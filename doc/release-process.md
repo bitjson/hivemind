@@ -30,7 +30,7 @@ Release Process
 ###perform gitian builds
 
  From a directory containing the hivemind source, gitian-builder and gitian.sigs
-  
+
 	export SIGNER=(your gitian key, ie bluematt, sipa, etc)
 	export VERSION=(new version, e.g. 0.8.0)
 	pushd ./hivemind
@@ -39,15 +39,15 @@ Release Process
 	pushd ./gitian-builder
 
 ###fetch and build inputs: (first time, or when dependency versions change)
- 
+
 	mkdir -p inputs
 
  Register and download the Apple SDK: (see OSX Readme for details)
- 
+
  https://developer.apple.com/downloads/download.action?path=Developer_Tools/xcode_6.1.1/xcode_6.1.1.dmg
- 
+
  Using a Mac, create a tarball for the 10.9 SDK and copy it to the inputs directory:
- 
+
 	tar -C /Volumes/Xcode/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/ -czf MacOSX10.9.sdk.tar.gz MacOSX10.9.sdk
 
 ###Optional: Seed the Gitian sources cache
@@ -59,7 +59,7 @@ Release Process
   Only missing files will be fetched, so this is safe to re-run for each build.
 
 ###Build Hivemind Core for Linux, Windows, and OS X:
-  
+
 	./bin/gbuild --commit hivemind=t${VERSION} ../hivemind/contrib/gitian-descriptors/gitian-linux.yml
 	./bin/gsign --signer $SIGNER --release ${VERSION}-linux --destination ../gitian.sigs/ ../hivemind/contrib/gitian-descriptors/gitian-linux.yml
 	mv build/out/hivemind-*.tar.gz build/out/src/hivemind-*.tar.gz ../
@@ -136,12 +136,18 @@ Note: check that SHA256SUMS itself doesn't end up in SHA256SUMS, which is a spur
 
 - Update hivemind.org version
 
-  - Make a pull request to add a file named `YYYY-MM-DD-vX.Y.Z.md` with the release notes
-  to https://github.com/hivemind/hivemind.org/tree/master/_releases
-   ([Example for 0.9.2.1](https://raw.githubusercontent.com/hivemind/hivemind.org/master/_releases/2014-06-19-v0.9.2.1.md)).
+  - First, check to see if the BitcoinHivemind.com maintainers have prepared a
+    release: https://github.com/bitcoin-hivemind/www.BitcoinHivemind.com/labels/Releases
 
-  - After the pull request is merged, the website will automatically show the newest version, as well
-    as update the OS download links. Ping Saivann in case anything goes wrong
+      - If they have, it will have previously failed their Travis CI
+        checks because the final release files weren't uploaded.
+        Trigger a Travis CI rebuild---if it passes, merge.
+
+  - If they have not prepared a release, follow the Bitcoin.org release
+    instructions: https://github.com/bitcoin/bitcoin.org#release-notes
+
+  - After the pull request is merged, the website will automatically show the newest version within 15 minutes, as well
+    as update the OS download links. Ping @saivann/@harding (saivann/harding on Freenode) in case anything goes wrong
 
 - Announce the release:
 
@@ -157,4 +163,4 @@ Note: check that SHA256SUMS itself doesn't end up in SHA256SUMS, which is a spur
 
 - Add release notes for the new version to the directory `doc/release-notes` in git master
 
-- Celebrate 
+- Celebrate
