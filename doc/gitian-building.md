@@ -416,6 +416,5 @@ gitian build.
 Uploading signatures
 ---------------------
 
-After building and signing you can push your signatures (both the `.assert` and `.assert.sig` files) to the
-[hivemind/gitian.sigs](https://github.com/hivemind/gitian.sigs/) repository, or if that's not possible create a pull
-request. You can also mail the files to me (laanwj@gmail.com) and I'll commit them.
+After building and signing you can push your signatures (both the `.assert` and `.assert.sig` files) to the [bitcoin-hivemind/gitian.sigs](https://github.com/bitcoin-hivemind/gitian.sigs/) repository, or create a pull
+request.
