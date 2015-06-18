@@ -41,6 +41,8 @@ Release Process
 ###fetch and build inputs: (first time, or when dependency versions change)
 
 	mkdir -p inputs
+	wget -P inputs https://bitcoincore.org/cfields/osslsigncode-Backports-to-1.7.1.patch
+	wget -P inputs http://downloads.sourceforge.net/project/osslsigncode/osslsigncode/osslsigncode-1.7.1.tar.gz
 
  Register and download the Apple SDK: (see OSX Readme for details)
 
@@ -60,13 +62,15 @@ Release Process
 
 ###Build Hivemind Core for Linux, Windows, and OS X:
 
-	./bin/gbuild --commit hivemind=t${VERSION} ../hivemind/contrib/gitian-descriptors/gitian-linux.yml
+	./bin/gbuild --commit hivemind=v${VERSION} ../hivemind/contrib/gitian-descriptors/gitian-linux.yml
 	./bin/gsign --signer $SIGNER --release ${VERSION}-linux --destination ../gitian.sigs/ ../hivemind/contrib/gitian-descriptors/gitian-linux.yml
-	mv build/out/hivemind-*.tar.gz build/out/src/hivemind-*.tar.gz ../
-	./bin/gbuild --commit hivemind=t${VERSION} ../hivemind/contrib/gitian-descriptors/gitian-win.yml
+	mv build/out/bitcoin-*.tar.gz build/out/src/hivemind-*.tar.gz ../
+	./bin/gbuild --commit hivemind=v${VERSION} ../hivemind/contrib/gitian-descriptors/gitian-win.yml
 	./bin/gsign --signer $SIGNER --release ${VERSION}-win --destination ../gitian.sigs/ ../hivemind/contrib/gitian-descriptors/gitian-win.yml
-	mv build/out/hivemind-*.zip build/out/hivemind-*.exe ../
-	./bin/gbuild --commit hivemind=t${VERSION} ../hivemind/contrib/gitian-descriptors/gitian-osx.yml
+	mv build/out/hivemind-*.zip ../
+	mv build/out/hivemind-*-win64-setup.exe inputs/hivemind-win64-setup.exe
+	mv build/out/hivemind-*-win32-setup.exe inputs/hivemind-win32-setup.exe
+	./bin/gbuild --commit hivemind=v${VERSION} ../hivemind/contrib/gitian-descriptors/gitian-osx.yml
 	./bin/gsign --signer $SIGNER --release ${VERSION}-osx-unsigned --destination ../gitian.sigs/ ../hivemind/contrib/gitian-descriptors/gitian-osx.yml
 	mv build/out/hivemind-*-unsigned.tar.gz inputs/hivemind-osx-unsigned.tar.gz
 	mv build/out/hivemind-*.tar.gz build/out/hivemind-*.dmg ../
@@ -75,7 +79,7 @@ Release Process
 
   1. source tarball (hivemind-${VERSION}.tar.gz)
   2. linux 32-bit and 64-bit binaries dist tarballs (hivemind-${VERSION}-linux[32|64].tar.gz)
-  3. windows 32-bit and 64-bit installers and dist zips (hivemind-${VERSION}-win[32|64]-setup.exe, hivemind-${VERSION}-win[32|64].zip)
+  3. windows 32-bit and 64-bit unsigned installers and dist zips (hivemind-${VERSION}-win[32|64]-setup.exe, hivemind-${VERSION}-win[32|64].zip)
   4. OSX unsigned installer (hivemind-${VERSION}-osx-unsigned.dmg)
   5. Gitian signatures (in gitian.sigs/${VERSION}-<linux|win|osx-unsigned>/(your gitian key)/
 
@@ -91,9 +95,9 @@ Commit your signature to gitian.sigs:
 	git push  # Assuming you can push to the gitian.sigs tree
 	popd
 
-  Wait for OSX detached signature:
-	Once the OSX build has 3 matching signatures, it will be signed with the Apple App-Store key.
-	A detached signature will then be committed to the bitcoin-detached-sigs repository, which can be combined with the unsigned app to create a signed binary.
+  Wait for Windows/OSX detached signatures:
+	Once the Windows/OSX builds each have 3 matching signatures, they will be signed with their respective release keys.
+	Detached signatures will then be committed to the bitcoin-detached-sigs repository, which can be combined with the unsigned apps to create signed binaries.
 
   Create the signed OSX binary:
 
@@ -103,10 +107,20 @@ Commit your signature to gitian.sigs:
 	mv build/out/hivemind-osx-signed.dmg ../hivemind-${VERSION}-osx.dmg
 	popd
 
-Commit your signature for the signed OSX binary:
+  Create the signed Windows binaries:
+
+	pushd ./gitian-builder
+	./bin/gbuild -i --commit signature=v${VERSION} ../bitcoin/contrib/gitian-descriptors/gitian-win-signer.yml
+	./bin/gsign --signer $SIGNER --release ${VERSION}-win-signed --destination ../gitian.sigs/ ../bitcoin/contrib/gitian-descriptors/gitian-win-signer.yml
+	mv build/out/bitcoin-win64-setup-signed.exe ../bitcoin-${VERSION}-win64-setup.exe
+	mv build/out/bitcoin-win32-setup-signed.exe ../bitcoin-${VERSION}-win32-setup.exe
+	popd
+
+Commit your signature for the signed OSX/Windows binaries:
 
 	pushd gitian.sigs
 	git add ${VERSION}-osx-signed/${SIGNER}
+	git add ${VERSION}-win-signed/${SIGNER}
 	git commit -a
 	git push  # Assuming you can push to the gitian.sigs tree
 	popd
@@ -114,12 +128,6 @@ Commit your signature for the signed OSX binary:
 -------------------------------------------------------------------------
 
 ### After 3 or more people have gitian-built and their results match:
-
-- Perform code-signing.
-
-    - Code-sign Windows -setup.exe (in a Windows virtual machine using signtool)
-
-  Note: only Gavin has the code-signing keys currently.
 
 - Create `SHA256SUMS.asc` for the builds, and GPG-sign it:
 ```bash
