@@ -34,17 +34,17 @@ Check out the source code in the following directory hierarchy.
 
 * * *
 
-###Setup and perform gitian builds
+###Setup and perform Gitian builds
 
- Setup gitian descriptors:
+ Setup Gitian descriptors:
 
 	pushd ./bitcoin
-	export SIGNER=(your gitian key, ie bluematt, sipa, etc)
+	export SIGNER=(your Gitian key, ie bluematt, sipa, etc)
 	export VERSION=(new version, e.g. 0.8.0)
 	git checkout v${VERSION}
 	popd
 
-  Ensure your gitian.sigs are up-to-date if you wish to gverify your builds against other gitian signatures.
+  Ensure your gitian.sigs are up-to-date if you wish to gverify your builds against other Gitian signatures.
 
 	pushd ./gitian.sigs
 	git pull
@@ -61,7 +61,7 @@ Check out the source code in the following directory hierarchy.
 	wget -P inputs https://bitcoincore.org/cfields/osslsigncode-Backports-to-1.7.1.patch
 	wget -P inputs http://downloads.sourceforge.net/project/osslsigncode/osslsigncode/osslsigncode-1.7.1.tar.gz
 
- Register and download the Apple SDK: see [OSX readme](README_osx.txt) for details.
+ Register and download the Apple SDK: see [OS X readme](README_osx.txt) for details.
 
  https://developer.apple.com/devcenter/download.action?path=/Developer_Tools/xcode_6.1.1/xcode_6.1.1.dmg
 
@@ -71,15 +71,15 @@ Check out the source code in the following directory hierarchy.
 
 ###Optional: Seed the Gitian sources cache and offline git repositories
 
-By default, gitian will fetch source files as needed. To cache them ahead of time:
+By default, Gitian will fetch source files as needed. To cache them ahead of time:
 
 	make -C ../hivemind/depends download SOURCES_PATH=`pwd`/cache/common
 
 Only missing files will be fetched, so this is safe to re-run for each build.
 
-NOTE: Offline builds must use the --url flag to ensure gitian fetches only from local URLs. For example:
+NOTE: Offline builds must use the --url flag to ensure Gitian fetches only from local URLs. For example:
 ```
-./bin/bguild --url bitcoin=/path/to/bitcoin,signature=/path/to/sigs {rest of arguments}
+./bin/gbuild --url bitcoin=/path/to/bitcoin,signature=/path/to/sigs {rest of arguments}
 ```
 The gbuild invocations below <b>DO NOT DO THIS</b> by default.
 
@@ -108,8 +108,8 @@ The gbuild invocations below <b>DO NOT DO THIS</b> by default.
   1. source tarball (hivemind-${VERSION}.tar.gz)
   2. linux 32-bit and 64-bit dist tarballs (hivemind-${VERSION}-linux[32|64].tar.gz)
   3. windows 32-bit and 64-bit unsigned installers and dist zips (hivemind-${VERSION}-win[32|64]-setup-unsigned.exe, hivemind-${VERSION}-win[32|64].zip)
-  4. OSX unsigned installer and dist tarball (hivemind-${VERSION}-osx-unsigned.dmg, hivemind-${VERSION}-osx64.tar.gz)
-  5. Gitian signatures (in gitian.sigs/${VERSION}-<linux|{win,osx}-unsigned>/(your gitian key)/
+  4. OS X unsigned installer and dist tarball (hivemind-${VERSION}-osx-unsigned.dmg, hivemind-${VERSION}-osx64.tar.gz)
+  5. Gitian signatures (in gitian.sigs/${VERSION}-<linux|{win,osx}-unsigned>/(your Gitian key)/
 
 ###Next steps:
 
@@ -123,12 +123,12 @@ Commit your signature to gitian.sigs:
 	git push  # Assuming you can push to the gitian.sigs tree
 	popd
 
-  Wait for Windows/OSX detached signatures:
+  Wait for Windows/OS X detached signatures:
 
-	Once the Windows/OSX builds each have 3 matching signatures, they will be signed with their respective release keys.
+	Once the Windows/OS X builds each have 3 matching signatures, they will be signed with their respective release keys.
 	Detached signatures will then be committed to the [bitcoin-detached-sigs](https://github.com/bitcoin/bitcoin-detached-sigs) repository, which can be combined with the unsigned apps to create signed binaries.
 
-  Create (and optionally verify) the signed OSX binary:
+  Create (and optionally verify) the signed OS X binary:
 
 	pushd ./gitian-builder
 	./bin/gbuild -i --commit signature=v${VERSION} ../bitcoin/contrib/gitian-descriptors/gitian-osx-signer.yml
@@ -147,7 +147,7 @@ Commit your signature to gitian.sigs:
 	mv build/out/bitcoin-*win32-setup.exe ../bitcoin-${VERSION}-win32-setup.exe
 	popd
 
-Commit your signature for the signed OSX/Windows binaries:
+Commit your signature for the signed OS X/Windows binaries:
 
 	pushd gitian.sigs
 	git add ${VERSION}-osx-signed/${SIGNER}

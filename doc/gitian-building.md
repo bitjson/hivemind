@@ -1,7 +1,7 @@
 Gitian building
 ================
 
-*Setup instructions for a gitian build of Hivemind using a Debian VM or physical system.*
+*Setup instructions for a Gitian build of Hivemind using a Debian VM or physical system.*
 
 Gitian is the deterministic build process that is used to build the Hivemind
 Core executables. It provides a way to be reasonably sure that the
@@ -13,7 +13,7 @@ Multiple developers build the source code by following a specific descriptor
 These results are compared and only if they match, the build is accepted and uploaded
 to hivemind.org.
 
-More independent gitian builders are needed, which is why this guide exists.
+More independent Gitian builders are needed, which is why this guide exists.
 It is preferred you follow these steps yourself instead of using someone else's
 VM image to avoid 'contaminating' the build.
 
@@ -22,9 +22,9 @@ Table of Contents
 
 - [Create a new VirtualBox VM](#create-a-new-virtualbox-vm)
 - [Connecting to the VM](#connecting-to-the-vm)
-- [Setting up Debian for gitian building](#setting-up-debian-for-gitian-building)
-- [Installing gitian](#installing-gitian)
-- [Setting up gitian images](#setting-up-gitian-images)
+- [Setting up Debian for Gitian building](#setting-up-debian-for-gitian-building)
+- [Installing Gitian](#installing-gitian)
+- [Setting up the Gitian image](#setting-up-the-gitian-image)
 - [Getting and building the inputs](#getting-and-building-the-inputs)
 - [Building Hivemind](#building-hivemind)
 - [Building an alternative repository](#building-an-alternative-repository)
@@ -43,7 +43,7 @@ Any kind of virtualization can be used, for example:
 - [KVM](http://www.linux-kvm.org/page/Main_Page)
 - [LXC](https://linuxcontainers.org/), see also [Gitian host docker container](https://github.com/gdm85/tenku/tree/master/docker/gitian-bitcoin-host/README.md).
 
-You can also install gitian on actual hardware instead of using virtualization.
+You can also install Gitian on actual hardware instead of using virtualization.
 
 Create a new VirtualBox VM
 ---------------------------
@@ -201,7 +201,7 @@ After Installation
 The next step in the guide involves logging in as root via SSH.
 SSH login for root users is disabled by default, so we'll enable that now.
 
-Login to the VM using username `root` and the root password you choose earlier.
+Login to the VM using username `root` and the root password you chose earlier.
 You'll be presented with a screen similar to this.
 
 ![](gitian-building/debian_root_login.png)
@@ -243,7 +243,7 @@ For example, to connect as `root` from a Linux command prompt use
 
 Replace `root` with `debian` to log in as user.
 
-Setting up Debian for gitian building
+Setting up Debian for Gitian building
 --------------------------------------
 
 In this section we will be setting up the Debian installation for Gitian building.
@@ -260,7 +260,7 @@ Then set up LXC and the rest with the following, which is a complex jumble of se
 
 ```bash
 # the version of lxc-start in Debian 7.4 needs to run as root, so make sure
-# that the build script can exectute it without providing a password
+# that the build script can execute it without providing a password
 echo "%sudo ALL=NOPASSWD: /usr/bin/lxc-start" > /etc/sudoers.d/gitian-lxc
 # add cgroup for LXC
 echo "cgroup  /sys/fs/cgroup  cgroup  defaults  0   0" >> /etc/fstab
@@ -280,7 +280,7 @@ reboot
 At the end the VM is rebooted to make sure that the changes take effect. The steps in this
 section only need to be performed once.
 
-Installing gitian
+Installing Gitian
 ------------------
 
 Re-login as the user `debian` that was created during installation.
@@ -300,7 +300,7 @@ cd ..
 
 **Note**: When sudo asks for a password, enter the password for the user *debian* not for *root*.
 
-Clone the git repositories for hivemind and gitian and then checkout the hivemind version that you want to build.
+Clone the git repositories for hivemind and Gitian.
 
 ```bash
 git clone https://github.com/devrandom/gitian-builder.git
@@ -310,7 +310,7 @@ git checkout t${VERSION}
 cd ..
 ```
 
-Setting up gitian images
+Setting up the Gitian image
 -------------------------
 
 Gitian needs virtual images of the operating system to build in.
@@ -342,8 +342,8 @@ offline.
 Building Hivemind
 ----------------
 
-To build Hivemind (for Linux, OSX and Windows) just follow the steps under 'perform
-gitian builds' in [doc/release-process.md](release-process.md#perform-gitian-builds) in the hivemind repository.
+To build Hivemind (for Linux, OS X and Windows) just follow the steps under 'perform
+Gitian builds' in [doc/release-process.md](release-process.md#perform-gitian-builds) in the hivemind repository.
 
 This may take some time as it will build all the dependencies needed for each descriptor.
 These dependencies will be cached after a successful build to avoid rebuilding them when possible.
@@ -382,7 +382,7 @@ Building an alternative repository
 -----------------------------------
 
 If you want to do a test build of a pull on GitHub it can be useful to point
-the gitian builder at an alternative repository, using the same descriptors
+the Gitian builder at an alternative repository, using the same descriptors
 and inputs.
 
 For example:
@@ -433,7 +433,7 @@ Offlinemode: 1
 service apt-cacher-ng restart
 ```
 
-Then when building, override the remote URLs that gbuild would otherwise pull from the gitian descriptors::
+Then when building, override the remote URLs that gbuild would otherwise pull from the Gitian descriptors::
 ```bash
 
 cd /some/root/path/
@@ -463,7 +463,7 @@ in `gitian.sigs` to your signing machine and do
 ```
 
 This will create the `.sig` files that can be committed together with the `.assert` files to assert your
-gitian build.
+Gitian build.
 
 Uploading signatures
 ---------------------
