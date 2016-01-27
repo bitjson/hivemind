@@ -190,6 +190,9 @@ void DecisionCreationWidget::editArray(json_spirit::Array array)
         ui->doubleSpinBoxScaledMax->setValue(scaledMax.get_real());
     }
 
+    // Unhide the scaled spinboxes if the decision is scaled
+    on_radioButtonScaled_clicked(isScaled);
+
     // Check for update index from model
     if (isScaled && array.size() == 10) {
         ui->pushButtonCreateDecision->hide();
