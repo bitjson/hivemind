@@ -33,7 +33,7 @@ QVariant AuthorPendingTableModel::data(const QModelIndex &index, int role) const
     {
         json_spirit::Array pendingCreation = pending.at(row);
 
-        /* Display data shared between decisions and markets */
+        /* Display data shared between all types */
 
         // Type
         std::string type = json_spirit::write_string(pendingCreation.back(), true);
@@ -50,6 +50,101 @@ QVariant AuthorPendingTableModel::data(const QModelIndex &index, int role) const
         // Fee
         if (col == 2) {
             return "0.02"; // Dummy temp
+        }
+
+        /* Display Combo */
+
+        if (type == "\"combo\"") {
+            // Branch ID
+            if (col == 3) {
+                std::string branchID = json_spirit::write_string(pendingCreation.at(1), true);
+                return QString::fromStdString(branchID);
+            }
+
+            // Prompt
+            if (col == 4) {
+                std::string prompt = json_spirit::write_string(pendingCreation.at(2), true);
+                return QString::fromStdString(prompt);
+            }
+
+            // Event Over By
+            if (col == 5) {
+                int eventOverBy = pendingCreation.at(3).get_int();
+                return eventOverBy;
+            }
+
+            // Answer Optionality
+            if (col == 6) {
+                bool answerOptionality = pendingCreation.at(4).get_bool();
+                return answerOptionality;
+            }
+
+            // Is Scaled?
+            bool scaled = false;
+            if (col == 7) {
+                scaled = pendingCreation.at(5).get_bool();
+                return scaled;
+            }
+
+            // Decision ID
+            if (col == 8) {
+                std::string decisionID = json_spirit::write_string(pendingCreation.at(8), true);
+                return QString::fromStdString(decisionID);
+            }
+
+            // Liquidity Factor (B)
+            if (col == 9) {
+                double B = pendingCreation.at(9).get_real();
+                return B;
+            }
+
+            // Trading Fee
+            if (col == 10) {
+                double tradingFee = pendingCreation.at(10).get_real();
+                return tradingFee;
+            }
+
+            // Max Commission
+            if (col == 11) {
+                double maxCommission = pendingCreation.at(11).get_real();
+                return maxCommission;
+            }
+
+            // Title
+            if (col == 12) {
+                std::string title = json_spirit::write_string(pendingCreation.at(12), true);
+                return QString::fromStdString(title);
+            }
+
+            // Description
+            if (col == 13) {
+                std::string description = json_spirit::write_string(pendingCreation.at(13), true);
+                return QString::fromStdString(description);
+            }
+
+            // Tags
+            if (col == 14) {
+                std::string tags = json_spirit::write_string(pendingCreation.at(14), true);
+                return QString::fromStdString(tags);
+            }
+
+            // Maturation
+            if (col == 15) {
+                int maturation = pendingCreation.at(15).get_int();
+                return maturation;
+            }
+
+            // txPoWh
+            if (col == 16) {
+                int txPoWh = pendingCreation.at(16).get_int();
+                return txPoWh;
+            }
+
+            // txPoWd
+            if (col == 17) {
+                int txPoWd = pendingCreation.at(17).get_int();
+                return txPoWd;
+            }
         }
 
         /* Display data unique to decisions */
