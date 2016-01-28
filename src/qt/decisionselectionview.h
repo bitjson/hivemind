@@ -5,6 +5,7 @@
 
 #include <QTableView>
 #include <QWidget>
+#include <QStringList>
 
 namespace Ui {
 class DecisionSelectionView;
@@ -24,6 +25,7 @@ public slots:
 
 signals:
     void decisionSelected(QString decisionHex);
+    void multipleDecisionsSelected(QStringList hexList);
     void done();
 
 private slots:
