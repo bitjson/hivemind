@@ -5,6 +5,7 @@
 #include "decisionselectionview.h"
 
 #include <QWidget>
+#include <QStringList>
 
 namespace Ui {
 class DecisionMarketCreationWidget;
@@ -37,6 +38,8 @@ public slots:
     void comboCreationUI();
 
     void decisionSelected(QString decisionHex);
+
+    void multipleDecisionsSelected(QStringList hexList);
 
 signals:
     /** Signal raised when json_spirit::Array for new Decision Market is created */

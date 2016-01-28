@@ -33,9 +33,24 @@ json_spirit::Array DecisionMarketCreationWidget::createDecisionMarketArray()
 {
     // Grab user input from the ui
     QString address = ui->lineEditAuthorAddress->text();
-    std::string decisionID = ui->lineEditDecisions->text().toStdString();
-    decisionID += ":";
-    decisionID += ui->comboBoxFunctions->currentText().toStdString();
+    QString decisions = ui->lineEditDecisions->text();
+
+    if (decisions.contains(", ")) {
+        QStringList decisionList = decisions.split(",");
+        QString combined = "";
+        for (int i = 0; i < decisionList.size(); i++) {
+            QString hex = decisionList.at(i);
+            QString function = ui->comboBoxFunctions->currentText();
+            QString formatted = hex + ":" + function;
+
+            combined.push_back(formatted);
+            if (i != decisionList.size() - 1) {
+                combined.push_back(",");
+            }
+        }
+        decisions = combined;
+    }
+
     double B = ui->doubleSpinBoxB->value();
     double tradingFee = ui->doubleSpinBoxTradeFee->value();
     double maxCommission = ui->doubleSpinBoxMaxCommission->value();
@@ -54,7 +69,7 @@ json_spirit::Array DecisionMarketCreationWidget::createDecisionMarketArray()
         error = true;
     }
 
-    if (decisionID.size() == 0) {
+    if (decisions.size() == 0) {
         emit inputError("You must enter a decision ID!");
         error = true;
     }
@@ -106,7 +121,7 @@ json_spirit::Array DecisionMarketCreationWidget::createDecisionMarketArray()
     if (error) return params;
 
     params.push_back(address.toStdString());
-    params.push_back(decisionID);
+    params.push_back(decisions.toStdString());
     params.push_back(B);
     params.push_back(tradingFee);
     params.push_back(maxCommission);
@@ -164,6 +179,9 @@ void DecisionMarketCreationWidget::on_pushButtonSelectDecision_clicked()
     // Connect signals
     connect(decisionSelection, SIGNAL(decisionSelected(QString)),
             this, SLOT(decisionSelected(QString)));
+
+    connect(decisionSelection, SIGNAL(multipleDecisionsSelected(QStringList)),
+            this, SLOT(multipleDecisionsSelected(QStringList)));
 
     // Display the decision selection widget
     QHBoxLayout *hbox = new QHBoxLayout(this);
@@ -270,4 +288,18 @@ void DecisionMarketCreationWidget::comboCreationUI()
 void DecisionMarketCreationWidget::decisionSelected(QString decisionHex)
 {
     ui->lineEditDecisions->setText(decisionHex);
+}
+
+void DecisionMarketCreationWidget::multipleDecisionsSelected(QStringList hexList)
+{
+    // Comma seperated list of hex's
+    QString csList = "";
+
+    for (int i = 0; i < hexList.size(); i++) {
+        csList.push_back(hexList.at(i));
+        if (i != hexList.size() - 1) {
+            csList.push_back(",");
+        }
+    }
+    ui->lineEditDecisions->setText(csList);
 }

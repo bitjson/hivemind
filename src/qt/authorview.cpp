@@ -17,6 +17,7 @@ AuthorView::AuthorView(QWidget *parent) :
     pendingTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     pendingTableModel = new AuthorPendingTableModel(this);
     pendingTableView->setModel(pendingTableModel);
+    pendingTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->frameLeft->layout()->addWidget(pendingTableView);
 
     // Setup signals
