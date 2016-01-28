@@ -336,7 +336,7 @@ void HivemindGUI::createActions(const NetworkStyle *networkStyle)
     connect(decisionAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(decisionAction, SIGNAL(triggered()), this, SLOT(gotoDecisionPage()));
     connect(marketAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
-    connect(marketAction, SIGNAL(triggered()), this, SLOT(gotoMarketPage()));
+    connect(marketAction, SIGNAL(triggered()), this, SLOT(gotoMarketView()));
 #endif // ENABLE_WALLET
 
     quitAction = new QAction(TextColorIcon(":/icons/quit"), tr("E&xit"), this);
@@ -685,10 +685,10 @@ void HivemindGUI::gotoDecisionPage()
     if (walletFrame) walletFrame->gotoDecisionPage();
 }
 
-void HivemindGUI::gotoMarketPage()
+void HivemindGUI::gotoMarketView()
 {
     marketAction->setChecked(true);
-    if (walletFrame) walletFrame->gotoMarketPage();
+    if (walletFrame) walletFrame->gotoMarketView();
 }
 
 void HivemindGUI::gotoReceiveCoinsPage()

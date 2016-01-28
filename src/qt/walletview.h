@@ -8,6 +8,7 @@
 
 #include "amount.h"
 #include "authorview.h"
+#include "marketview.h"
 
 #include <QStackedWidget>
 
@@ -15,7 +16,6 @@ class HivemindGUI;
 class ClientModel;
 class BallotView;
 class DecisionView;
-class MarketView;
 class OverviewPage;
 class ReceiveCoinsDialog;
 class SendCoinsDialog;
@@ -65,11 +65,10 @@ private:
     QWidget *transactionsPage;
     QWidget *ballotPage;
     QWidget *decisionPage;
-    QWidget *marketPage;
+    //QWidget *marketPage;
     ReceiveCoinsDialog *receiveCoinsPage;
     SendCoinsDialog *sendCoinsPage;
     AuthorView *authorView;
-
     BallotView *ballotView;
     DecisionView *decisionView;
     MarketView *marketView;
@@ -88,8 +87,8 @@ public slots:
     void gotoBallotPage();
     /** Switch to decision page */
     void gotoDecisionPage();
-    /** Switch to market page */
-    void gotoMarketPage();
+    /** Switch to market view */
+    void gotoMarketView();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */

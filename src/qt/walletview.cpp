@@ -83,14 +83,7 @@ WalletView::WalletView(QWidget *parent):
     decisionPage->setLayout(dvbox);
 
     // Market tab
-    marketPage = new QWidget(this);
-    QVBoxLayout *mvbox = new QVBoxLayout();
-    QHBoxLayout *mhbox_buttons = new QHBoxLayout();
     marketView = new MarketView(this);
-    mvbox->addWidget(marketView);
-    mhbox_buttons->addStretch();
-    mvbox->addLayout(mhbox_buttons);
-    marketPage->setLayout(mvbox);
 
     // Receive tab
     receiveCoinsPage = new ReceiveCoinsDialog();
@@ -101,7 +94,7 @@ WalletView::WalletView(QWidget *parent):
     addWidget(authorView);
     addWidget(overviewPage);
     addWidget(transactionsPage);
-    addWidget(marketPage);
+    addWidget(marketView);
     addWidget(decisionPage);
     addWidget(ballotPage);
     addWidget(receiveCoinsPage);
@@ -159,7 +152,6 @@ void WalletView::setWalletModel(WalletModel *walletModel)
     // Put transaction list in tabs
     ballotView->setModel(walletModel);
     decisionView->setModel(walletModel);
-    marketView->setModel(walletModel);
     transactionView->setModel(walletModel);
     overviewPage->setWalletModel(walletModel);
     receiveCoinsPage->setModel(walletModel);
@@ -229,9 +221,9 @@ void WalletView::gotoDecisionPage()
     setCurrentWidget(decisionPage);
 }
 
-void WalletView::gotoMarketPage()
+void WalletView::gotoMarketView()
 {
-    setCurrentWidget(marketPage);
+    setCurrentWidget(marketView);
 }
 
 void WalletView::gotoReceiveCoinsPage()

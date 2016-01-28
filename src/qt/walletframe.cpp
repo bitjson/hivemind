@@ -141,11 +141,11 @@ void WalletFrame::gotoDecisionPage()
         i.value()->gotoDecisionPage();
 }
 
-void WalletFrame::gotoMarketPage()
+void WalletFrame::gotoMarketView()
 {
     QMap<QString, WalletView*>::const_iterator i;
     for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
-        i.value()->gotoMarketPage();
+        i.value()->gotoMarketView();
 }
 
 void WalletFrame::gotoReceiveCoinsPage()

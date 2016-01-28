@@ -87,6 +87,7 @@ QT_FORMS_UI = \
   qt/forms/editaddressdialog.ui \
   qt/forms/helpmessagedialog.ui \
   qt/forms/intro.ui \
+  qt/forms/marketview.ui \
   qt/forms/openuridialog.ui \
   qt/forms/optionsdialog.ui \
   qt/forms/overviewpage.ui \
@@ -122,6 +123,8 @@ QT_MOC_CPP = \
   qt/moc_intro.cpp \
   qt/moc_macdockiconhandler.cpp \
   qt/moc_macnotificationhandler.cpp \
+  qt/moc_marketview.cpp \
+  qt/moc_marketmodel.cpp \
   qt/moc_ballotview.cpp \
   qt/moc_ballotballotwindow.cpp \
   qt/moc_ballotballotfilterproxymodel.cpp \
@@ -228,6 +231,8 @@ HIVEMIND_QT_H = \
   qt/intro.h \
   qt/macdockiconhandler.h \
   qt/macnotificationhandler.h \
+	qt/marketview.h \
+	qt/marketmodel.h \
   qt/ballotview.h \
   qt/ballotballotfilterproxymodel.h \
   qt/ballotballottablemodel.h \
@@ -258,7 +263,6 @@ HIVEMIND_QT_H = \
   qt/decisiontradewindow.h \
   qt/decisionview.h \
   qt/decisionviewgraph.h \
-  qt/marketview.h \
   qt/marketviewgraph.h \
   qt/networkstyle.h \
   qt/notificator.h \
@@ -422,6 +426,7 @@ HIVEMIND_QT_CPP += \
   qt/decisionview.cpp \
   qt/decisionviewgraph.cpp \
   qt/marketview.cpp \
+	qt/marketmodel.cpp \
   qt/marketviewgraph.cpp \
   qt/openuridialog.cpp \
   qt/overviewpage.cpp \

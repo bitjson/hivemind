@@ -60,7 +60,7 @@ public slots:
     /** Switch to decision page */
     void gotoDecisionPage();
     /** Switch to market page */
-    void gotoMarketPage();
+    void gotoMarketView();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */
