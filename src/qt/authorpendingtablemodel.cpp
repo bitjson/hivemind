@@ -724,7 +724,6 @@ void AuthorPendingTableModel::finalizeCombo(json_spirit::Array params, unsigned 
 
             // If success, get txid and market id
             if (codePair.name_ == "txid" ) {
-                std::string txid = codePair.value_.get_str();
                 // Market?
                 if (messagePair.name_ == "marketid") {
                     // Remove finalized combos from the pending model
