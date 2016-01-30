@@ -1,6 +1,9 @@
 #ifndef MARKETVIEW_H
 #define MARKETVIEW_H
 
+#include "marketmodel.h"
+
+#include <QTableView>
 #include <QWidget>
 
 namespace Ui {
@@ -17,6 +20,9 @@ public:
 
 private:
     Ui::MarketView *ui;
+
+    MarketModel *marketModel;
+    QTableView *marketTableView;
 };
 
 #endif // MARKETVIEW_H
