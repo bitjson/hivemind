@@ -265,12 +265,6 @@ QVariant AuthorPendingTableModel::data(const QModelIndex &index, int role) const
             return boldFont;
         }
         break;
-    case Qt::BackgroundRole:
-        break;
-    case Qt::TextAlignmentRole:
-        break;
-    case Qt::CheckStateRole:
-        break;
     }
 
     return QVariant();
@@ -278,11 +272,9 @@ QVariant AuthorPendingTableModel::data(const QModelIndex &index, int role) const
 
 QVariant AuthorPendingTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (role == Qt::DisplayRole)
-    {
+    if (role == Qt::DisplayRole) {
         if (orientation == Qt::Horizontal) {
-            switch (section)
-            {
+            switch (section) {
             case 0:
                 return QString("Type");
             case 1:

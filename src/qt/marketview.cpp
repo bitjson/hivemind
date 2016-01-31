@@ -17,6 +17,7 @@ MarketView::MarketView(QWidget *parent) :
     marketTableView = new QTableView(this);
     marketTableView->horizontalHeader()->setStretchLastSection(true);
     marketTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    marketTableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     marketModel = new MarketModel(this);
     marketTableView->setModel(marketModel);
     marketTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -24,6 +25,10 @@ MarketView::MarketView(QWidget *parent) :
 
     // Set the branch for the market table model
     marketModel->setBranch(uBranch);
+
+    // Setup signals
+    connect(marketTableView, SIGNAL(doubleClicked(QModelIndex)),
+            marketModel, SLOT(on_tableView_doubleClicked(QModelIndex)));
 }
 
 MarketView::~MarketView()
