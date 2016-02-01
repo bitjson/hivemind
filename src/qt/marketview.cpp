@@ -1,5 +1,9 @@
 #include "marketview.h"
 #include "ui_marketview.h"
+#include "markettradeview.h"
+
+#include <QDialog>
+#include <QHBoxLayout>
 
 MarketView::MarketView(QWidget *parent) :
     QWidget(parent),
@@ -28,10 +32,26 @@ MarketView::MarketView(QWidget *parent) :
 
     // Setup signals
     connect(marketTableView, SIGNAL(doubleClicked(QModelIndex)),
-            marketModel, SLOT(on_tableView_doubleClicked(QModelIndex)));
+            this, SLOT(on_tableView_doubleClicked(QModelIndex)));
 }
 
 MarketView::~MarketView()
 {
     delete ui;
+}
+
+void MarketView::on_tableView_doubleClicked(const QModelIndex &index)
+{
+    // Find the market, open the trading window
+    // marketMarket *marketChosen = marketModel->at(index.row());
+
+    MarketTradeView *marketTradeView = new MarketTradeView(this);
+
+    QHBoxLayout *hbox = new QHBoxLayout(this);
+    hbox->addWidget(marketTradeView);
+
+    QDialog *dialog = new QDialog(this);
+    dialog->setWindowTitle("Trade");
+    dialog->setLayout(hbox);
+    dialog->show();
 }

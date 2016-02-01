@@ -20,7 +20,6 @@ signals:
 public slots:
     void setBranch(uint256 branchID);
     void resetModel();
-    void on_tableView_doubleClicked(const QModelIndex &index);
 
 private:
     QList<marketMarket *> marketModel;

@@ -120,8 +120,4 @@ void MarketModel::resetModel()
     endResetModel();
 }
 
-void MarketModel::on_tableView_doubleClicked(const QModelIndex &index)
-{
-    // Find the market, open the trading window
-    //marketMarket *marketChosen = marketModel.at(index.row());
-}
+

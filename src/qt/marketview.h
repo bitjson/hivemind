@@ -18,6 +18,9 @@ public:
     explicit MarketView(QWidget *parent = 0);
     ~MarketView();
 
+public slots:
+        void on_tableView_doubleClicked(const QModelIndex &index);
+
 private:
     Ui::MarketView *ui;
 
