@@ -16,7 +16,7 @@ int MarketModel::rowCount(const QModelIndex & /*parent*/) const
 
 int MarketModel::columnCount(const QModelIndex & /*parent*/) const
 {
-    return 2;
+    return 3;
 }
 
 QVariant MarketModel::data(const QModelIndex &index, int role) const
@@ -33,13 +33,18 @@ QVariant MarketModel::data(const QModelIndex &index, int role) const
     {
         marketMarket *market = marketModel.at(row);
 
-        // Graph
+        // Title
         if (col == 0) {
+            return QString::fromStdString(market->title);
+        }
+
+        // Graph
+        if (col == 1) {
             return QString("Graph");
         }
 
-        // Market Info
-        if (col == 1) {
+        // Market Details
+        if (col == 2) {
             std::stringstream sstream;
             sstream << "Title: " << market->title << std::endl;
             sstream << "Description: " << market->description << std::endl;
@@ -60,8 +65,10 @@ QVariant MarketModel::headerData(int section, Qt::Orientation orientation, int r
         if (orientation == Qt::Horizontal) {
             switch(section) {
             case 0:
-                return QString("Graph");
+                return QString("Title");
             case 1:
+                return QString("Graph");
+            case 2:
                 return QString("Market Info");
             }
         }
