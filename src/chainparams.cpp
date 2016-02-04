@@ -60,9 +60,9 @@ static const Checkpoints::CCheckpointData data = {
 static Checkpoints::MapCheckpoints mapCheckpointsTestnet;
 static const Checkpoints::CCheckpointData dataTestnet = {
         &mapCheckpointsTestnet,
-        1337966069,
-        1488,
-        300
+        0,
+        0,
+        0
     };
 static Checkpoints::MapCheckpoints mapCheckpointsRegtest;
 static const Checkpoints::CCheckpointData dataRegtest = {
@@ -77,7 +77,7 @@ public:
     CMainParams() {
         strNetworkID = "main";
 bool SHORT_TAU_TESTING = true;
-        /** 
+        /**
          * The message start string is designed to be unlikely to occur in normal data.
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
          * a large 4-byte int at any alignment.
@@ -95,7 +95,7 @@ bool SHORT_TAU_TESTING = true;
         nToCheckBlockUpgradeMajority = 1000;
         nMinerThreads = 0;
         nTargetTimespan = 14 * 24 * 60 * 60; // two weeks
-        nTargetSpacing = 10 * 60;
+        nTargetSpacing = 10 * 60; // 10 Minutes
 
         /**
          * Build the genesis block. Note that the output of the genesis coinbase cannot
@@ -160,8 +160,7 @@ if (SHORT_TAU_TESTING) {
         genesisBranch.txid = txNew.GetHash();
         hashGenesisBlock = genesis.GetHash();
 
-        vSeeds.push_back(CDNSSeedData("198.204.244.178", "198.204.244.178"));
-        vSeeds.push_back(CDNSSeedData("69.117.250.141", "69.117.250.141"));
+        vSeeds.push_back(CDNSSeedData("162.243.37.30", "162.243.37.30"));
 
 if (SHORT_TAU_TESTING) {
         assert(genesis.hashMerkleRoot == uint256S("0x84468287c97d192c4e5d957964f802cd51ded59b714c2ddb7348edf4f4c45fa5"));
@@ -192,7 +191,7 @@ fSkipProofOfWorkCheck = true;
         fTestnetToBeDeprecatedFieldRPC = false;
     }
 
-    const Checkpoints::CCheckpointData& Checkpoints() const 
+    const Checkpoints::CCheckpointData& Checkpoints() const
     {
         return data;
     }
@@ -200,55 +199,37 @@ fSkipProofOfWorkCheck = true;
 static CMainParams mainParams;
 
 /**
- * Testnet (v3)
+ * Hivemind Testnet
  */
 class CTestNetParams : public CMainParams {
 public:
     CTestNetParams() {
         strNetworkID = "test";
+
         pchMessageStart[0] = 0x0b;
         pchMessageStart[1] = 0x11;
         pchMessageStart[2] = 0x09;
         pchMessageStart[3] = 0x07;
         vAlertPubKey = ParseHex("04302390343f91cc401d56d68b123028bf52e5fca1939df127f63c6467cdf9c8e2c14b61104cf817d0b780da337893ecc4aaff1309e536162dabbdb45200ca2b0a");
         nDefaultPort = 64533;
-        nEnforceBlockUpgradeMajority = 51;
-        nRejectBlockOutdatedMajority = 75;
-        nToCheckBlockUpgradeMajority = 100;
-        nMinerThreads = 0;
-        nTargetTimespan = 14 * 24 * 60 * 60; //! two weeks
-        nTargetSpacing = 10 * 60;
+        nTargetTimespan = 1 * 1 * 60 * 60;
+        nTargetSpacing = 1 * 60; // 1 minute
 
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
-        genesis.nTime = 1296688602;
-        genesis.nNonce = 414098458;
-        hashGenesisBlock = genesis.GetHash();
-        // assert(hashGenesisBlock == uint256S("0x000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943"));
+        genesis.nTime = 1454472451;
+        genesis.nNonce = 3;
+        hashGenesisBlock = uint256S("0x14ddcf0a2bb0041dab74b50029e85211fb0be42125a2be0a37837e884e5167d5");
 
-        vFixedSeeds.clear();
-        vSeeds.clear();
-        vSeeds.push_back(CDNSSeedData("alexykot.me", "testnet-seed.alexykot.me"));
-        vSeeds.push_back(CDNSSeedData("hivemind.petertodd.org", "testnet-seed.hivemind.petertodd.org"));
-        vSeeds.push_back(CDNSSeedData("bluematt.me", "testnet-seed.bluematt.me"));
-        vSeeds.push_back(CDNSSeedData("hivemind.schildbach.de", "testnet-seed.hivemind.schildbach.de"));
-
-        base58Prefixes[PUBKEY_ADDRESS] = boost::assign::list_of(111);
-        base58Prefixes[SCRIPT_ADDRESS] = boost::assign::list_of(196);
-        base58Prefixes[SECRET_KEY]     = boost::assign::list_of(239);
-        base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x35)(0x87)(0xCF);
-        base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x35)(0x83)(0x94);
+        assert(hashGenesisBlock == uint256S("0x14ddcf0a2bb0041dab74b50029e85211fb0be42125a2be0a37837e884e5167d5"));
 
         convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
 
-        fRequireRPCPassword = true;
-        fMiningRequiresPeers = true;
-        fDefaultCheckMemPool = false;
         fAllowMinDifficultyBlocks = true;
         fRequireStandard = false;
         fMineBlocksOnDemand = false;
         fTestnetToBeDeprecatedFieldRPC = true;
     }
-    const Checkpoints::CCheckpointData& Checkpoints() const 
+    const Checkpoints::CCheckpointData& Checkpoints() const
     {
         return dataTestnet;
     }
@@ -292,7 +273,7 @@ public:
         fMineBlocksOnDemand = true;
         fTestnetToBeDeprecatedFieldRPC = false;
     }
-    const Checkpoints::CCheckpointData& Checkpoints() const 
+    const Checkpoints::CCheckpointData& Checkpoints() const
     {
         return dataRegtest;
     }
@@ -317,7 +298,7 @@ public:
         fMineBlocksOnDemand = true;
     }
 
-    const Checkpoints::CCheckpointData& Checkpoints() const 
+    const Checkpoints::CCheckpointData& Checkpoints() const
     {
         // UnitTest share the same checkpoints as MAIN
         return data;

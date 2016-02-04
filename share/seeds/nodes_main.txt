@@ -1,6 +1,6 @@
 # List of fixed seed nodes for main network
 
 # IPv4 nodes (generated using contrib/seeds/makeseeds.py)
-198.204.244.178
+162.243.37.30
 
 # Onion nodes
