@@ -120,4 +120,14 @@ void MarketModel::resetModel()
     endResetModel();
 }
 
+uint256 MarketModel::getMarketID(const QModelIndex &index)
+{
+    uint256 uMarket;
 
+    if (!index.isValid()) {
+        return uMarket;
+    }
+
+    uMarket = marketModel.at(index.row())->GetHash();
+    return uMarket;
+}

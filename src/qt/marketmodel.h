@@ -4,6 +4,7 @@
 #include <QAbstractTableModel>
 #include "uint256.h"
 #include "txdb.h"
+#include <string>
 
 class MarketModel : public QAbstractTableModel
 {
@@ -20,6 +21,7 @@ signals:
 public slots:
     void setBranch(uint256 branchID);
     void resetModel();
+    uint256 getMarketID(const QModelIndex &index);
 
 private:
     QList<marketMarket *> marketModel;
