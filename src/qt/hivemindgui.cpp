@@ -1016,7 +1016,7 @@ void HivemindGUI::setEncryptionStatus(int status)
         labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b>"));
         encryptWalletAction->setChecked(true);
         changePassphraseAction->setEnabled(true);
-        encryptWalletAction->setEnabled(false); // TODO: decrypt currently not supported
+        encryptWalletAction->setEnabled(false); // TODO: encrypt currently not supported
         break;
     case WalletModel::Locked:
         labelEncryptionIcon->show();
