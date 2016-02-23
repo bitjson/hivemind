@@ -56,24 +56,20 @@ bool fMarketIndex = true;
 bool fIsBareMultisigStd = true;
 unsigned int nCoinCacheSize = 5000;
 
-// fill obj->nHeight if recorded
-// TODO: logic needs to be better.
 void InsertMarketObjectHeight(marketObj *obj)
 {
-    if (!obj)
-        return; 
+    if (!obj) return;
 
-    /* default */
+    // Insert default nHeight
     obj->nHeight = (uint32_t) (-1);
 
+    // Insert actual nHeight, if in chain
     CTransaction tx;
     uint256 hashBlock;
     if (GetTransaction(obj->txid, tx, hashBlock, true)) {
-        BlockMap::iterator mi = mapBlockIndex.find(hashBlock);
-        if (mi != mapBlockIndex.end() && (*mi).second) {
-            CBlockIndex *pindex = (*mi).second;
-            if (chainActive.Contains(pindex))
-                obj->nHeight = pindex->nHeight;
+        CBlockIndex *pindex = (*mapBlockIndex.find(hashBlock)).second;
+        if (pindex && chainActive.Contains(pindex)) {
+            obj->nHeight = pindex->nHeight;
         }
     }
 }

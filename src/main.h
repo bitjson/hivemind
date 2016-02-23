@@ -138,7 +138,7 @@ extern CBlockIndex *pindexBestHeader;
 /** Minimum disk space required - used in CheckDiskSpace() */
 static const uint64_t nMinDiskSpace = 52428800;
 
-void InsertMarketObjectHeight(marketObj *);
+void InsertMarketObjectHeight(marketObj *obj);
 
 /** Register a wallet to receive updates from core */
 void RegisterValidationInterface(CValidationInterface* pwalletIn);

@@ -349,7 +349,7 @@ static const CRPCCommand vRPCCommands[] =
     { "wallet",             "walletpassphrase",       &walletpassphrase,       true,      false,      true },
 #endif // ENABLE_WALLET
 
-    /* Prediction Markets */
+    /* Bitcoin-Hivemind market functions */
     { "market",             "listbranches",           &listbranches,           false,     false,      true },
     { "market",             "listdecisions",          &listdecisions,          false,     false,      true },
     { "market",             "listmarkets",            &listmarkets,            false,     false,      true },

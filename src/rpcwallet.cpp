@@ -2930,15 +2930,16 @@ Value createsealedvote(const Array& params, bool fHelp)
         throw JSONRPCError(RPC_WALLET_ERROR, strError.c_str());
     }
 
+    // Make sure wallet is unlocked
     EnsureWalletIsUnlocked();
 
+    // Create sealed vote spirit object from params
     marketSealedVote obj;
-
     obj.branchid.SetHex(params[0].get_str());
     obj.height = params[1].get_int();
     obj.voteid.SetHex(params[2].get_str());
 
-    /* double-check branchid */
+    // Validate branch ID
     marketBranch *branch = pmarkettree->GetBranch(obj.branchid);
     if (!branch) {
         string strError = std::string("Error: branchid ")
@@ -2948,7 +2949,7 @@ Value createsealedvote(const Array& params, bool fHelp)
     uint32_t tau = branch->tau;
     delete branch; /* branch no longer needed */
 
-    /* double-check height */
+    // Validate vote nHeight
     if (obj.height % tau != 0) {
         string strError = std::string("Error: Invalid height ")
             + " for the branch's tau!";
@@ -2963,13 +2964,13 @@ Value createsealedvote(const Array& params, bool fHelp)
         throw JSONRPCError(RPC_WALLET_ERROR, strError);
     }
 
-    // create output script
+    // Create output script
     CScript scriptPubKey = obj.GetScript();
 
-    // key to send the change to
+    // Key (changeaddr) to send the change to
     CReserveKey reservekey(pwalletMain);
 
-    // fee to create vote
+    // Fee to create vote
     CAmount nFeeRequired;
     CAmount nAmount = (int64_t) rounduint64(0.01*COIN);
 
@@ -2983,12 +2984,13 @@ Value createsealedvote(const Array& params, bool fHelp)
             strError = strprintf(
                 "Error: This transaction requires a transaction fee of at least %s!",
                 FormatMoney(nFeeRequired));
-        LogPrintf("createrevealvote() : %s\n", strError);
+        LogPrintf("createsealedvote() : %s\n", strError);
         throw JSONRPCError(RPC_WALLET_ERROR, strError);
     }
+
     if (!pwalletMain->CommitTransaction(wtx, reservekey))
         throw JSONRPCError(RPC_WALLET_ERROR,
-            "Error: The createrevealvote transaction was rejected!");
+            "Error: The createsealedvote transaction was rejected!");
 
     Object entry;
     entry.push_back(Pair("txid", wtx.GetHash().ToString()));
@@ -3075,12 +3077,12 @@ Value createstealvote(const Array& params, bool fHelp)
             strError = strprintf(
                 "Error: This transaction requires a transaction fee of at least %s!",
                 FormatMoney(nFeeRequired));
-        LogPrintf("createrevealvote() : %s\n", strError);
+        LogPrintf("createstealvote() : %s\n", strError);
         throw JSONRPCError(RPC_WALLET_ERROR, strError);
     }
     if (!pwalletMain->CommitTransaction(wtx, reservekey))
         throw JSONRPCError(RPC_WALLET_ERROR,
-            "Error: The createrevealvote transaction was rejected!");
+            "Error: The createstealvote transaction was rejected!");
 
     Object entry;
     entry.push_back(Pair("txid", wtx.GetHash().ToString()));
