@@ -46,7 +46,7 @@ The following are developer notes on how to build Hivemind on your native platfo
 
 Development
 ---------------------
-The Hivemind repo's [root README](https://github.com/hivemind/hivemind/blob/master/README.md) contains relevant information on the development process and automated testing.
+The Hivemind repo's [root README](/README.md) contains relevant information on the development process and automated testing.
 
 - [Developer Notes](developer-notes.md)
 - [Multiwallet Qt Development](multiwallet-qt.md)

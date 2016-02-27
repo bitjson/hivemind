@@ -209,7 +209,7 @@ Note: check that SHA256SUMS itself doesn't end up in SHA256SUMS, which is a spur
 
   - Optionally reddit /r/Hivemind, ... but this will usually sort out itself
 
-- Notify BlueMatt so that he can start building [https://launchpad.net/~hivemind/+archive/ubuntu/hivemind](the PPAs)
+- Notify BlueMatt so that he can start building [the PPAs](https://launchpad.net/~hivemind/+archive/ubuntu/hivemind)
 
 - Add release notes for the new version to the directory `doc/release-notes` in git master
 
