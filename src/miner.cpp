@@ -42,11 +42,11 @@ extern CMarketTreeDB *pmarkettree;
 // calc_rep_tx:
 //    for a given tau, the miner calcs reputation transactions at
 //        height n*tau + ballotTime + unsealTime
-//    it considers all decisions in that branch ending in 
+//    it considers all decisions in that branch ending in
 //        heights ((n-1)*tau, n*tau]
-//    it considers all sealed votes submitted for those decisions in 
+//    it considers all sealed votes submitted for those decisions in
 //        heights (n*tau, n*tau+ballotTime]
-//    it considers all revealed votes submitted for those decisions in 
+//    it considers all revealed votes submitted for those decisions in
 //        heights (n*tau+ballotTime, n*tau+ballotTime+unsealTime]
 // calc_coin_tx:
 //    any market with max { maturation, decisionID[].eventOverBy}
@@ -62,7 +62,7 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
     if (!branch)
         return mtx;
 
-    uint64_t defaultNA = 2016;
+    uint64_t defaultNA = 2016; // 2 weeks
     uint32_t maxDecisionHeight = height - branch->ballotTime - branch->unsealTime;
     uint32_t minDecisionHeight = maxDecisionHeight - branch->tau;
 
@@ -94,7 +94,7 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
         if (outcomes[i]->tx.vout.empty())
             continue;
         prev_outcome_height = outcomes[i]->nHeight;
-        preptx = outcomes[i]->tx; 
+        preptx = outcomes[i]->tx;
     }
     if (!prev_outcome_height) {
         uint256 hashBlock;
@@ -152,7 +152,7 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
             else
             if (whichType == TX_SCRIPTHASH)
                 u = uint160(vSolutions[0]);
-            else 
+            else
                 rc = -1;
         }
         CKeyID keyID(u);
