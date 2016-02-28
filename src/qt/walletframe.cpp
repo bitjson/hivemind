@@ -148,6 +148,13 @@ void WalletFrame::gotoMarketView()
         i.value()->gotoMarketView();
 }
 
+void WalletFrame::gotoVoteView()
+{
+    QMap<QString, WalletView*>::const_iterator i;
+    for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
+        i.value()->gotoVoteView();
+}
+
 void WalletFrame::gotoReceiveCoinsPage()
 {
     QMap<QString, WalletView*>::const_iterator i;

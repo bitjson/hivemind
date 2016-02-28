@@ -85,6 +85,9 @@ WalletView::WalletView(QWidget *parent):
     // Market tab
     marketView = new MarketView(this);
 
+    // Vote tab
+    voteView = new VoteView(this);
+
     // Receive tab
     receiveCoinsPage = new ReceiveCoinsDialog();
 
@@ -95,6 +98,7 @@ WalletView::WalletView(QWidget *parent):
     addWidget(overviewPage);
     addWidget(transactionsPage);
     addWidget(marketView);
+    addWidget(voteView);
     addWidget(decisionPage);
     addWidget(ballotPage);
     addWidget(receiveCoinsPage);
@@ -224,6 +228,11 @@ void WalletView::gotoDecisionPage()
 void WalletView::gotoMarketView()
 {
     setCurrentWidget(marketView);
+}
+
+void WalletView::gotoVoteView()
+{
+    setCurrentWidget(voteView);
 }
 
 void WalletView::gotoReceiveCoinsPage()

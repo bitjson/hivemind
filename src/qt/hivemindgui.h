@@ -93,6 +93,7 @@ private:
     QAction *ballotAction;
     QAction *decisionAction;
     QAction *marketAction;
+    QAction *voteAction;
     QAction *quitAction;
     QAction *sendCoinsAction;
     QAction *sendCoinsMenuAction;
@@ -188,6 +189,8 @@ private slots:
     void gotoDecisionPage();
     /** Switch to market page */
     void gotoMarketView();
+    /** Switch to vote page */
+    void gotoVoteView();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */

@@ -79,6 +79,7 @@ HivemindGUI::HivemindGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     ballotAction(0),
     decisionAction(0),
     marketAction(0),
+    voteAction(0),
     quitAction(0),
     sendCoinsAction(0),
     sendCoinsMenuAction(0),
@@ -304,15 +305,22 @@ void HivemindGUI::createActions(const NetworkStyle *networkStyle)
     authorAction->setStatusTip(tr("Create decisions and markets"));
     authorAction->setToolTip(authorAction->statusTip());
     authorAction->setCheckable(true);
-    authorAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
+    authorAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
     tabGroup->addAction(authorAction);
 
     ballotAction = new QAction(SingleColorIcon(":/icons/ballot"), tr("&Ballot"), this);
     ballotAction->setStatusTip(tr("See votes"));
     ballotAction->setToolTip(ballotAction->statusTip());
     ballotAction->setCheckable(true);
-    ballotAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
+    ballotAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
     tabGroup->addAction(ballotAction);
+
+    voteAction = new QAction(SingleColorIcon(":/icons/overview"), tr("&Vote"), this);
+    voteAction->setStatusTip(tr("Create decisions and markets"));
+    voteAction->setToolTip(voteAction->statusTip());
+    voteAction->setCheckable(true);
+    voteAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_9));
+    tabGroup->addAction(voteAction);
 
 #ifdef ENABLE_WALLET
     // These showNormalIfMinimized are needed because Send Coins and Receive Coins
@@ -337,6 +345,8 @@ void HivemindGUI::createActions(const NetworkStyle *networkStyle)
     connect(decisionAction, SIGNAL(triggered()), this, SLOT(gotoDecisionPage()));
     connect(marketAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(marketAction, SIGNAL(triggered()), this, SLOT(gotoMarketView()));
+    connect(voteAction, SIGNAL(triggered()), this, SLOT(gotoVoteView()));
+    connect(voteAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
 #endif // ENABLE_WALLET
 
     quitAction = new QAction(TextColorIcon(":/icons/quit"), tr("E&xit"), this);
@@ -465,6 +475,7 @@ void HivemindGUI::createToolBars()
         toolbar->addAction(decisionAction);
         toolbar->addAction(authorAction);
         toolbar->addAction(ballotAction);
+        toolbar->addAction(voteAction);
         overviewAction->setChecked(true);
     }
 }
@@ -547,6 +558,7 @@ void HivemindGUI::setWalletActionsEnabled(bool enabled)
     ballotAction->setEnabled(enabled);
     decisionAction->setEnabled(enabled);
     marketAction->setEnabled(enabled);
+    voteAction->setEnabled(enabled);
     encryptWalletAction->setEnabled(enabled);
     backupWalletAction->setEnabled(enabled);
     changePassphraseAction->setEnabled(enabled);
@@ -689,6 +701,12 @@ void HivemindGUI::gotoMarketView()
 {
     marketAction->setChecked(true);
     if (walletFrame) walletFrame->gotoMarketView();
+}
+
+void HivemindGUI::gotoVoteView()
+{
+    voteAction->setChecked(true);
+    if (walletFrame) walletFrame->gotoVoteView();
 }
 
 void HivemindGUI::gotoReceiveCoinsPage()

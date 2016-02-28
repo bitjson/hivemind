@@ -9,6 +9,7 @@
 #include "amount.h"
 #include "authorview.h"
 #include "marketview.h"
+#include "voteview.h"
 
 #include <QStackedWidget>
 
@@ -65,13 +66,13 @@ private:
     QWidget *transactionsPage;
     QWidget *ballotPage;
     QWidget *decisionPage;
-    //QWidget *marketPage;
     ReceiveCoinsDialog *receiveCoinsPage;
     SendCoinsDialog *sendCoinsPage;
     AuthorView *authorView;
     BallotView *ballotView;
     DecisionView *decisionView;
     MarketView *marketView;
+    VoteView *voteView;
     TransactionView *transactionView;
 
     QProgressDialog *progressDialog;
@@ -89,6 +90,8 @@ public slots:
     void gotoDecisionPage();
     /** Switch to market view */
     void gotoMarketView();
+    /** Switch to vote view */
+    void gotoVoteView();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */
