@@ -102,6 +102,7 @@ private:
     QAction *signMessageAction;
     QAction *verifyMessageAction;
     QAction *resolveVoteAction;
+    QAction *timeAction;
     QAction *aboutAction;
     QAction *receiveCoinsAction;
     QAction *receiveCoinsMenuAction;
@@ -202,6 +203,8 @@ private slots:
     void gotoVerifyMessageTab(QString addr = "");
     /** Show Resolve Vote dialog */
     void gotoResolveVoteTab();
+    /** Show TimeView in a QDialog, may change to tab later */
+    void gotoTimeViewTab();
 
     /** Show open dialog */
     void openClicked();

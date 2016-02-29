@@ -3,10 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "walletview.h"
-
 #include "addressbookpage.h"
 #include "askpassphrasedialog.h"
+#include "authorview.h"
 #include "hivemindgui.h"
 #include "clientmodel.h"
 #include "guiutil.h"
@@ -20,9 +19,12 @@
 #include "scicon.h"
 #include "sendcoinsdialog.h"
 #include "signverifymessagedialog.h"
+#include "timeview.h"
 #include "transactiontablemodel.h"
 #include "transactionview.h"
+#include "voteview.h"
 #include "walletmodel.h"
+#include "walletview.h"
 
 #include "ui_interface.h"
 
@@ -280,6 +282,18 @@ void WalletView::gotoResolveVoteTab()
     resolveVoteDialog->show();
     resolveVoteDialog->raise();
     resolveVoteDialog->setFocus();
+}
+
+void WalletView::gotoTimeViewTab()
+{
+    QDialog *timeDialog = new QDialog();
+    TimeView *timeView = new TimeView();
+
+    QHBoxLayout *hbox = new QHBoxLayout();
+    hbox->addWidget(timeView);
+
+    timeDialog->setLayout(hbox);
+    timeDialog->show();
 }
 
 bool WalletView::handlePaymentRequest(const SendCoinsRecipient& recipient)

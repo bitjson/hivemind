@@ -74,6 +74,8 @@ public slots:
     void gotoVerifyMessageTab(QString addr = "");
     /** Show Resolve Vote dialog */
     void gotoResolveVoteTab();
+    /** Show TimeView in a QDialog, may change to tab later */
+    void gotoTimeViewTab();
 
     /** Encrypt the wallet */
     void encryptWallet(bool status);
