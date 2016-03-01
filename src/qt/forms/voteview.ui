@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Address:</string>
+      <string>Votecoin Address:</string>
      </property>
     </widget>
    </item>
@@ -27,73 +27,75 @@
    <item>
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Market ID:</string>
+      <string>Branch ID:</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="lineEditMarketID"/>
+    <widget class="QLineEdit" name="lineEditBranchID"/>
    </item>
    <item>
     <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>Buy / Sell:</string>
+      <string>Height:</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QRadioButton" name="radioButtonBuy">
-     <property name="text">
-      <string>Buy</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QRadioButton" name="radioButtonSell">
-     <property name="text">
-      <string>Sell</string>
-     </property>
-    </widget>
+    <widget class="QSpinBox" name="spinBoxHeight"/>
    </item>
    <item>
     <widget class="QLabel" name="label_4">
      <property name="text">
-      <string>Shares:</string>
+      <string>Decision ID:</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxShares"/>
+    <widget class="QLineEdit" name="lineEditDecisionID"/>
    </item>
    <item>
     <widget class="QLabel" name="label_5">
      <property name="text">
-      <string>Price:</string>
+      <string>Vote:</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxPrice"/>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_6">
-     <property name="text">
-      <string>Decision State:</string>
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QSpinBox" name="spinBoxState"/>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_7">
-     <property name="text">
-      <string>nNonce:</string>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
      </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QRadioButton" name="radioButton">
+        <property name="text">
+         <string>RadioButton</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioButton_2">
+        <property name="text">
+         <string>RadioButton</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioButton_3">
+        <property name="text">
+         <string>RadioButton</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
-   </item>
-   <item>
-    <widget class="QSpinBox" name="spinBoxNonce"/>
    </item>
    <item>
     <spacer name="verticalSpacer">
