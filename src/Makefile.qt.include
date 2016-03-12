@@ -157,6 +157,7 @@ QT_MOC_CPP = \
   qt/moc_decisiontradewindow.cpp \
   qt/moc_decisionview.cpp \
   qt/moc_decisionviewgraph.cpp \
+  qt/moc_hivemindrecenttablemodel.cpp \
   qt/moc_marketview.cpp \
   qt/moc_marketviewgraph.cpp \
   qt/moc_notificator.cpp \
@@ -270,6 +271,7 @@ HIVEMIND_QT_H = \
   qt/decisiontradewindow.h \
   qt/decisionview.h \
   qt/decisionviewgraph.h \
+  qt/hivemindrecenttablemodel.h \
   qt/marketviewgraph.h \
   qt/networkstyle.h \
   qt/notificator.h \
@@ -434,6 +436,7 @@ HIVEMIND_QT_CPP += \
   qt/decisiontradewindow.cpp \
   qt/decisionview.cpp \
   qt/decisionviewgraph.cpp \
+  qt/hivemindrecenttablemodel.cpp \
   qt/marketview.cpp \
 	qt/marketmodel.cpp \
   qt/markettradeview.cpp \

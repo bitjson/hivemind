@@ -7,8 +7,10 @@
 #define HIVEMIND_QT_OVERVIEWPAGE_H
 
 #include "amount.h"
+#include "hivemindrecenttablemodel.h"
 
 #include <QWidget>
+#include <QTableView>
 
 class ClientModel;
 class TransactionFilterProxy;
@@ -56,6 +58,9 @@ private:
 
     TxViewDelegate *txdelegate;
     TransactionFilterProxy *filter;
+
+    QTableView *hivemindRecentTableView;
+    HivemindRecentTableModel *hivemindRecentTableModel;
 
 private slots:
     void updateDisplayUnit();

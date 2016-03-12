@@ -20,7 +20,7 @@
 #include <QPainter>
 
 #define DECORATION_SIZE 64
-#define NUM_ITEMS 3
+#define NUM_ITEMS 6
 
 class TxViewDelegate : public QAbstractItemDelegate
 {
@@ -121,6 +121,15 @@ OverviewPage::OverviewPage(QWidget *parent) :
     filter(0)
 {
     ui->setupUi(this);
+
+    // Setup Hivemind recent table and model
+    hivemindRecentTableView = new QTableView(this);
+    hivemindRecentTableView->horizontalHeader()->setStretchLastSection(true);
+    hivemindRecentTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    hivemindRecentTableModel = new HivemindRecentTableModel(this);
+    hivemindRecentTableView->setModel(hivemindRecentTableModel);
+    hivemindRecentTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->frameLeft->layout()->addWidget(hivemindRecentTableView);
 
     // Recent transactions
     ui->listTransactions->setItemDelegate(txdelegate);
