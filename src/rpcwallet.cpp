@@ -2611,7 +2611,7 @@ Value createmarket(const Array& params, bool fHelp)
         "\n    :X1   X, identity [default]"
         "\n    :X2   X^2"
         "\n    :X3   X^3"
-        "\n    :LNX  LN(X)";
+        "\n    :LNX1  LN(X)";
 
     if (fHelp || (params.size() != 11))
         throw runtime_error(strHelp);
