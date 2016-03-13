@@ -2,8 +2,6 @@
 
 #include <QTimer>
 
-#define NUM_ITEMS 6
-
 HivemindRecentTableModel::HivemindRecentTableModel(QObject *parent) :
     QAbstractTableModel(parent)
 {
@@ -12,23 +10,26 @@ HivemindRecentTableModel::HivemindRecentTableModel(QObject *parent) :
      * the table should have these columns;
      * 1. Type / icon (market / vote etc)
      * 2. Title
-     * 3. Height
+     * 3. Text
+     * 4. Height
      */
 
     // This timer will update the recent hivemind model
     pollTimer = new QTimer(this);
     connect(pollTimer, SIGNAL(timeout()), this, SLOT(updateModel()));
-    pollTimer->start(1000);
+    pollTimer->start(10000);
+
+    updateModel();
 }
 
 int HivemindRecentTableModel::rowCount(const QModelIndex & /*parent*/) const
 {
-    return recent.size();
+    return recentDecisions.size();
 }
 
 int HivemindRecentTableModel::columnCount(const QModelIndex & /*parent*/) const
 {
-    return 3;
+    return 4;
 }
 
 QVariant HivemindRecentTableModel::data(const QModelIndex &index, int role) const
@@ -39,6 +40,8 @@ QVariant HivemindRecentTableModel::data(const QModelIndex &index, int role) cons
 
     int row = index.row();
     int col = index.column();
+
+    marketDecision *recentDecision = recentDecisions.at(row);
 
     switch (role) {
     case Qt::DisplayRole:
@@ -52,12 +55,17 @@ QVariant HivemindRecentTableModel::data(const QModelIndex &index, int role) cons
 
         // Title
         if (col == 1) {
-            return "Title";
+            return QString::fromStdString(recentDecision->prompt);
+        }
+
+        // Text
+        if (col == 2) {
+            return QString::fromStdString(recentDecision->ToString());
         }
 
         // Height
-        if (col == 2) {
-            return 0;
+        if (col == 3) {
+            return QString::number(recentDecision->nHeight);
         }
     }
 
@@ -76,6 +84,8 @@ QVariant HivemindRecentTableModel::headerData(int section, Qt::Orientation orien
             case 1:
                 return QString("Title");
             case 2:
+                return QString("Text");
+            case 3:
                 return QString("Height");
             }
         }
@@ -85,7 +95,45 @@ QVariant HivemindRecentTableModel::headerData(int section, Qt::Orientation orien
 
 void HivemindRecentTableModel::updateModel()
 {
-    // on refresh, if the 6th item isn't the same as tip of market branch still (nothing new), get the
-    // NUM_ITEMS --6-- most recent things on the pmarket branch
+    /*
+     * 1. Get Branches
+     * 2. Get Decisions
+     * 3. Get Trades
+     * 4. Get Votes
+     * 5. Sort data by most recent
+     * 6. Display up to limit of items
+     */
 
+    // Clear old data
+    beginResetModel();
+    recentDecisions.clear();
+    endResetModel();
+
+    // Get branches
+    // TODO get branches other than main. vector<marketBranch *> branches = pmarkettree->GetBranches();
+    uint256 branchID;
+    branchID.SetHex("0f894a25c5e0318ee148fe54600ebbf50782f0a1df1eb2aab06321a8ccec270d");
+
+    // Get decisions
+    vector<marketDecision *> decisions = pmarkettree->GetDecisions(branchID);
+
+    int row = recentDecisions.size();
+    beginInsertRows(QModelIndex(), row, row+decisions.size());
+
+    unsigned int displayCount = 20;
+    if (decisions.size() < displayCount) displayCount = decisions.size();
+
+    for (unsigned int i = 0; i < displayCount; ++i) {
+        recentDecisions.push_back(decisions.at(i));
+    }
+
+    endInsertRows();
+
+    // Get markets TODO
+
+    // Get trades TODO
+
+    // Get votes TODO
+
+    //
 }

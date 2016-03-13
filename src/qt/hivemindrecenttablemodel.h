@@ -28,7 +28,7 @@ private slots:
     void updateModel();
 
 private:
-    QList<json_spirit::Array> recent;
+    QList<marketDecision *> recentDecisions;
     QTimer *pollTimer;
 
 };
