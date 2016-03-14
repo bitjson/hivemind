@@ -1,5 +1,8 @@
 #include "hivemindrecenttablemodel.h"
 
+#include "scicon.h"
+
+#include <QIcon>
 #include <QTimer>
 
 HivemindRecentTableModel::HivemindRecentTableModel(QObject *parent) :
@@ -43,16 +46,18 @@ QVariant HivemindRecentTableModel::data(const QModelIndex &index, int role) cons
 
     marketDecision *recentDecision = recentDecisions.at(row);
 
+    /* Display recent entries to the hivemind market branch */
     switch (role) {
-    case Qt::DisplayRole:
+    case Qt::DecorationRole:
     {
-        /* Display recent entries to the hivemind market branch */
-
         // Icon
         if (col == 0) {
-            return "Icon";
+            QPixmap decisionIcon(QPixmap(":/icons/decision").scaled(80, 80));
+            return decisionIcon;
         }
-
+    }
+    case Qt::DisplayRole:
+    {
         // Title
         if (col == 1) {
             return QString::fromStdString(recentDecision->prompt);
@@ -68,9 +73,7 @@ QVariant HivemindRecentTableModel::data(const QModelIndex &index, int role) cons
             return QString::number(recentDecision->nHeight);
         }
     }
-
     }
-
     return QVariant();
 }
 
@@ -134,6 +137,4 @@ void HivemindRecentTableModel::updateModel()
     // Get trades TODO
 
     // Get votes TODO
-
-    //
 }

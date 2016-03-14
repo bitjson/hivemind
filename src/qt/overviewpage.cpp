@@ -126,6 +126,7 @@ OverviewPage::OverviewPage(QWidget *parent) :
     hivemindRecentTableView = new QTableView(this);
     hivemindRecentTableView->horizontalHeader()->setStretchLastSection(true);
     hivemindRecentTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    hivemindRecentTableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     hivemindRecentTableModel = new HivemindRecentTableModel(this);
     hivemindRecentTableView->setModel(hivemindRecentTableModel);
     hivemindRecentTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
