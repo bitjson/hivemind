@@ -37,6 +37,12 @@ step if you will be downloading the pre-built binaries:
     libtool \
     libdb++-dev
 
+If you would like to work on Hivemind-Qt (or use the GUI) please install the
+following additional dependencies:
+  apt-get install \
+    qt-sdk \
+    protobuf-compiler
+
 and then reboot the system:
   reboot
 
