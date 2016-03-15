@@ -1,6 +1,8 @@
 #include "voteview.h"
 #include "ui_voteview.h"
 
+#include <iostream>
+
 VoteView::VoteView(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::VoteView)
