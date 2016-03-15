@@ -316,7 +316,7 @@ void HivemindGUI::createActions(const NetworkStyle *networkStyle)
     ballotAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
     tabGroup->addAction(ballotAction);
 
-    voteAction = new QAction(SingleColorIcon(":/icons/overview"), tr("&Vote"), this);
+    voteAction = new QAction(SingleColorIcon(":/icons/ballot"), tr("&Vote"), this);
     voteAction->setStatusTip(tr("Create decisions and markets"));
     voteAction->setToolTip(voteAction->statusTip());
     voteAction->setCheckable(true);
