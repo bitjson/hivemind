@@ -432,6 +432,9 @@ tc_mat_svd(
         tc_mat_resize(D, A->nc, A->nc);
     if (A->nr < A->nc)
         return -2;
+
+    if (A->nc == 0) return -1;
+
     /* case nc = 1 */
     if (A->nc == 1) {
         V->a[0][0] = 1.0;

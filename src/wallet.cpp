@@ -1160,11 +1160,10 @@ void CWallet::AvailableCoins(
     vCoins.clear();
     {
         LOCK2(cs_main, cs_wallet);
-        map<uint256, CWalletTx>::const_iterator it;
-        for(it=mapWallet.begin(); it != mapWallet.end(); ++it)
+        for (map<uint256, CWalletTx>::const_iterator it = mapWallet.begin(); it != mapWallet.end(); ++it)
         {
             const uint256 &wtxid = it->first;
-            const CWalletTx *pcoin = &it->second;
+            const CWalletTx *pcoin = &(*it).second;
 
             if (!pcoin->vout.size())
                 continue;
@@ -1411,7 +1410,6 @@ bool CWallet::SelectCoins(
         }
         return (nValueRet >= nTargetValue);
     }
-
     return (SelectCoinsMinConf(nTargetValue, 1, 6, vCoins, setCoinsRet, nValueRet) ||
             SelectCoinsMinConf(nTargetValue, 1, 1, vCoins, setCoinsRet, nValueRet) ||
             (bSpendZeroConfChange && SelectCoinsMinConf(nTargetValue, 0, 1, vCoins, setCoinsRet, nValueRet)));

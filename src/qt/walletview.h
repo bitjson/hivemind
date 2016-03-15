@@ -7,20 +7,22 @@
 #define HIVEMIND_QT_WALLETVIEW_H
 
 #include "amount.h"
-#include "authorview.h"
 
 #include <QStackedWidget>
 
-class HivemindGUI;
+class AuthorView;
 class ClientModel;
 class BallotView;
 class DecisionView;
+class HivemindGUI;
 class MarketView;
 class OverviewPage;
 class ReceiveCoinsDialog;
 class SendCoinsDialog;
 class SendCoinsRecipient;
+class TimeView;
 class TransactionView;
+class VoteView;
 class WalletModel;
 
 QT_BEGIN_NAMESPACE
@@ -65,14 +67,13 @@ private:
     QWidget *transactionsPage;
     QWidget *ballotPage;
     QWidget *decisionPage;
-    QWidget *marketPage;
     ReceiveCoinsDialog *receiveCoinsPage;
     SendCoinsDialog *sendCoinsPage;
     AuthorView *authorView;
-
     BallotView *ballotView;
     DecisionView *decisionView;
     MarketView *marketView;
+    VoteView *voteView;
     TransactionView *transactionView;
 
     QProgressDialog *progressDialog;
@@ -88,8 +89,10 @@ public slots:
     void gotoBallotPage();
     /** Switch to decision page */
     void gotoDecisionPage();
-    /** Switch to market page */
-    void gotoMarketPage();
+    /** Switch to market view */
+    void gotoMarketView();
+    /** Switch to vote view */
+    void gotoVoteView();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */
@@ -101,6 +104,8 @@ public slots:
     void gotoVerifyMessageTab(QString addr = "");
     /** Show Resolve Vote dialog */
     void gotoResolveVoteTab();
+    /** Show TimeView in a QDialog, may change to tab later */
+    void gotoTimeViewTab();
 
     /** Show incoming transaction notification for new transactions.
 

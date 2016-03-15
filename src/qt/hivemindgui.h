@@ -93,6 +93,7 @@ private:
     QAction *ballotAction;
     QAction *decisionAction;
     QAction *marketAction;
+    QAction *voteAction;
     QAction *quitAction;
     QAction *sendCoinsAction;
     QAction *sendCoinsMenuAction;
@@ -101,6 +102,7 @@ private:
     QAction *signMessageAction;
     QAction *verifyMessageAction;
     QAction *resolveVoteAction;
+    QAction *timeAction;
     QAction *aboutAction;
     QAction *receiveCoinsAction;
     QAction *receiveCoinsMenuAction;
@@ -187,7 +189,9 @@ private slots:
     /** Switch to decision page */
     void gotoDecisionPage();
     /** Switch to market page */
-    void gotoMarketPage();
+    void gotoMarketView();
+    /** Switch to vote page */
+    void gotoVoteView();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */
@@ -199,6 +203,8 @@ private slots:
     void gotoVerifyMessageTab(QString addr = "");
     /** Show Resolve Vote dialog */
     void gotoResolveVoteTab();
+    /** Show TimeView in a QDialog, may change to tab later */
+    void gotoTimeViewTab();
 
     /** Show open dialog */
     void openClicked();

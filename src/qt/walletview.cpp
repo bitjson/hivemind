@@ -3,10 +3,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "walletview.h"
-
 #include "addressbookpage.h"
 #include "askpassphrasedialog.h"
+#include "authorview.h"
 #include "hivemindgui.h"
 #include "clientmodel.h"
 #include "guiutil.h"
@@ -20,9 +19,12 @@
 #include "scicon.h"
 #include "sendcoinsdialog.h"
 #include "signverifymessagedialog.h"
+#include "timeview.h"
 #include "transactiontablemodel.h"
 #include "transactionview.h"
+#include "voteview.h"
 #include "walletmodel.h"
+#include "walletview.h"
 
 #include "ui_interface.h"
 
@@ -83,14 +85,10 @@ WalletView::WalletView(QWidget *parent):
     decisionPage->setLayout(dvbox);
 
     // Market tab
-    marketPage = new QWidget(this);
-    QVBoxLayout *mvbox = new QVBoxLayout();
-    QHBoxLayout *mhbox_buttons = new QHBoxLayout();
     marketView = new MarketView(this);
-    mvbox->addWidget(marketView);
-    mhbox_buttons->addStretch();
-    mvbox->addLayout(mhbox_buttons);
-    marketPage->setLayout(mvbox);
+
+    // Vote tab
+    voteView = new VoteView(this);
 
     // Receive tab
     receiveCoinsPage = new ReceiveCoinsDialog();
@@ -101,7 +99,8 @@ WalletView::WalletView(QWidget *parent):
     addWidget(authorView);
     addWidget(overviewPage);
     addWidget(transactionsPage);
-    addWidget(marketPage);
+    addWidget(marketView);
+    addWidget(voteView);
     addWidget(decisionPage);
     addWidget(ballotPage);
     addWidget(receiveCoinsPage);
@@ -159,7 +158,6 @@ void WalletView::setWalletModel(WalletModel *walletModel)
     // Put transaction list in tabs
     ballotView->setModel(walletModel);
     decisionView->setModel(walletModel);
-    marketView->setModel(walletModel);
     transactionView->setModel(walletModel);
     overviewPage->setWalletModel(walletModel);
     receiveCoinsPage->setModel(walletModel);
@@ -229,9 +227,14 @@ void WalletView::gotoDecisionPage()
     setCurrentWidget(decisionPage);
 }
 
-void WalletView::gotoMarketPage()
+void WalletView::gotoMarketView()
 {
-    setCurrentWidget(marketPage);
+    setCurrentWidget(marketView);
+}
+
+void WalletView::gotoVoteView()
+{
+    setCurrentWidget(voteView);
 }
 
 void WalletView::gotoReceiveCoinsPage()
@@ -279,6 +282,18 @@ void WalletView::gotoResolveVoteTab()
     resolveVoteDialog->show();
     resolveVoteDialog->raise();
     resolveVoteDialog->setFocus();
+}
+
+void WalletView::gotoTimeViewTab()
+{
+    QDialog *timeDialog = new QDialog();
+    TimeView *timeView = new TimeView();
+
+    QHBoxLayout *hbox = new QHBoxLayout();
+    hbox->addWidget(timeView);
+
+    timeDialog->setLayout(hbox);
+    timeDialog->show();
 }
 
 bool WalletView::handlePaymentRequest(const SendCoinsRecipient& recipient)

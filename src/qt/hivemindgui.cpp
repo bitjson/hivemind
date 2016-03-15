@@ -79,6 +79,7 @@ HivemindGUI::HivemindGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     ballotAction(0),
     decisionAction(0),
     marketAction(0),
+    voteAction(0),
     quitAction(0),
     sendCoinsAction(0),
     sendCoinsMenuAction(0),
@@ -87,6 +88,7 @@ HivemindGUI::HivemindGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     signMessageAction(0),
     verifyMessageAction(0),
     resolveVoteAction(0),
+    timeAction(0),
     aboutAction(0),
     receiveCoinsAction(0),
     receiveCoinsMenuAction(0),
@@ -304,15 +306,22 @@ void HivemindGUI::createActions(const NetworkStyle *networkStyle)
     authorAction->setStatusTip(tr("Create decisions and markets"));
     authorAction->setToolTip(authorAction->statusTip());
     authorAction->setCheckable(true);
-    authorAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
+    authorAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
     tabGroup->addAction(authorAction);
 
     ballotAction = new QAction(SingleColorIcon(":/icons/ballot"), tr("&Ballot"), this);
     ballotAction->setStatusTip(tr("See votes"));
     ballotAction->setToolTip(ballotAction->statusTip());
     ballotAction->setCheckable(true);
-    ballotAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
+    ballotAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
     tabGroup->addAction(ballotAction);
+
+    voteAction = new QAction(SingleColorIcon(":/icons/ballot"), tr("&Vote"), this);
+    voteAction->setStatusTip(tr("Create decisions and markets"));
+    voteAction->setToolTip(voteAction->statusTip());
+    voteAction->setCheckable(true);
+    voteAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_9));
+    tabGroup->addAction(voteAction);
 
 #ifdef ENABLE_WALLET
     // These showNormalIfMinimized are needed because Send Coins and Receive Coins
@@ -336,7 +345,9 @@ void HivemindGUI::createActions(const NetworkStyle *networkStyle)
     connect(decisionAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(decisionAction, SIGNAL(triggered()), this, SLOT(gotoDecisionPage()));
     connect(marketAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
-    connect(marketAction, SIGNAL(triggered()), this, SLOT(gotoMarketPage()));
+    connect(marketAction, SIGNAL(triggered()), this, SLOT(gotoMarketView()));
+    connect(voteAction, SIGNAL(triggered()), this, SLOT(gotoVoteView()));
+    connect(voteAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
 #endif // ENABLE_WALLET
 
     quitAction = new QAction(TextColorIcon(":/icons/quit"), tr("E&xit"), this);
@@ -368,6 +379,9 @@ void HivemindGUI::createActions(const NetworkStyle *networkStyle)
     verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified Hivemind addresses"));
     resolveVoteAction = new QAction(TextColorIcon(":/icons/resolve"), tr("&Resolve vote..."), this);
     resolveVoteAction->setStatusTip(tr("Test an Outcome independent of the blockchain"));
+    timeAction = new QAction(TextColorIcon(":/icons/resolve"), tr("&Time"), this);
+    timeAction->setStatusTip(tr("View the time of the Hivemind network"));
+
 
     openRPCConsoleAction = new QAction(TextColorIcon(":/icons/debugwindow"), tr("&Debug window"), this);
     openRPCConsoleAction->setStatusTip(tr("Open debugging and diagnostic console"));
@@ -398,6 +412,7 @@ void HivemindGUI::createActions(const NetworkStyle *networkStyle)
         connect(signMessageAction, SIGNAL(triggered()), this, SLOT(gotoSignMessageTab()));
         connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(gotoVerifyMessageTab()));
         connect(resolveVoteAction, SIGNAL(triggered()), this, SLOT(gotoResolveVoteTab()));
+        connect(timeAction, SIGNAL(triggered()), this, SLOT(gotoTimeViewTab()));
         connect(usedSendingAddressesAction, SIGNAL(triggered()), walletFrame, SLOT(usedSendingAddresses()));
         connect(usedReceivingAddressesAction, SIGNAL(triggered()), walletFrame, SLOT(usedReceivingAddresses()));
         connect(openAction, SIGNAL(triggered()), this, SLOT(openClicked()));
@@ -424,6 +439,7 @@ void HivemindGUI::createMenuBar()
         file->addAction(signMessageAction);
         file->addAction(verifyMessageAction);
         file->addAction(resolveVoteAction);
+        file->addAction(timeAction);
         file->addSeparator();
         file->addAction(usedSendingAddressesAction);
         file->addAction(usedReceivingAddressesAction);
@@ -465,6 +481,7 @@ void HivemindGUI::createToolBars()
         toolbar->addAction(decisionAction);
         toolbar->addAction(authorAction);
         toolbar->addAction(ballotAction);
+        toolbar->addAction(voteAction);
         overviewAction->setChecked(true);
     }
 }
@@ -547,12 +564,14 @@ void HivemindGUI::setWalletActionsEnabled(bool enabled)
     ballotAction->setEnabled(enabled);
     decisionAction->setEnabled(enabled);
     marketAction->setEnabled(enabled);
+    voteAction->setEnabled(enabled);
     encryptWalletAction->setEnabled(enabled);
     backupWalletAction->setEnabled(enabled);
     changePassphraseAction->setEnabled(enabled);
     signMessageAction->setEnabled(enabled);
     verifyMessageAction->setEnabled(enabled);
     resolveVoteAction->setEnabled(enabled);
+    timeAction->setEnabled(enabled);
     usedSendingAddressesAction->setEnabled(enabled);
     usedReceivingAddressesAction->setEnabled(enabled);
     openAction->setEnabled(enabled);
@@ -599,6 +618,7 @@ void HivemindGUI::createTrayIconMenu()
     trayIconMenu->addAction(signMessageAction);
     trayIconMenu->addAction(verifyMessageAction);
     trayIconMenu->addAction(resolveVoteAction);
+    trayIconMenu->addAction(timeAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(optionsAction);
     trayIconMenu->addAction(openRPCConsoleAction);
@@ -685,10 +705,16 @@ void HivemindGUI::gotoDecisionPage()
     if (walletFrame) walletFrame->gotoDecisionPage();
 }
 
-void HivemindGUI::gotoMarketPage()
+void HivemindGUI::gotoMarketView()
 {
     marketAction->setChecked(true);
-    if (walletFrame) walletFrame->gotoMarketPage();
+    if (walletFrame) walletFrame->gotoMarketView();
+}
+
+void HivemindGUI::gotoVoteView()
+{
+    voteAction->setChecked(true);
+    if (walletFrame) walletFrame->gotoVoteView();
 }
 
 void HivemindGUI::gotoReceiveCoinsPage()
@@ -716,6 +742,11 @@ void HivemindGUI::gotoVerifyMessageTab(QString addr)
 void HivemindGUI::gotoResolveVoteTab()
 {
     if (walletFrame) walletFrame->gotoResolveVoteTab();
+}
+
+void HivemindGUI::gotoTimeViewTab()
+{
+    if (walletFrame) walletFrame->gotoTimeViewTab();
 }
 #endif // ENABLE_WALLET
 
@@ -1016,7 +1047,7 @@ void HivemindGUI::setEncryptionStatus(int status)
         labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b>"));
         encryptWalletAction->setChecked(true);
         changePassphraseAction->setEnabled(true);
-        encryptWalletAction->setEnabled(false); // TODO: decrypt currently not supported
+        encryptWalletAction->setEnabled(false); // TODO: encrypt currently not supported
         break;
     case WalletModel::Locked:
         labelEncryptionIcon->show();

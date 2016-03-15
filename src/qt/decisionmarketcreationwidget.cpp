@@ -1,7 +1,6 @@
 #include "decisionmarketcreationwidget.h"
 #include "ui_decisionmarketcreationwidget.h"
 
-#include "json/json_spirit_writer_template.h"
 #include "txdb.h"
 
 #include <QMessageBox>

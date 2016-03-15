@@ -4,8 +4,6 @@
 #include <QItemSelectionModel>
 #include <QModelIndexList>
 
-#include <iostream>
-
 DecisionSelectionView::DecisionSelectionView(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DecisionSelectionView)
