@@ -41,7 +41,8 @@ If you would like to work on Hivemind-Qt (or use the GUI) please install the
 following additional dependencies:
   apt-get install \
     qt-sdk \
-    protobuf-compiler
+    protobuf-compiler \
+    libprotobuf-dev
 
 and then reboot the system:
   reboot
