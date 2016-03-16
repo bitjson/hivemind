@@ -211,9 +211,6 @@
       </item>
       <item>
        <widget class="QLineEdit" name="lineEditOwnerAddr">
-        <property name="placeholderText">
-         <string>Owner Address</string>
-        </property>
        </widget>
       </item>
       <item>
