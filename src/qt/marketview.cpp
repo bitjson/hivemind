@@ -20,8 +20,15 @@ MarketView::MarketView(QWidget *parent) :
     // Setup model & market table
     marketTableView = new QTableView(this);
     marketTableView->horizontalHeader()->setStretchLastSection(true);
+
+#if QT_VERSION < 0x050000
     marketTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     marketTableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+#else
+    marketTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    marketTableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+#endif
+
     marketModel = new MarketModel(this);
     marketTableView->setModel(marketModel);
     marketTableView->setSelectionBehavior(QAbstractItemView::SelectRows);

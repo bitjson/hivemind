@@ -13,7 +13,13 @@ DecisionSelectionView::DecisionSelectionView(QWidget *parent) :
     // Setup model and decision selection table
     decisionSelectionTable = new QTableView(this);
     decisionSelectionTable->horizontalHeader()->setStretchLastSection(true);
+
+#if QT_VERSION < 0x050000
     decisionSelectionTable->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+#else
+    decisionSelectionTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+#endif
+
     decisionSelectionModel = new DecisionSelectionModel(this);
     decisionSelectionTable->setModel(decisionSelectionModel);
     decisionSelectionTable->setSelectionBehavior(QAbstractItemView::SelectRows);

@@ -14,7 +14,13 @@ AuthorView::AuthorView(QWidget *parent) :
     // Setup model & author pending table
     pendingTableView = new QTableView(this);
     pendingTableView->horizontalHeader()->setStretchLastSection(true);
+
+#if QT_VERSION < 0x050000
     pendingTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+#else
+    pendingTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+#endif
+
     pendingTableModel = new AuthorPendingTableModel(this);
     pendingTableView->setModel(pendingTableModel);
     pendingTableView->setSelectionBehavior(QAbstractItemView::SelectRows);

@@ -125,8 +125,15 @@ OverviewPage::OverviewPage(QWidget *parent) :
     // Setup Hivemind recent table and model
     hivemindRecentTableView = new QTableView(this);
     hivemindRecentTableView->horizontalHeader()->setStretchLastSection(true);
+
+#if QT_VERSION < 0x050000
     hivemindRecentTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     hivemindRecentTableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+#else
+    hivemindRecentTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    hivemindRecentTableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+#endif
+
     hivemindRecentTableModel = new HivemindRecentTableModel(this);
     hivemindRecentTableView->setModel(hivemindRecentTableModel);
     hivemindRecentTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
