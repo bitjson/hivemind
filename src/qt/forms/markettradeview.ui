@@ -72,13 +72,13 @@
    </item>
    <item row="3" column="0">
     <widget class="QTabWidget" name="tabWidget">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabStandard">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <attribute name="title">
        <string>Standard</string>
       </attribute>
@@ -574,11 +574,17 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tabTwoDimensional">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <attribute name="title">
        <string>Two Dimensional</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tabHighDimensional">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <attribute name="title">
        <string>High Dimensional</string>
       </attribute>
