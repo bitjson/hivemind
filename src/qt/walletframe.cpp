@@ -127,13 +127,6 @@ void WalletFrame::gotoAuthorView()
         i.value()->gotoAuthorView();
 }
 
-void WalletFrame::gotoBallotPage()
-{
-    QMap<QString, WalletView*>::const_iterator i;
-    for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
-        i.value()->gotoBallotPage();
-}
-
 void WalletFrame::gotoDecisionPage()
 {
     QMap<QString, WalletView*>::const_iterator i;

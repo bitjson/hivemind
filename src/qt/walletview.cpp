@@ -9,7 +9,6 @@
 #include "hivemindgui.h"
 #include "clientmodel.h"
 #include "guiutil.h"
-#include "ballotview.h"
 #include "decisionview.h"
 #include "marketview.h"
 #include "optionsmodel.h"
@@ -63,16 +62,6 @@ WalletView::WalletView(QWidget *parent):
     // Author tab
     authorView = new AuthorView(this);
 
-    // Ballot tab
-    ballotPage = new QWidget(this);
-    QVBoxLayout *bvbox = new QVBoxLayout();
-    QHBoxLayout *bhbox_buttons = new QHBoxLayout();
-    ballotView = new BallotView(this);
-    bvbox->addWidget(ballotView);
-    bhbox_buttons->addStretch();
-    bvbox->addLayout(bhbox_buttons);
-    ballotPage->setLayout(bvbox);
-
     // Decision tab
     decisionPage = new QWidget(this);
     QVBoxLayout *dvbox = new QVBoxLayout();
@@ -101,7 +90,6 @@ WalletView::WalletView(QWidget *parent):
     addWidget(marketView);
     addWidget(voteView);
     addWidget(decisionPage);
-    addWidget(ballotPage);
     addWidget(receiveCoinsPage);
     addWidget(sendCoinsPage);
 
@@ -155,7 +143,6 @@ void WalletView::setWalletModel(WalletModel *walletModel)
     this->walletModel = walletModel;
 
     // Put transaction list in tabs
-    ballotView->setModel(walletModel);
     decisionView->setModel(walletModel);
     transactionView->setModel(walletModel);
     overviewPage->setWalletModel(walletModel);
@@ -214,11 +201,6 @@ void WalletView::gotoHistoryPage()
 void WalletView::gotoAuthorView()
 {
     setCurrentWidget(authorView);
-}
-
-void WalletView::gotoBallotPage()
-{
-    setCurrentWidget(ballotPage);
 }
 
 void WalletView::gotoDecisionPage()
