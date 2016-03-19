@@ -153,10 +153,6 @@ void DecisionMarketCreationWidget::on_pushButtonSelectDecision_clicked()
     QString branchID;
     if (ui->comboBoxBranch->currentText() == "Main") {
         branchID = "0f894a25c5e0318ee148fe54600ebbf50782f0a1df1eb2aab06321a8ccec270d";
-    } else if (ui->comboBoxBranch->currentText() == "Sports") {
-        branchID = "419cd87761f45c108a976ca6d93d4929c7c4d1ff4386f5089fc2f7ff7ae21ddf";
-    } else if (ui->comboBoxBranch->currentText() == "Econ") {
-        branchID = "3277b5057ac9cda54e9edfbb45fd8bab38be1b5afc3cd6c587f6d17779f34f74";
     }
 
     // Exit if no branch is selected (technically impossible via the UI)
