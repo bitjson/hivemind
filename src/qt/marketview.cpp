@@ -11,11 +11,9 @@ MarketView::MarketView(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QString branchID = "0f894a25c5e0318ee148fe54600ebbf50782f0a1df1eb2aab06321a8ccec270d";
-
     // Grab the branch
     uint256 uBranch;
-    uBranch.SetHex(branchID.toStdString());
+    uBranch.SetHex("0f894a25c5e0318ee148fe54600ebbf50782f0a1df1eb2aab06321a8ccec270d");
 
     // Setup model & market table
     marketTableView = new QTableView(this);

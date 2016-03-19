@@ -3,6 +3,7 @@
 
 #include "txdb.h"
 
+#include <QClipboard>
 #include <QMessageBox>
 
 extern CMarketTreeDB *pmarkettree;
@@ -142,4 +143,10 @@ void MarketTradeView::on_finalizeError(const QString &errorMessage)
 void MarketTradeView::on_spinBoxShares_valueChanged(int arg1)
 {
     ui->labelSharesToBuyValue->setText(QString::number(arg1));
+}
+
+void MarketTradeView::on_pushButtonCopyMarketID_clicked()
+{
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(ui->labelMarketIDValue->text());
 }
