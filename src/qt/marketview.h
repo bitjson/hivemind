@@ -21,11 +21,29 @@ public:
 public slots:
         void on_tableView_doubleClicked(const QModelIndex &index);
 
+        void setScale(int scale);
+
+private slots:
+        void on_pushButtonScaleLess_clicked();
+
+        void on_pushButtonScaleMore_clicked();
+
 private:
     Ui::MarketView *ui;
 
     MarketModel *marketModel;
     QTableView *marketTableView;
+
+    /*
+     * 1 = 1 day
+     * 2 = 3 days
+     * 3 = 1 week
+     * 4 = 3 weeks
+     * 5 = 1 month
+     * 6 = 3 months
+     * 7 = 1 year
+     */
+    int graphScale;
 };
 
 #endif // MARKETVIEW_H

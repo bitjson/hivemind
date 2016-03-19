@@ -40,6 +40,9 @@ MarketView::MarketView(QWidget *parent) :
     // Setup signals
     connect(marketTableView, SIGNAL(doubleClicked(QModelIndex)),
             this, SLOT(on_tableView_doubleClicked(QModelIndex)));
+
+    // Default graph scale = 1 (1 day)
+    graphScale = 1;
 }
 
 MarketView::~MarketView()
@@ -61,4 +64,50 @@ void MarketView::on_tableView_doubleClicked(const QModelIndex &index)
     dialog->setWindowTitle("Trade");
     dialog->setLayout(hbox);
     dialog->show();
+}
+
+void MarketView::setScale(int scale)
+{
+    switch (scale) {
+    case 1: // 1 day
+        ui->radioButtonScale1->setChecked(true);
+        graphScale = scale;
+        break;
+    case 2: // 3 days
+        ui->radioButtonScale2->setChecked(true);
+        graphScale = scale;
+        break;
+    case 3: // 1 week
+        ui->radioButtonScale3->setChecked(true);
+        graphScale = scale;
+        break;
+    case 4: // 3 weeks
+        ui->radioButtonScale4->setChecked(true);
+        graphScale = scale;
+        break;
+    case 5: // 1 month
+        ui->radioButtonScale5->setChecked(true);
+        graphScale = scale;
+        break;
+    case 6: // 3 months
+        ui->radioButtonScale6->setChecked(true);
+        graphScale = scale;
+        break;
+    case 7: // 1 year
+        ui->radioButtonScale7->setChecked(true);
+        graphScale = scale;
+        break;
+    default:
+        break;
+    }
+}
+
+void MarketView::on_pushButtonScaleLess_clicked()
+{
+    setScale(graphScale-1);
+}
+
+void MarketView::on_pushButtonScaleMore_clicked()
+{
+    setScale(graphScale+1);
 }
