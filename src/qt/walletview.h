@@ -20,7 +20,6 @@ class OverviewPage;
 class ReceiveCoinsDialog;
 class SendCoinsDialog;
 class SendCoinsRecipient;
-class TimeView;
 class TransactionView;
 class VoteView;
 class WalletModel;
@@ -104,8 +103,6 @@ public slots:
     void gotoVerifyMessageTab(QString addr = "");
     /** Show Resolve Vote dialog */
     void gotoResolveVoteTab();
-    /** Show TimeView in a QDialog, may change to tab later */
-    void gotoTimeViewTab();
 
     /** Show incoming transaction notification for new transactions.
 

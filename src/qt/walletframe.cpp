@@ -190,13 +190,6 @@ void WalletFrame::gotoResolveVoteTab()
         walletView->gotoResolveVoteTab();
 }
 
-void WalletFrame::gotoTimeViewTab()
-{
-    WalletView *walletView = currentWalletView();
-    if (walletView)
-        walletView->gotoTimeViewTab();
-}
-
 void WalletFrame::encryptWallet(bool status)
 {
     WalletView *walletView = currentWalletView();

@@ -88,7 +88,6 @@ HivemindGUI::HivemindGUI(const NetworkStyle *networkStyle, QWidget *parent) :
     signMessageAction(0),
     verifyMessageAction(0),
     resolveVoteAction(0),
-    timeAction(0),
     aboutAction(0),
     receiveCoinsAction(0),
     receiveCoinsMenuAction(0),
@@ -379,9 +378,6 @@ void HivemindGUI::createActions(const NetworkStyle *networkStyle)
     verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified Hivemind addresses"));
     resolveVoteAction = new QAction(TextColorIcon(":/icons/resolve"), tr("&Resolve vote..."), this);
     resolveVoteAction->setStatusTip(tr("Test an Outcome independent of the blockchain"));
-    timeAction = new QAction(TextColorIcon(":/icons/resolve"), tr("&Time"), this);
-    timeAction->setStatusTip(tr("View the time of the Hivemind network"));
-
 
     openRPCConsoleAction = new QAction(TextColorIcon(":/icons/debugwindow"), tr("&Debug window"), this);
     openRPCConsoleAction->setStatusTip(tr("Open debugging and diagnostic console"));
@@ -412,7 +408,6 @@ void HivemindGUI::createActions(const NetworkStyle *networkStyle)
         connect(signMessageAction, SIGNAL(triggered()), this, SLOT(gotoSignMessageTab()));
         connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(gotoVerifyMessageTab()));
         connect(resolveVoteAction, SIGNAL(triggered()), this, SLOT(gotoResolveVoteTab()));
-        connect(timeAction, SIGNAL(triggered()), this, SLOT(gotoTimeViewTab()));
         connect(usedSendingAddressesAction, SIGNAL(triggered()), walletFrame, SLOT(usedSendingAddresses()));
         connect(usedReceivingAddressesAction, SIGNAL(triggered()), walletFrame, SLOT(usedReceivingAddresses()));
         connect(openAction, SIGNAL(triggered()), this, SLOT(openClicked()));
@@ -439,7 +434,6 @@ void HivemindGUI::createMenuBar()
         file->addAction(signMessageAction);
         file->addAction(verifyMessageAction);
         file->addAction(resolveVoteAction);
-        file->addAction(timeAction);
         file->addSeparator();
         file->addAction(usedSendingAddressesAction);
         file->addAction(usedReceivingAddressesAction);
@@ -571,7 +565,6 @@ void HivemindGUI::setWalletActionsEnabled(bool enabled)
     signMessageAction->setEnabled(enabled);
     verifyMessageAction->setEnabled(enabled);
     resolveVoteAction->setEnabled(enabled);
-    timeAction->setEnabled(enabled);
     usedSendingAddressesAction->setEnabled(enabled);
     usedReceivingAddressesAction->setEnabled(enabled);
     openAction->setEnabled(enabled);
@@ -618,7 +611,6 @@ void HivemindGUI::createTrayIconMenu()
     trayIconMenu->addAction(signMessageAction);
     trayIconMenu->addAction(verifyMessageAction);
     trayIconMenu->addAction(resolveVoteAction);
-    trayIconMenu->addAction(timeAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(optionsAction);
     trayIconMenu->addAction(openRPCConsoleAction);
@@ -744,10 +736,6 @@ void HivemindGUI::gotoResolveVoteTab()
     if (walletFrame) walletFrame->gotoResolveVoteTab();
 }
 
-void HivemindGUI::gotoTimeViewTab()
-{
-    if (walletFrame) walletFrame->gotoTimeViewTab();
-}
 #endif // ENABLE_WALLET
 
 void HivemindGUI::setNumConnections(int count)

@@ -19,7 +19,6 @@
 #include "scicon.h"
 #include "sendcoinsdialog.h"
 #include "signverifymessagedialog.h"
-#include "timeview.h"
 #include "transactiontablemodel.h"
 #include "transactionview.h"
 #include "voteview.h"
@@ -282,18 +281,6 @@ void WalletView::gotoResolveVoteTab()
     resolveVoteDialog->show();
     resolveVoteDialog->raise();
     resolveVoteDialog->setFocus();
-}
-
-void WalletView::gotoTimeViewTab()
-{
-    QDialog *timeDialog = new QDialog();
-    TimeView *timeView = new TimeView();
-
-    QHBoxLayout *hbox = new QHBoxLayout();
-    hbox->addWidget(timeView);
-
-    timeDialog->setLayout(hbox);
-    timeDialog->show();
 }
 
 bool WalletView::handlePaymentRequest(const SendCoinsRecipient& recipient)
