@@ -21,6 +21,9 @@ DecisionMarketCreationWidget::DecisionMarketCreationWidget(QWidget *parent) :
 
     connect(this, SIGNAL(inputError(QString)),
             this, SLOT(on_inputError(QString)));
+
+    // Hide advanced settings unless the advanced toolbutton is pressed
+    ui->frameAdvanced->hide();
 }
 
 DecisionMarketCreationWidget::~DecisionMarketCreationWidget()
@@ -301,4 +304,10 @@ void DecisionMarketCreationWidget::multipleDecisionsSelected(QStringList hexList
         }
     }
     ui->lineEditDecisions->setText(csList);
+}
+
+void DecisionMarketCreationWidget::on_toolButtonAdvanced_clicked()
+{
+    ui->toolButtonAdvanced->hide();
+    ui->frameAdvanced->show();
 }

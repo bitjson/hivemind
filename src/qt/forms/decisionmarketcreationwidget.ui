@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>650</width>
-    <height>882</height>
+    <width>669</width>
+    <height>984</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -201,108 +201,127 @@
      <property name="title">
       <string>Advanced</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0">
-       <widget class="QLabel" name="labelB">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QToolButton" name="toolButtonAdvanced">
         <property name="text">
-         <string>Liquidity Factor:</string>
+         <string>...</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="labelMaxCommission">
-        <property name="text">
-         <string>Max Commission:</string>
+      <item>
+       <widget class="QFrame" name="frameAdvanced">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
         </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QDoubleSpinBox" name="doubleSpinBoxB">
-        <property name="value">
-         <double>0.100000000000000</double>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
         </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxCommission">
-        <property name="value">
-         <double>0.100000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="labelTradeFee">
-        <property name="text">
-         <string>Trading Fee:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLabel" name="labelFunctions">
-        <property name="text">
-         <string>Function:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QDoubleSpinBox" name="doubleSpinBoxTradeFee">
-        <property name="value">
-         <double>0.100000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QComboBox" name="comboBoxFunctions">
-        <item>
-         <property name="text">
-          <string>X1</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>X2</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>X3</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>LNX1</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="labelHashFunction">
-        <property name="text">
-         <string>Hash Function:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QLabel" name="labelDifficulty">
-        <property name="text">
-         <string>Difficulty</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QComboBox" name="comboBoxHashFunction">
-        <item>
-         <property name="text">
-          <string>SHA-2</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="5" column="1">
-       <widget class="QDoubleSpinBox" name="doubleSpinBoxDifficulty">
-        <property name="value">
-         <double>1.000000000000000</double>
-        </property>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="1">
+          <widget class="QLabel" name="labelMaxCommission">
+           <property name="text">
+            <string>Max Commission:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="labelHashFunction">
+           <property name="text">
+            <string>Hash Function:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="labelTradeFee">
+           <property name="text">
+            <string>Trading Fee:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxCommission">
+           <property name="value">
+            <double>0.100000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelB">
+           <property name="text">
+            <string>Liquidity Factor:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxB">
+           <property name="value">
+            <double>0.100000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxTradeFee">
+           <property name="value">
+            <double>0.100000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QComboBox" name="comboBoxHashFunction">
+           <item>
+            <property name="text">
+             <string>SHA-2</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="labelFunctions">
+           <property name="text">
+            <string>Function:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QComboBox" name="comboBoxFunctions">
+           <item>
+            <property name="text">
+             <string>X1</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>X2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>X3</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>LNX1</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLabel" name="labelDifficulty">
+           <property name="text">
+            <string>Difficulty</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxDifficulty">
+           <property name="value">
+            <double>1.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
