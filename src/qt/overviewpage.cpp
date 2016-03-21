@@ -124,7 +124,6 @@ OverviewPage::OverviewPage(QWidget *parent) :
 
     // Setup Hivemind recent table and model
     hivemindRecentTableView = new QTableView(this);
-    hivemindRecentTableView->horizontalHeader()->setStretchLastSection(true);
 
 #if QT_VERSION < 0x050000
     hivemindRecentTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
@@ -136,7 +135,6 @@ OverviewPage::OverviewPage(QWidget *parent) :
 
     hivemindRecentTableModel = new HivemindRecentTableModel(this);
     hivemindRecentTableView->setModel(hivemindRecentTableModel);
-    hivemindRecentTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->frameLeft->layout()->addWidget(hivemindRecentTableView);
 
     // Recent transactions
