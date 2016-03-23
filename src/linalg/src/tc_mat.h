@@ -37,7 +37,7 @@ void tc_mat_print(const struct tc_mat *);
 
 /**
  * Calculate the Norm of a matrix.
- * Return Norm if successful, return 0.0 if error (and/or if the matrix is empty).
+ * Return Norm if successful, return 0.0 if error (or if the matrix is empty).
  */
 double tc_mat_norm(const struct tc_mat *);
 
@@ -175,7 +175,7 @@ int tc_vote_notvalid(const struct tc_vote *);
 int tc_vote_print(const struct tc_vote *);
 
 /**
- * Perform the hivemind vote process, calc
+ * Perform the entire hivemind vote process.
  * Return 0 if successful, -1 if error.
  */
 int tc_vote_proc(struct tc_vote *);
