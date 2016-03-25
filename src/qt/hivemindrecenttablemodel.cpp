@@ -67,7 +67,7 @@ QVariant HivemindRecentTableModel::data(const QModelIndex &index, int role) cons
             }
             // Trade icon
             if (recentObject.canConvert<marketTrade *>()) {
-                return QPixmap(":/icons/quit").scaled(80, 80);
+                return QPixmap(":/icons/trade").scaled(80, 80);
             }
         }
     }
@@ -93,8 +93,9 @@ QVariant HivemindRecentTableModel::data(const QModelIndex &index, int role) cons
             if (recentObject.canConvert<marketTrade *>()) {
                 marketTrade *trade;
                 trade = recentObject.value<marketTrade *>();
-                QString type = trade->isBuy ? "Buy" : "Sell";
-                if (!type.isEmpty()) return type;
+                QString type = "Trade: ";
+                type.append(trade->isBuy ? "Buy" : "Sell");
+                return type;
             }
         }
         // Height
