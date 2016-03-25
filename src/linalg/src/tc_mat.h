@@ -52,7 +52,7 @@ void tc_mat_resize(struct tc_mat *, uint32_t nr_, uint32_t nc_);
 void tc_mat_copy(struct tc_mat *, const struct tc_mat *);
 
 /**
- * Convert matrix into idententity matrix.
+ * Convert matrix into identity matrix.
  */
 void tc_mat_identity(struct tc_mat *);
 
@@ -80,13 +80,15 @@ int tc_mat_sub(struct tc_mat *, const struct tc_mat *A, const struct tc_mat *B);
 int tc_mat_mult(struct tc_mat *, const struct tc_mat *A, const struct tc_mat *B);
 
 /**
- * Perform scalar multiplication, based on param 'a', save result in first pointer
+ * Perform scalar multiplication, based on param 'a', save result in first
+ * pointer
  * Return 0 if successful, -1 if error.
  */
 int tc_mat_mult_scalar(struct tc_mat *, double a, const struct tc_mat *B);
 
 /**
- * Perform Householder transformation to decompose matrix. Decomposes into matrices U, B and V.
+ * Perform Householder transformation to decompose matrix. Decomposes into
+ * matrices U, B and V.
  * Return 0 if successful, -1 if error.
  */
 int tc_mat_bidiag_decomp(const struct tc_mat *A, struct tc_mat *U, struct tc_mat *B, struct tc_mat *V);
