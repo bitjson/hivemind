@@ -35,7 +35,7 @@ static void draw_graph(
     if (y0 >= y1) return;
 
     /* draw labels */
-    QString Title("Plot of Judgement Space");
+    QString Title("Plot of Judgment Space");
     QRectF rect0(x1/2-4*margin, 0, 8*margin, margin);
     painter.drawText(rect0, Qt::AlignCenter, Title);
 

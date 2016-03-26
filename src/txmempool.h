@@ -61,7 +61,7 @@ public:
 
 class CMinerPolicyEstimator;
 
-/** An inpoint - a combination of a transaction and an index n into its vin */
+/** An inpatient - a combination of a transaction and an index n into its vin */
 class CInPoint
 {
 public:

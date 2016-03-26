@@ -125,7 +125,7 @@ static void draw_graph(
     }
     else
     if (Ymin == Ymax) {
-        /* draw horizonal line */
+        /* draw horizontal line */
     }
 }
 

@@ -77,7 +77,7 @@ json_spirit::Array DecisionCreationWidget::createDecisionArray()
     // Return empty array if there was an input error
     if (error) return params;
 
-    // Add parmeters to array
+    // Add parameters to array
     params.push_back(address.toStdString());
     params.push_back(branchID.toStdString());
     params.push_back(prompt.toStdString());

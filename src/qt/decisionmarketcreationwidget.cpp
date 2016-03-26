@@ -290,7 +290,7 @@ void DecisionMarketCreationWidget::decisionSelected(QString decisionHex)
 
 void DecisionMarketCreationWidget::multipleDecisionsSelected(QStringList hexList)
 {
-    // Comma seperated list of hex's
+    // Comma separated list of hex's
     QString csList = "";
 
     for (int i = 0; i < hexList.size(); i++) {
