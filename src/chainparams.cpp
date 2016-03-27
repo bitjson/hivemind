@@ -215,6 +215,8 @@ public:
         nTargetTimespan = 10 * 60; // 10 minutes
         nTargetSpacing = 1 * 60; // 1 minute
 
+        bnProofOfWorkLimit = ~arith_uint256(0) >> 12;
+
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
         genesis.nTime = 1454472451;
         genesis.nNonce = 3;
