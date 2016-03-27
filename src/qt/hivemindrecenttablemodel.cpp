@@ -95,6 +95,9 @@ QVariant HivemindRecentTableModel::data(const QModelIndex &index, int role) cons
                 trade = recentObject.value<marketTrade *>();
                 QString type = "Trade: ";
                 type.append(trade->isBuy ? "Buy" : "Sell");
+                type.append(" (");
+                type.append(QString::fromStdString(trade->marketid.ToString()));
+                type.append(") ");
                 return type;
             }
         }
