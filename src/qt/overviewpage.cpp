@@ -7,6 +7,7 @@
 #include "ui_overviewpage.h"
 
 #include "hivemindunits.h"
+#include "chainparams.h"
 #include "clientmodel.h"
 #include "guiconstants.h"
 #include "guiutil.h"
@@ -17,7 +18,9 @@
 #include "walletmodel.h"
 
 #include <QAbstractItemDelegate>
+#include <QCheckBox>
 #include <QPainter>
+#include <QMessageBox>
 
 #define DECORATION_SIZE 64
 #define NUM_ITEMS 6
@@ -133,6 +136,7 @@ OverviewPage::OverviewPage(QWidget *parent) :
     hivemindRecentTableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 #endif
 
+    // Recent Hivemind Objects
     hivemindRecentTableModel = new HivemindRecentTableModel(this);
     hivemindRecentTableView->setModel(hivemindRecentTableModel);
     ui->frameLeft->layout()->addWidget(hivemindRecentTableView);
@@ -151,8 +155,50 @@ OverviewPage::OverviewPage(QWidget *parent) :
 
     // start with displaying the "out of sync" warnings
     showOutOfSyncWarning(true);
-}
 
+    /*
+     * While Bitcoin Hivemind is in roadmap development / testing mode, alert
+     * the user if they (accidentally?) connect to the unused main network.
+     *
+     * Not adding the showMessageBox setting to the options model as this is
+     * all to be removed later.
+     *
+     * TODO Remove for release.
+     */
+    QSettings settings("Hivemind", "Hivemind-Qt");
+    settings.beginGroup("networkMessageBox");
+    bool showMessageBox = settings.value("showMessageBox", true).toBool();
+    settings.endGroup();
+
+    std::string networkID = Params().NetworkIDString();
+    if (networkID == "main" && showMessageBox) {
+        // Create the message box to let the user know about the testnet.
+        QMessageBox *networkMessageBox = new QMessageBox(this);
+        networkMessageBox->setText("Did you mean to use the -testnet option?\n");
+
+        QString networkMessage = "Hivemind is in testing / roadmap development mode,";
+        networkMessage += " and all activity is taking place on the testnet.\n\n";
+        networkMessage += "For more information, visit:\n";
+        networkMessage += "bitcoinhivemind.com\n";
+        networkMessage += "github.com/bitcoin-hivemind/testnet-canonical\n";
+        networkMessageBox->setInformativeText(networkMessage);
+        networkMessageBox->setStandardButtons(QMessageBox::Ok);
+        networkMessageBox->setDefaultButton(QMessageBox::Ok);
+
+        QCheckBox dontShowAgain;
+        dontShowAgain.blockSignals(true);
+        dontShowAgain.setText("Do not show this message again");
+        networkMessageBox->addButton(&dontShowAgain, QMessageBox::NoRole);
+
+        // Show the message box
+        int response = networkMessageBox->exec();
+        if (response == QMessageBox::Ok && dontShowAgain.isChecked()) {
+            settings.beginGroup("networkMessageBox");
+            settings.setValue("showMessageBox", false);
+            settings.endGroup();
+        }
+    }
+}
 void OverviewPage::handleTransactionClicked(const QModelIndex &index)
 {
     if(filter)
