@@ -127,13 +127,6 @@ void WalletFrame::gotoAuthorView()
         i.value()->gotoAuthorView();
 }
 
-void WalletFrame::gotoBallotPage()
-{
-    QMap<QString, WalletView*>::const_iterator i;
-    for (i = mapWalletViews.constBegin(); i != mapWalletViews.constEnd(); ++i)
-        i.value()->gotoBallotPage();
-}
-
 void WalletFrame::gotoDecisionPage()
 {
     QMap<QString, WalletView*>::const_iterator i;
@@ -188,13 +181,6 @@ void WalletFrame::gotoResolveVoteTab()
     WalletView *walletView = currentWalletView();
     if (walletView)
         walletView->gotoResolveVoteTab();
-}
-
-void WalletFrame::gotoTimeViewTab()
-{
-    WalletView *walletView = currentWalletView();
-    if (walletView)
-        walletView->gotoTimeViewTab();
 }
 
 void WalletFrame::encryptWallet(bool status)

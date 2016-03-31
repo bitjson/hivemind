@@ -11,17 +11,22 @@ MarketView::MarketView(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QString branchID = "0f894a25c5e0318ee148fe54600ebbf50782f0a1df1eb2aab06321a8ccec270d";
-
     // Grab the branch
     uint256 uBranch;
-    uBranch.SetHex(branchID.toStdString());
+    uBranch.SetHex("0f894a25c5e0318ee148fe54600ebbf50782f0a1df1eb2aab06321a8ccec270d");
 
     // Setup model & market table
     marketTableView = new QTableView(this);
     marketTableView->horizontalHeader()->setStretchLastSection(true);
+
+#if QT_VERSION < 0x050000
     marketTableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     marketTableView->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+#else
+    marketTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    marketTableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+#endif
+
     marketModel = new MarketModel(this);
     marketTableView->setModel(marketModel);
     marketTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -33,6 +38,9 @@ MarketView::MarketView(QWidget *parent) :
     // Setup signals
     connect(marketTableView, SIGNAL(doubleClicked(QModelIndex)),
             this, SLOT(on_tableView_doubleClicked(QModelIndex)));
+
+    // Default graph scale = 1 (1 day)
+    graphScale = 1;
 }
 
 MarketView::~MarketView()
@@ -54,4 +62,50 @@ void MarketView::on_tableView_doubleClicked(const QModelIndex &index)
     dialog->setWindowTitle("Trade");
     dialog->setLayout(hbox);
     dialog->show();
+}
+
+void MarketView::setScale(int scale)
+{
+    switch (scale) {
+    case 1: // 1 day
+        ui->radioButtonScale1->setChecked(true);
+        graphScale = scale;
+        break;
+    case 2: // 3 days
+        ui->radioButtonScale2->setChecked(true);
+        graphScale = scale;
+        break;
+    case 3: // 1 week
+        ui->radioButtonScale3->setChecked(true);
+        graphScale = scale;
+        break;
+    case 4: // 3 weeks
+        ui->radioButtonScale4->setChecked(true);
+        graphScale = scale;
+        break;
+    case 5: // 1 month
+        ui->radioButtonScale5->setChecked(true);
+        graphScale = scale;
+        break;
+    case 6: // 3 months
+        ui->radioButtonScale6->setChecked(true);
+        graphScale = scale;
+        break;
+    case 7: // 1 year
+        ui->radioButtonScale7->setChecked(true);
+        graphScale = scale;
+        break;
+    default:
+        break;
+    }
+}
+
+void MarketView::on_pushButtonScaleLess_clicked()
+{
+    setScale(graphScale-1);
+}
+
+void MarketView::on_pushButtonScaleMore_clicked()
+{
+    setScale(graphScale+1);
 }

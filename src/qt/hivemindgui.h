@@ -90,7 +90,6 @@ private:
     QAction *overviewAction;
     QAction *historyAction;
     QAction *authorAction;
-    QAction *ballotAction;
     QAction *decisionAction;
     QAction *marketAction;
     QAction *voteAction;
@@ -102,7 +101,6 @@ private:
     QAction *signMessageAction;
     QAction *verifyMessageAction;
     QAction *resolveVoteAction;
-    QAction *timeAction;
     QAction *aboutAction;
     QAction *receiveCoinsAction;
     QAction *receiveCoinsMenuAction;
@@ -184,8 +182,6 @@ private slots:
     void gotoHistoryPage();
     /** Switch to author page */
     void gotoAuthorView();
-    /** Switch to ballot page */
-    void gotoBallotPage();
     /** Switch to decision page */
     void gotoDecisionPage();
     /** Switch to market page */
@@ -203,8 +199,6 @@ private slots:
     void gotoVerifyMessageTab(QString addr = "");
     /** Show Resolve Vote dialog */
     void gotoResolveVoteTab();
-    /** Show TimeView in a QDialog, may change to tab later */
-    void gotoTimeViewTab();
 
     /** Show open dialog */
     void openClicked();

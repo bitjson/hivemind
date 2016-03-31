@@ -2,7 +2,9 @@
 #include "ui_markettradeview.h"
 
 #include "txdb.h"
+#include "utilmoneystr.h"
 
+#include <QClipboard>
 #include <QMessageBox>
 
 extern CMarketTreeDB *pmarkettree;
@@ -114,10 +116,10 @@ void MarketTradeView::updateMarketInfo()
     // Shares on the market
     double *nShares = new double [nStates];
     marketNShares(trades, nStates, nShares);
-    double marketPrice = marketAccountValue(market->maxCommission, 1e-8*market->B, nStates, nShares);
+    std::string marketPrice = FormatMoney(marketAccountValue(market->maxCommission, 1e-8*market->B, nStates, nShares));
 
     // Set market price label
-    ui->labelMarketPriceValue->setText(QString::number(marketPrice));
+    ui->labelMarketPriceValue->setText(QString::fromStdString(marketPrice));
 }
 
 void MarketTradeView::setMarketToTrade(uint256 uMarket)
@@ -142,4 +144,10 @@ void MarketTradeView::on_finalizeError(const QString &errorMessage)
 void MarketTradeView::on_spinBoxShares_valueChanged(int arg1)
 {
     ui->labelSharesToBuyValue->setText(QString::number(arg1));
+}
+
+void MarketTradeView::on_pushButtonCopyMarketID_clicked()
+{
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(ui->labelMarketIDValue->text());
 }

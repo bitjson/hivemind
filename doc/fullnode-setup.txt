@@ -31,6 +31,7 @@ step if you will be downloading the pre-built binaries:
     git \
     build-essential \
     autoconf \
+    automake \
     pkg-config \
     libboost-all-dev \
     libssl-dev \

@@ -789,8 +789,8 @@ void ThreadSocketHandler()
                 // * If there is data to send, select() for sending data. As this only
                 //   happens when optimistic write failed, we choose to first drain the
                 //   write buffer in this case before receiving more. This avoids
-                //   needlessly queueing received data, if the remote peer is not themselves
-                //   receiving data. This means properly utilizing TCP flow control signalling.
+                //   needlessly queuing received data, if the remote peer is not themselves
+                //   receiving data. This means properly utilizing TCP flow control signaling.
                 // * Otherwise, if there is no (complete) message in the receive buffer,
                 //   or there is space left in the buffer, select() for receiving data.
                 // * (if neither of the above applies, there is certainly one message

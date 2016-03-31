@@ -30,6 +30,8 @@ private slots:
 
     void on_pushButtonUpdateMarket_clicked();
 
+    void on_toolButtonAdvanced_clicked();
+
 public slots:
     // Load json_spirit array for editing
     void editArray(json_spirit::Array array);

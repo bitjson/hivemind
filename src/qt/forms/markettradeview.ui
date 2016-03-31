@@ -38,6 +38,23 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="pushButtonCopyMarketID">
+        <property name="text">
+         <string>Copy</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../hivemind.qrc">
+          <normaloff>:/icons/editcopy</normaloff>:/icons/editcopy</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -55,13 +72,13 @@
    </item>
    <item row="3" column="0">
     <widget class="QTabWidget" name="tabWidget">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
      <widget class="QWidget" name="tabStandard">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <attribute name="title">
        <string>Standard</string>
       </attribute>
@@ -543,6 +560,12 @@
              <iconset resource="../hivemind.qrc">
               <normaloff>:/icons/transaction_confirmed</normaloff>:/icons/transaction_confirmed</iconset>
             </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
            </widget>
           </item>
          </layout>
@@ -551,11 +574,17 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tabTwoDimensional">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <attribute name="title">
        <string>Two Dimensional</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tabHighDimensional">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <attribute name="title">
        <string>High Dimensional</string>
       </attribute>

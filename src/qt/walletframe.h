@@ -55,8 +55,6 @@ public slots:
     void gotoHistoryPage();
     /** Switch to author page */
     void gotoAuthorView();
-    /** Switch to ballot page */
-    void gotoBallotPage();
     /** Switch to decision page */
     void gotoDecisionPage();
     /** Switch to market page */
@@ -74,8 +72,6 @@ public slots:
     void gotoVerifyMessageTab(QString addr = "");
     /** Show Resolve Vote dialog */
     void gotoResolveVoteTab();
-    /** Show TimeView in a QDialog, may change to tab later */
-    void gotoTimeViewTab();
 
     /** Encrypt the wallet */
     void encryptWallet(bool status);

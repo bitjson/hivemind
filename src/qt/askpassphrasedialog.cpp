@@ -146,7 +146,7 @@ void AskPassphraseDialog::accept()
         }
         else
         {
-            QDialog::reject(); // Cancelled
+            QDialog::reject(); // Canceled
         }
         } break;
     case Unlock:

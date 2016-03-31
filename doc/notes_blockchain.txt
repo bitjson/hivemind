@@ -51,7 +51,7 @@ Example output scripts:
                   OP_EQUALVERIFY OP_CHECKSIG
               | OP_HASH160 OP_PUSHx14 pubkey_hash OP_EQUAL
 
-     Standard MiltiSig
+     Standard Multisig
      script = OP_X {OP_PUSH public_key}N OP_N OP_CHECKMULTISIG
 
 
@@ -124,7 +124,7 @@ Hivemind's actions consists of:
    7. creation of steal votes
    8. creation of reveal votes
    9. publishing outcomes with transfers of bitcoins.
-  10. redistributions of votecoin allocations
+  10. redistribution of votecoin allocations
 
 Anyone with bitcoins may initiate any of the actions 1,3,4,5. Anyone with
 votecoins will be obligated to initiate actions 6,8. The miners will initiate
@@ -187,7 +187,7 @@ Create Branch
   We must have ballotTime + unsealTime less than tau so that the change of
   votecoins in an outcome is set before the next run of the outcome algorithm.
 
-  It is desireable to have tau correspond to approximately two weeks (for 10
+  It is desirable to have tau correspond to approximately two weeks (for 10
   minute block spacing, tau = 2016).
 
   Note 3: The outcome algorithm is best when there are many decisions on a

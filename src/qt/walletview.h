@@ -12,7 +12,6 @@
 
 class AuthorView;
 class ClientModel;
-class BallotView;
 class DecisionView;
 class HivemindGUI;
 class MarketView;
@@ -20,7 +19,6 @@ class OverviewPage;
 class ReceiveCoinsDialog;
 class SendCoinsDialog;
 class SendCoinsRecipient;
-class TimeView;
 class TransactionView;
 class VoteView;
 class WalletModel;
@@ -65,12 +63,10 @@ private:
 
     OverviewPage *overviewPage;
     QWidget *transactionsPage;
-    QWidget *ballotPage;
     QWidget *decisionPage;
     ReceiveCoinsDialog *receiveCoinsPage;
     SendCoinsDialog *sendCoinsPage;
     AuthorView *authorView;
-    BallotView *ballotView;
     DecisionView *decisionView;
     MarketView *marketView;
     VoteView *voteView;
@@ -85,8 +81,6 @@ public slots:
     void gotoHistoryPage();
     /** Switch to author view */
     void gotoAuthorView();
-    /** Switch to ballot page */
-    void gotoBallotPage();
     /** Switch to decision page */
     void gotoDecisionPage();
     /** Switch to market view */
@@ -104,8 +98,6 @@ public slots:
     void gotoVerifyMessageTab(QString addr = "");
     /** Show Resolve Vote dialog */
     void gotoResolveVoteTab();
-    /** Show TimeView in a QDialog, may change to tab later */
-    void gotoTimeViewTab();
 
     /** Show incoming transaction notification for new transactions.
 

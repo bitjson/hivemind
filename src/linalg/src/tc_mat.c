@@ -1022,7 +1022,6 @@ tc_vote_print(const struct tc_vote *ptr)
     return 0;
 }
 
-#define METHOD6
 int
 tc_vote_proc(struct tc_vote *vote)
 {
@@ -1139,7 +1138,6 @@ tc_vote_proc(struct tc_vote *vote)
               }
         }
 
-#ifdef METHOD6
         /* distance */
         struct tc_mat *dist = tc_mat_ctr(0, 0);
         tc_mat_copy(dist, fM);
@@ -1191,7 +1189,7 @@ tc_vote_proc(struct tc_vote *vote)
         tc_mat_dtr(noncompliance);
         tc_mat_dtr(mainstream);
         tc_mat_dtr(dist);
-#endif
+
         /* twgt = (||v1|| < ||v2||)? score1: score2 */
         if (tc_mat_norm(v1) <= tc_mat_norm(v2))
             tc_mat_copy(twgt, new_scores_1);

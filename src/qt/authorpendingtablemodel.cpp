@@ -737,7 +737,7 @@ void AuthorPendingTableModel::finalizeCombo(json_spirit::Array params, unsigned 
 
 void AuthorPendingTableModel::receiveUpdatedCombo(json_spirit::Array array)
 {
-    if (!array.size() >= 19) return;
+    if (!(array.size() >= 19)) return;
     int index = array.back().get_int();
     array.pop_back();
 
@@ -746,7 +746,7 @@ void AuthorPendingTableModel::receiveUpdatedCombo(json_spirit::Array array)
 
 void AuthorPendingTableModel::receiveUpdatedDecision(json_spirit::Array array)
 {
-    if (!array.size() >= 8) return;
+    if (!(array.size() >= 8)) return;
     int index = array.back().get_int();
     array.pop_back();
 
@@ -755,7 +755,7 @@ void AuthorPendingTableModel::receiveUpdatedDecision(json_spirit::Array array)
 
 void AuthorPendingTableModel::receiveUpdatedDecisionMarket(json_spirit::Array array)
 {
-    if(!array.size() == 13) return;
+    if(!(array.size() == 13)) return;
     int index = array.back().get_int();
     array.pop_back();
 

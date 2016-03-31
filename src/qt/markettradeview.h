@@ -33,6 +33,8 @@ private slots:
 
     void on_spinBoxShares_valueChanged(int arg1);
 
+    void on_pushButtonCopyMarketID_clicked();
+
 signals:
     void finalizeError(const QString &errorMessage);
 

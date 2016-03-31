@@ -52,7 +52,7 @@ json_spirit::Array ComboCreationWidget::createComboArray()
 void ComboCreationWidget::on_pushButtonCreateCombo_clicked()
 {
     json_spirit::Array comboArray = createComboArray();
-    if (!comboArray.empty()) {
+    if (comboArray.size() > 1) {
         emit newComboArray(comboArray);
     }
 }

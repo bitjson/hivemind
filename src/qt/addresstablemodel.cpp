@@ -374,7 +374,7 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con
             WalletModel::UnlockContext ctx(walletModel->requestUnlock());
             if(!ctx.isValid())
             {
-                // Unlock wallet failed or was cancelled
+                // Unlock wallet failed or was canceled
                 editStatus = WALLET_UNLOCK_FAILURE;
                 return QString();
             }

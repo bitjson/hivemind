@@ -222,7 +222,6 @@ HEADERS += src/addrman.h \
            src/qt/sendcoinsentry.h \
            src/qt/signverifymessagedialog.h \
            src/qt/splashscreen.h \
-           src/qt/timeview.h \
            src/qt/trafficgraphwidget.h \
            src/qt/transactiondesc.h \
            src/qt/transactiondescdialog.h \
@@ -368,7 +367,6 @@ FORMS += src/qt/forms/addressbookpage.ui \
          src/qt/forms/sendcoinsdialog.ui \
          src/qt/forms/sendcoinsentry.ui \
          src/qt/forms/signverifymessagedialog.ui \
-         src/qt/forms/timeview.ui \
          src/qt/forms/transactiondescdialog.ui \
          src/qt/forms/voteview.ui
 SOURCES += src/addrman.cpp \
@@ -531,7 +529,6 @@ SOURCES += src/addrman.cpp \
            src/qt/sendcoinsentry.cpp \
            src/qt/signverifymessagedialog.cpp \
            src/qt/splashscreen.cpp \
-           src/qt/timeview.cpp \
            src/qt/trafficgraphwidget.cpp \
            src/qt/transactiondesc.cpp \
            src/qt/transactiondescdialog.cpp \
