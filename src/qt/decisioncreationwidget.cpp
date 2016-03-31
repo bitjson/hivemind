@@ -32,7 +32,7 @@ json_spirit::Array DecisionCreationWidget::createDecisionArray()
     // Grab user input from ui
     QString address = ui->lineEditOwnerAddr->text();
     QString prompt = ui->plainTextEditPrompt->toPlainText();
-    int eventOverBy = 1; // Temporary placeholder
+    int eventOverBy = ui->spinBoxEventOverBy->value();
     bool answerOptionality = false;
     if (ui->checkBoxVoteMandatory->isChecked()) {
         answerOptionality = false;
