@@ -2974,7 +2974,15 @@ Value createsealedvote(const Array& params, bool fHelp)
     CAmount nFeeRequired;
     CAmount nAmount = (int64_t) rounduint64(0.01*COIN);
 
-    string strAccount = obj.branchid.ToString();
+    /*
+     * Allow for the creation of sealedvote objects with Bitcoin on the testnet.
+     * TODO: remove
+     */
+    string strAccount;
+    if (Params().NetworkIDString() == "main") {
+      strAccount = obj.branchid.ToString();
+    }
+
     CWalletTx wtx;
     CTxDestination txDestChange;
     if (!pwalletMain->CreateTransaction(scriptPubKey, strAccount, nAmount, wtx,
@@ -3067,7 +3075,15 @@ Value createstealvote(const Array& params, bool fHelp)
     CAmount nFeeRequired;
     CAmount nAmount = (int64_t) rounduint64(0.01*COIN);
 
-    string strAccount = obj.branchid.ToString();
+    /*
+     * Allow for the creation of stealvote objects with Bitcoin on the testnet.
+     * TODO: remove
+     */
+    string strAccount;
+    if (Params().NetworkIDString() == "main") {
+      strAccount = obj.branchid.ToString();
+    }
+
     CWalletTx wtx;
     CTxDestination txDestChange;
     if (!pwalletMain->CreateTransaction(scriptPubKey, strAccount, nAmount, wtx,
@@ -3188,7 +3204,15 @@ Value createrevealvote(const Array& params, bool fHelp)
     CAmount nFeeRequired;
     CAmount nAmount = (int64_t) rounduint64(0.01*COIN);
 
-    string strAccount = obj.branchid.ToString();
+    /*
+     * Allow for the creation of revealvote objects with Bitcoin on the testnet.
+     * TODO: remove
+     */
+    string strAccount;
+    if (Params().NetworkIDString() == "main") {
+      strAccount = obj.branchid.ToString();
+    }
+
     CWalletTx wtx;
     CTxDestination txDestChange;
     if (!pwalletMain->CreateTransaction(scriptPubKey, strAccount, nAmount, wtx,
