@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>669</width>
-    <height>984</height>
+    <height>986</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -178,6 +178,9 @@
       </item>
       <item>
        <widget class="QSpinBox" name="spinBoxMaturation">
+        <property name="maximum">
+         <number>999999999</number>
+        </property>
         <property name="value">
          <number>1</number>
         </property>
@@ -231,6 +234,9 @@
          </item>
          <item row="1" column="1">
           <widget class="QDoubleSpinBox" name="doubleSpinBoxMaxCommission">
+           <property name="maximum">
+            <double>999999999.000000000000000</double>
+           </property>
            <property name="value">
             <double>0.100000000000000</double>
            </property>
@@ -245,6 +251,9 @@
          </item>
          <item row="1" column="0">
           <widget class="QDoubleSpinBox" name="doubleSpinBoxB">
+           <property name="maximum">
+            <double>999999999.000000000000000</double>
+           </property>
            <property name="value">
             <double>0.100000000000000</double>
            </property>
@@ -252,6 +261,9 @@
          </item>
          <item row="3" column="0">
           <widget class="QDoubleSpinBox" name="doubleSpinBoxTradeFee">
+           <property name="maximum">
+            <double>999999999.000000000000000</double>
+           </property>
            <property name="value">
             <double>0.100000000000000</double>
            </property>
@@ -306,6 +318,9 @@
          </item>
          <item row="5" column="1">
           <widget class="QDoubleSpinBox" name="doubleSpinBoxDifficulty">
+           <property name="maximum">
+            <double>999999999.000000000000000</double>
+           </property>
            <property name="value">
             <double>1.000000000000000</double>
            </property>

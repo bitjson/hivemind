@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+#include "decisionselectionview.h"
 #include "json/json_spirit_writer_template.h"
 
 namespace Ui {
@@ -18,10 +19,18 @@ public:
     ~VoteView();
 
 private slots:
-    void on_pushButtonCreateVote_clicked();
+    void on_pushButtonSelectDecision_clicked();
+
+    void decisionSelected(QString decisionHex);
+
+    void on_pushButtonCreateRevealVote_clicked();
+
+    void on_pushButtonCreateSealedVote_clicked();
 
 private:
     Ui::VoteView *ui;
+
+    DecisionSelectionView *decisionSelection;
 };
 
 #endif // VOTEVIEW_H
