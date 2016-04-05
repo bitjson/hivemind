@@ -1,13 +1,22 @@
 #include "voteview.h"
 #include "ui_voteview.h"
 
+#include <QDialog>
+#include <QHBoxLayout>
+#include <QMessageBox>
+
 #include <iostream>
+#include "base58.h"
+#include "txdb.h"
 
 VoteView::VoteView(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::VoteView)
 {
     ui->setupUi(this);
+
+    connect(this, SIGNAL(displayMessage(QString,QString)),
+            this, SLOT(on_displayMessage(QString,QString)));
 }
 
 VoteView::~VoteView()
@@ -15,53 +24,76 @@ VoteView::~VoteView()
     delete ui;
 }
 
-void VoteView::on_pushButtonCreateVote_clicked()
+void VoteView::on_pushButtonSelectDecision_clicked()
 {
-    /*
-     * Creating votes goes as follows;
-     * 1. Create reveal vote object.
-     * 2. Create sealed vote object from revealed vote object.
-     */
+    selectDecision();
+}
+
+void VoteView::decisionSelected(QString decisionHex)
+{
+    ui->lineEditDecisionID->setText(decisionHex);
+}
+
+void VoteView::on_pushButtonCreateRevealVote_clicked()
+{
     extern json_spirit::Value createrevealvote(const json_spirit::Array &revealVoteParams, bool fHelp);
-    extern json_spirit::Value createsealedvote(const json_spirit::Array &sealedVoteParams, bool fHelp);
 
-    /* 1. Create reveal vote object */
+    // Grab the branch if it exists
+    std::string branchID = "0f894a25c5e0318ee148fe54600ebbf50782f0a1df1eb2aab06321a8ccec270d";
+    uint256 uBranch;
+    uBranch.SetHex(branchID);
+    marketBranch *branch = pmarkettree->GetBranch(uBranch);
+    if (!branch) {
+        emit displayMessage("Error creating Revealed Vote", "Invalid Branch ID, branch does not exist!");
+        return;
+    }
 
-    // Get reveal vote params from UI
-    std::string address = ui->lineEditAddress->text().toStdString();
-    std::string branchID = ui->lineEditBranchID->text().toStdString();
-    int height = ui->spinBoxHeight->value();
-    std::string voteID = "";
-    int NA = 2016;
-    std::string decisionID = ui->lineEditDecisionID->text().toStdString();
-    int vote = 0;
+    // Create Votecoin address
+    CHivemindAddress address;
+    address.is_votecoin = 1;
+    CScriptID id = branch->GetScript();
+    address.Set(id);
 
-    // Create spirit array of reveal vote params
+    // Try to get the sealed vote
+    uint256 uVote;
+    uVote.SetHex(ui->lineEditSealedVoteID->text().toStdString());
+
+    marketSealedVote *sealedVote = pmarkettree->GetSealedVote(uVote);
+    if (!sealedVote) {
+        emit displayMessage("Error creating Revealed Vote", "Vote does not exist!");
+        return;
+    }
+
+    // Create spirit array of sealed vote params
     json_spirit::Array revealVoteParams;
-    revealVoteParams.push_back(address);
-    revealVoteParams.push_back(branchID);
+    revealVoteParams.push_back(address.ToString());
+    revealVoteParams.push_back(branch->GetHash().GetHex());
+    int height = sealedVote->height;
     revealVoteParams.push_back(height);
-    revealVoteParams.push_back(voteID);
-    revealVoteParams.push_back(NA);
-    revealVoteParams.push_back(decisionID);
-    revealVoteParams.push_back(vote);
+    revealVoteParams.push_back(sealedVote->GetHash().GetHex());
+    revealVoteParams.push_back(2016);
+    QString decisionVote = ui->lineEditDecisionID->text();
+    decisionVote.append(",");
+    decisionVote.append(ui->comboBoxVote->currentIndex());
+    revealVoteParams.push_back(decisionVote.toStdString());
 
-    // Try to create the revealed vote
+    // Try to create the revealvote
     json_spirit::Value revealVoteResult;
     try {
         revealVoteResult = createrevealvote(revealVoteParams, false);
     } catch (const std::runtime_error &error) {
-        std::cout << "Error: " << error.what() << std::endl;
+        QString errorText = QString::fromStdString(error.what());
+        emit displayMessage("Error creating Revealed Vote", errorText);
         return;
     } catch (const std::exception &exception) {
-        std::cout << "Exception: " << exception.what() << std::endl;
+        QString exceptionText = QString::fromStdString(exception.what());
+        emit displayMessage("Error creating Revealed Vote", exceptionText);
         return;
     } catch (const json_spirit::Object &object) {
         revealVoteResult = object;
     }
 
-    // Check the reveal vote results
-    std::string resultVoteID = "";
+    // Check the reveal vote result
     try {
         // Get reveal vote result pairs
         json_spirit::Object revealVoteResultObject = revealVoteResult.get_obj();
@@ -72,40 +104,102 @@ void VoteView::on_pushButtonCreateVote_clicked()
         if (codePair.name_ == "code") {
             int code = codePair.value_.get_int();
             if (code < 0) {
-                std::cout << "Error creating reveal vote: " << messagePair.value_.get_str() << std::endl;
+                QString errorText = QString::fromStdString(messagePair.value_.get_str());
+                emit displayMessage("Error creating Revealed Vote", errorText);
+                return;
+
             }
         }
 
-        // If success, get the txid and reveal vote id
-        std::cout << "codepair name: " << codePair.name_ << std::endl;
-        std::cout << "codepair value: " << codePair.value_.get_str() << std::endl;
+        // If the reveal vote was created, display the txid and vote id
+        QString resultMessage;
+        resultMessage.append("Revealed vote has been submitted!\n");
+        resultMessage.append(QString::fromStdString(codePair.name_));
+        resultMessage.append(":\n");
+        resultMessage.append(QString::fromStdString(codePair.value_.get_str()));
+        resultMessage.append("\n\n");
+        resultMessage.append(QString::fromStdString(messagePair.name_));
+        resultMessage.append(":\n");
+        resultMessage.append(QString::fromStdString(messagePair.value_.get_str()));
+        emit displayMessage("Revealed Vote Submitted!", resultMessage);
 
-        std::cout << "messagepair name: " << messagePair.name_ << std::endl;
-        std::cout << "messagepair value: " << messagePair.value_.get_str() << std::endl;
     } catch (const std::runtime_error &error) {
-        std::cout << "Error: " << error.what() << std::endl;
+        emit displayMessage("Error creating Revealed Vote!", QString::fromStdString(error.what()));
+
     } catch (const std::exception &exception) {
-        std::cout << "Exception: " << exception.what() << std::endl;
+        emit displayMessage("Error creating Revealed Vote!", QString::fromStdString(exception.what()));
     }
+}
+
+void VoteView::on_pushButtonCreateSealedVote_clicked()
+{
+    /*
+     * Creating votes goes as follows;
+     * 1. Create reveal vote object.
+     * 2. Create sealed vote object from revealed vote object.
+     */
+    extern json_spirit::Value createsealedvote(const json_spirit::Array &sealedVoteParams, bool fHelp);
+
+    /* 1. Create reveal vote object */
+
+    // Grab the branch if it exists
+    std::string branchID = "0f894a25c5e0318ee148fe54600ebbf50782f0a1df1eb2aab06321a8ccec270d";
+    uint256 uBranch;
+    uBranch.SetHex(branchID);
+    marketBranch *branch = pmarkettree->GetBranch(uBranch);
+    if (!branch) {
+        emit displayMessage("Error creating Sealed Vote", "Branch does not exist!");
+        return;
+    }
+
+    // Create blank voteid
+    std::string voteID = "0000000000000000000000000000000000000000000000000000000000000000";
+    uint256 uVote;
+    uVote.SetHex(voteID);
+
+    // Grab the decision if it exists
+    std::string decisionID = ui->lineEditDecisionID->text().toStdString();
+    uint256 uDecision;
+    uDecision.SetHex(decisionID);
+    marketDecision *decision = pmarkettree->GetDecision(uDecision);
+    if (!decision) {
+        emit displayMessage("Error creating Sealed Vote", "Decision does not exist!");
+        return;
+    }
+
+    // Create Votecoin address
+    CHivemindAddress address;
+    address.is_votecoin = 1;
+    CScriptID id = branch->GetScript();
+    address.Set(id);
+
+    // Create revealvote
+    marketRevealVote revealVote;
+    revealVote.branchid.SetHex(branch->GetHash().GetHex());
+    revealVote.height = ui->spinBoxHeight->value();
+    revealVote.voteid = uVote;
+    revealVote.decisionIDs.push_back(decision->GetHash());
+    revealVote.decisionVotes.push_back(ui->comboBoxVote->currentIndex());
+    revealVote.NA = 2016;
+    address.GetKeyID(revealVote.keyID);
 
     /* 2. Create sealed vote object from revealed vote object */
 
     // Create spirit array of sealed vote params
     json_spirit::Array sealedVoteParams;
-    sealedVoteParams.push_back(branchID);
-    sealedVoteParams.push_back(height);
-    sealedVoteParams.push_back(resultVoteID);
+    sealedVoteParams.push_back(branch->GetHash().GetHex());
+    sealedVoteParams.push_back(ui->spinBoxHeight->value());
+    sealedVoteParams.push_back(revealVote.GetHash().GetHex());
 
-
-    // Try to create the sealed vote
+    // Try to create the sealedvote
     json_spirit::Value sealedVoteResult;
     try {
         sealedVoteResult = createsealedvote(sealedVoteParams, false);
     } catch (const std::runtime_error &error) {
-        std::cout << "Error: " << error.what() << std::endl;
+        emit displayMessage("Error creating Sealed Vote", QString::fromStdString(error.what()));
         return;
     } catch (const std::exception &exception) {
-        std::cout << "Exception: " << exception.what() << std::endl;
+        emit displayMessage("Error creating Sealed Vote", QString::fromStdString(exception.what()));
         return;
     } catch (const json_spirit::Object &object) {
         sealedVoteResult = object;
@@ -122,20 +216,79 @@ void VoteView::on_pushButtonCreateVote_clicked()
         if (codePair.name_ == "code") {
             int code = codePair.value_.get_int();
             if (code < 0) {
-                std::cout << "Error creating vote: " << messagePair.value_.get_str() << std::endl;
+                emit displayMessage("Error creating Sealed Vote", QString::fromStdString(messagePair.value_.get_str()));
             }
         }
 
-        // If success, get the txid and vote id
-        std::cout << "codepair name: " << codePair.name_ << std::endl;
-        std::cout << "codepair value: " << codePair.value_.get_str() << std::endl;
-
-        std::cout << "messagepair name: " << messagePair.name_ << std::endl;
-        std::cout << "messagepair value: " << messagePair.value_.get_str() << std::endl;
+        // If the sealed vote was created, display the txid and vote id
+        QString resultMessage;
+        resultMessage.append("Sealed vote has been submitted!\n");
+        resultMessage.append(QString::fromStdString(codePair.name_));
+        resultMessage.append(":\n");
+        resultMessage.append(QString::fromStdString(codePair.value_.get_str()));
+        resultMessage.append("\n\n");
+        resultMessage.append(QString::fromStdString(messagePair.name_));
+        resultMessage.append(":\n");
+        resultMessage.append(QString::fromStdString(messagePair.value_.get_str()));
+        emit displayMessage("Sealed Vote Submitted!", resultMessage);
 
     } catch (const std::runtime_error &error) {
-        std::cout << "Error: " << error.what() << std::endl;
+        emit displayMessage("Error creating Sealed Vote", QString::fromStdString(error.what()));
     } catch (const std::exception &exception) {
-        std::cout << "Exception: " << exception.what() << std::endl;
+        emit displayMessage("Error creating Sealed Vote", QString::fromStdString(exception.what()));
     }
+}
+
+void VoteView::selectDecision()
+{
+    // Grab the ID of the user selected branch
+    QString branchID;
+    if (ui->comboBoxBranch->currentText() == "Main") {
+        branchID = "0f894a25c5e0318ee148fe54600ebbf50782f0a1df1eb2aab06321a8ccec270d";
+    }
+
+    // Exit if no branch is selected (technically impossible via the UI)
+    if (branchID.isEmpty()) return;
+
+    // Grab the branch
+    uint256 uBranch;
+    uBranch.SetHex(branchID.toStdString());
+    const marketBranch *branch = pmarkettree->GetBranch(uBranch);
+
+    if (!branch) return;
+
+    // Grab decisions on the branch
+    vector<marketDecision *> decisions = pmarkettree->GetDecisions(uBranch);
+
+    // Setup the decision selection widget
+    decisionSelection = new DecisionSelectionView(this);
+    QVector<marketDecision *> qvDecisions = QVector<marketDecision *>::fromStdVector(decisions);
+    QList<marketDecision *> qlDecisions = QList<marketDecision *>::fromVector(qvDecisions);
+    decisionSelection->loadDecisions(qlDecisions);
+
+    // Connect signals
+    connect(decisionSelection, SIGNAL(decisionSelected(QString)),
+            this, SLOT(decisionSelected(QString)));
+
+    // Display the decision selection widget
+    QHBoxLayout *hbox = new QHBoxLayout(this);
+    hbox->addWidget(decisionSelection);
+    QDialog *dialog = new QDialog(this);
+
+    connect(decisionSelection, SIGNAL(done()),
+            dialog, SLOT(close()));
+
+    dialog->setWindowTitle("Select Decision");
+    dialog->setLayout(hbox);
+    dialog->exec();
+}
+
+void VoteView::on_displayMessage(const QString &title, const QString &message)
+{
+    QMessageBox messageBox;
+    messageBox.setWindowTitle(title);
+    messageBox.setText(message);
+    messageBox.setStandardButtons(QMessageBox::Ok);
+    messageBox.setDefaultButton(QMessageBox::Ok);
+    messageBox.exec();
 }

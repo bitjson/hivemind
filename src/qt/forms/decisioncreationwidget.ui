@@ -154,12 +154,18 @@
         <property name="enabled">
          <bool>false</bool>
         </property>
+        <property name="maximum">
+         <double>999999999.000000000000000</double>
+        </property>
        </widget>
       </item>
       <item row="0" column="5">
        <widget class="QDoubleSpinBox" name="doubleSpinBoxScaledMax">
         <property name="enabled">
          <bool>false</bool>
+        </property>
+        <property name="maximum">
+         <double>999999999.000000000000000</double>
         </property>
        </widget>
       </item>
@@ -184,7 +190,11 @@
        </widget>
       </item>
       <item row="1" column="2">
-       <widget class="QSpinBox" name="spinBoxEventOverBy"/>
+       <widget class="QSpinBox" name="spinBoxEventOverBy">
+        <property name="maximum">
+         <number>999999999</number>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
