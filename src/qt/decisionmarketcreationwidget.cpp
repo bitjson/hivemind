@@ -1,11 +1,11 @@
 #include "decisionmarketcreationwidget.h"
 #include "ui_decisionmarketcreationwidget.h"
 
-#include "txdb.h"
-
-#include <QMessageBox>
 #include <QDialog>
 #include <QHBoxLayout>
+#include <QMessageBox>
+
+#include "txdb.h"
 
 extern CMarketTreeDB *pmarkettree;
 

@@ -27,6 +27,14 @@ private slots:
 
     void on_pushButtonCreateSealedVote_clicked();
 
+    void selectDecision();
+
+    void on_displayMessage(const QString &title, const QString &message);
+
+signals:
+    /** Signal raised to display messages from vote widget */
+    void displayMessage(const QString &title, const QString &message);
+
 private:
     Ui::VoteView *ui;
 
