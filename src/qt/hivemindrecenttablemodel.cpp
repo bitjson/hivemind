@@ -25,6 +25,8 @@ HivemindRecentTableModel::HivemindRecentTableModel(QObject *parent) :
     pollTimer = new QTimer(this);
     connect(pollTimer, SIGNAL(timeout()), this, SLOT(updateModel()));
     pollTimer->start(600000); // 10 minutes
+    // Also fire a single shot timer to update the model after initial sync.
+    QTimer::singleShot(42000, this, SLOT(updateModel()));
 
     // Perform first update
     updateModel();

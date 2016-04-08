@@ -74,9 +74,7 @@ The Hivemind Vote Process (Deciding Outcomes)
 At an interval of N number of blocks known as the tau, the Hivemind vote process
 is initiated by the miners. A voting period begins when the current block height
 is divisible by the tau value (nHeight % tau) == 0. A voting period ends at
-N + (tau - 1). For example, if the tau is 100 blocks, a new voting period begins
-when the current block height is divisible by 100 (the tau), and ends 99 blocks
-from the beginning of the voting period (tau - 1).
+N + (tau - 1).
 
 1. Voters request ballots and submit votes:
 
