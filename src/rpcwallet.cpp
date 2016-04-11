@@ -2759,6 +2759,8 @@ Value createtrade(const Array& params, bool fHelp)
     if (!address.IsValid())
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind address");
     address.GetKeyID(obj.keyID);
+
+    /* Add market id to the object, checked later (performance) */
     obj.marketid.SetHex(params[1].get_str());
 
     /* double-check buy_or_sell */
@@ -2847,10 +2849,8 @@ Value createtrade(const Array& params, bool fHelp)
 
     if ((obj.isBuy) && (1e-8*price > 1e-8*obj.price)) {
         delete market;
-        char tmp[32];
-        snprintf(tmp, sizeof(tmp), "%.8f", price);
         string strError = std::string("Error: price needs to be at least ")
-            + tmp;
+            + FormatMoney(price);
         throw JSONRPCError(RPC_WALLET_ERROR, strError.c_str());
     }
 
