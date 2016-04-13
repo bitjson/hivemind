@@ -240,6 +240,7 @@ extern json_spirit::Value getoutcome(const json_spirit::Array& params, bool fHel
 extern json_spirit::Value gettrade(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value getvote(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value getballot(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value getnewvotecoinaddress(const json_spirit::Array& params, bool fHelp);
 
 extern json_spirit::Value createbranch(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value createdecision(const json_spirit::Array& params, bool fHelp);
