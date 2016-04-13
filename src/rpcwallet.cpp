@@ -3663,6 +3663,49 @@ Value getballot(const Array &params, bool fHelp)
     return entry;
 }
 
+Value getnewvotecoinaddress(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() > 1)
+        throw runtime_error(
+            "getnewvotecoinaddress ( \"account\" )\n"
+            "\nReturns a new Votecoin address\n"
+            "If 'account' is specified (recommended), it is added to the address book \n"
+            "so payments received with the address will be credited to 'account'.\n"
+            "\nArguments:\n"
+            "1. \"account\"         (string, optional) The account name for the address to be linked to.\n"
+            "\nResult:\n"
+            "\"votecoinaddress\"    (string) The new votecoin address\n"
+            "\nExamples:\n"
+            + HelpExampleCli("getnewvotecoinaddress", "")
+            + HelpExampleCli("getnewvotecoinaddress", "\"\"")
+            + HelpExampleCli("getnewvotecoinaddress", "\"myaccount\"")
+            + HelpExampleRpc("getnewvotecoinaddress", "\"myaccount\"")
+        );
+
+    // Parse the account first so we don't generate a key if there's an error
+    string strAccount;
+    if (params.size() > 0)
+        strAccount = AccountFromValue(params[0]);
+
+    if (!pwalletMain->IsLocked())
+        pwalletMain->TopUpKeyPool();
+
+    // Generate a new key that is added to wallet
+    CPubKey newKey;
+    if (!pwalletMain->GetKeyFromPool(newKey))
+        throw JSONRPCError(RPC_WALLET_KEYPOOL_RAN_OUT, "Error: Keypool ran out, please call keypoolrefill first");
+    CKeyID keyID = newKey.GetID();
+
+    pwalletMain->SetAddressBook(keyID, strAccount, "receive");
+
+    // Create a Votecoin address from the new key
+    CHivemindAddress votecoinAddress;
+    votecoinAddress.is_votecoin = 1;
+    votecoinAddress.Set(keyID);
+
+    return votecoinAddress.ToString();
+}
+
 Value getcreatetradecapitalrequired(const Array& params, bool fHelp)
 {
     string strHelp =
