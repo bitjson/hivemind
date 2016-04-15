@@ -74,7 +74,7 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
     vector<marketOutcome *> outcomes = pmarkettree->GetOutcomes(branch->GetHash());
 
     /* Try to find the previous outcome transaction */
-    CTransaction previousRepTx;
+    CTransaction previousOutcomeTx;
     uint32_t previousOutcomeHeight = 0;
     for(size_t i = 0; i < outcomes.size(); ++i) {
         if (outcomes[i]->nHeight < previousOutcomeHeight)
@@ -82,13 +82,21 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
         if (outcomes[i]->tx.vout.empty())
             continue;
         previousOutcomeHeight = outcomes[i]->nHeight;
-        previousRepTx = outcomes[i]->tx;
+        previousOutcomeTx = outcomes[i]->tx;
     }
 
     /* If there is no previous outcome, get branch creation transaction */
     if (!previousOutcomeHeight) {
+        // Get the branch creation transaction
         uint256 hashBlock;
-        GetTransaction(branch->txid, previousRepTx, hashBlock, true);
+        bool foundBranchTx = GetTransaction(branch->txid, previousOutcomeTx, hashBlock, true);
+
+        // If this is the genesis branch, get the genesis branch transaction
+        if (!foundBranchTx && branch->GetHash() == Params().GenesisBranch().GetHash()) {
+            // Create the first outcome
+            CBlock genesisBlock = Params().GenesisBlock();
+            previousOutcomeTx = genesisBlock.vtx.front();
+        }
     }
 
     /* Retrieve the votes for this height. */
@@ -110,6 +118,9 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
     outcome->tol = branch->tol;
     outcome->nVoters = 0;
 
+    // TODO fix
+    // max = height - ballot - unseal
+    // min = height - tau - ballot - unseal
     /* The range of decision ending times to be included in the new outcome */
     uint32_t maxHeight = height; // Max = the current height, which is a multiple of tau.
     uint32_t minHeight = maxHeight - (branch->tau - 1); // Min = the begining of this tau period
@@ -134,11 +145,11 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
         outcome->voteMatrix.resize(voteMap.size()*outcome->nDecisions, outcome->NA);
 
         /* Go through the previous outcome and find voters */
-        for(uint32_t i=0; i < previousRepTx.vout.size(); i++) {
+        for(uint32_t i=0; i < previousOutcomeTx.vout.size(); i++) {
             uint160 u;
             vector<vector<unsigned char> > vSolutions;
             txnouttype whichType;
-            int rc = (Solver(previousRepTx.vout[i].scriptPubKey, whichType, vSolutions))? 0: -1;
+            int rc = (Solver(previousOutcomeTx.vout[i].scriptPubKey, whichType, vSolutions))? 0: -1;
             if (rc) {
                 if (whichType == TX_PUBKEY) {
                     CPubKey pubKey(vSolutions[0]);
@@ -159,7 +170,7 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
             /* The current voter's key */
             CKeyID keyID(u);
             outcome->voterIDs.push_back(keyID);
-            outcome->oldRep.push_back(previousRepTx.vout[i].nValue);
+            outcome->oldRep.push_back(previousOutcomeTx.vout[i].nValue);
             map<CKeyID, const marketRevealVote *>::const_iterator vit
                 = voteMap.find(keyID);
             if ((!rc) && (vit != voteMap.end())) {
@@ -182,9 +193,9 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
     }
 
     /* calculate the new reputations if we need to */
-    if (outcome->nVoters && previousRepTx.vout.size() && outcome->calc() == 0) {
+    if (outcome->nVoters && previousOutcomeTx.vout.size() && outcome->calc() == 0) {
         /* create new reputation tx and append to reputationTx */
-        for(uint32_t i=0; i < previousRepTx.vout.size(); i++) {
+        for(uint32_t i=0; i < previousOutcomeTx.vout.size(); i++) {
             CKeyID keyID = outcome->voterIDs[i];
             CScript script;
             script << OP_DUP << OP_HASH160 << ToByteVector(keyID) << OP_EQUALVERIFY << OP_CHECKSIG;
@@ -192,7 +203,7 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
              * Input: the previous reputation tx, or the branch creation tx if first outcome on branch
              * Output: reputation transfers to voters
              */
-            mtx.vin.push_back(CTxIn(COutPoint(previousRepTx.GetHash(),i)));
+            mtx.vin.push_back(CTxIn(COutPoint(previousOutcomeTx.GetHash(),i)));
             mtx.vout.push_back(CTxOut(outcome->smoothedRep[i], script));
         }
     }

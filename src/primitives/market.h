@@ -263,7 +263,7 @@ struct marketOutcome : public marketObj {
     uint64_t NA;
     uint64_t alpha; /* for smoothed rep */
     uint64_t tol;
-    CTransaction tx; /* transaction */
+    CTransaction tx; /* transaction with market payouts and reputation (votecoin) transfers */
 
     marketOutcome(void) : marketObj() { marketop = 'O'; } 
     virtual ~marketOutcome(void) { }
