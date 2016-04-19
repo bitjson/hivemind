@@ -58,7 +58,7 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
     /* The outcome transaction to return */
     CMutableTransaction mtx;
 
-    /* Check that the branch exists */
+    /* Check that branch actually points to something */
     if (!branch) return mtx;
 
     /* Make sure the current height is a factor of tau */
@@ -146,6 +146,7 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
 
         /* Go through the previous outcome and find voters */
         for(uint32_t i=0; i < previousOutcomeTx.vout.size(); i++) {
+            /* Get the current voter's key */
             uint160 u;
             vector<vector<unsigned char> > vSolutions;
             txnouttype whichType;
@@ -204,7 +205,7 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
              * Output: reputation transfers to voters
              */
             mtx.vin.push_back(CTxIn(COutPoint(previousOutcomeTx.GetHash(),i)));
-            mtx.vout.push_back(CTxOut(outcome->smoothedRep[i], script));
+            mtx.vout.push_back(CTxOut(1e-8*outcome->smoothedRep[i], script));
         }
     }
 
@@ -217,7 +218,6 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
     for (unsigned int x = 0; x < decisions.size(); x++) {
         // Get the markets for this decision
         uint256 uDecision(decisions.at(x)->GetHash());
-        //uDecision.SetHex(decisions.at(x)->GetHash().GetHex());
         vector<marketMarket* > decisionMarkets = pmarkettree->GetMarkets(uDecision);
 
         // Add the markets to the markets vector
@@ -437,6 +437,7 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn)
         if (btx.vout.size())
             pblock->vtx.push_back(btx);
     }
+    /* clean up */
     for(size_t i=0; i < branches.size(); i++)
         delete branches[i];
 
@@ -659,8 +660,9 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn)
         pblocktemplate->vTxSigOps[0] = GetLegacySigOpCount(pblock->vtx[0]);
 
         CValidationState state;
-        if (!TestBlockValidity(state, *pblock, pindexPrev, false, false))
+        if (!TestBlockValidity(state, *pblock, pindexPrev, false, false)) {
             throw std::runtime_error("CreateNewBlock() : TestBlockValidity failed");
+        }
     }
 
     return pblocktemplate.release();
