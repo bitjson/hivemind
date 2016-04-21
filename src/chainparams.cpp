@@ -52,10 +52,10 @@ static void convertSeed6(std::vector<CAddress> &vSeedsOut, const SeedSpec6 *data
 static Checkpoints::MapCheckpoints mapCheckpoints;
 static const Checkpoints::CCheckpointData data = {
         &mapCheckpoints,
-        1397080064, // * UNIX timestamp of last checkpoint block
-        36544669,   // * total number of transactions between genesis and last checkpoint
-                    //   (the tx=... number in the SetBestChain debug.log lines)
-        60000.0     // * estimated number of transactions per day after checkpoint
+        0, // * UNIX timestamp of last checkpoint block
+        0, // * total number of transactions between genesis and last checkpoint
+           //   (the tx=... number in the SetBestChain debug.log lines)
+        0  // * estimated number of transactions per day after checkpoint
     };
 static Checkpoints::MapCheckpoints mapCheckpointsTestnet;
 static const Checkpoints::CCheckpointData dataTestnet = {
@@ -102,7 +102,7 @@ public:
          */
         CMutableTransaction txNew;
         txNew.vin.resize(1);
-        txNew.vout.resize(2);
+        txNew.vout.resize(3);
 
         /* vin[0]: */
         txNew.vin[0].scriptSig = CScript() << ParseHex("ffff001d") << ParseHex("84");
@@ -128,14 +128,19 @@ public:
         txNew.vout[0].scriptPubKey = genesisBranch.GetScript();
 
         /* Genesis branch votecoins */
+        // 1 votecoin to Va21XbkLRmjs6ajLcR2dkzdhu1Lc5SLAUF
         txNew.vout[1].nValue = 100000000;
-        txNew.vout[1].scriptPubKey = CScript() << ParseHex("04E7ED3A17EB571C8159DC97F16158F464CABA5FE2878DFBF584AC8A65DA72D4B7B03381E809A59001AD2F13B2A50095434AD009FE2E812A66BE46B873AD39159A") << OP_CHECKSIG;
+        txNew.vout[1].scriptPubKey = CScript() << OP_DUP << OP_HASH160 << ParseHex("003947b2fe63ced9f1a8d685be6fe506972a6ddd") << OP_EQUALVERIFY << OP_CHECKSIG;
+
+        // 1 votecoin to VdSQB5w3f66UtrsizDJ7vAFRnv5DTBYKZP
+        txNew.vout[2].nValue = 100000000;
+        txNew.vout[2].scriptPubKey = CScript() << OP_DUP << OP_HASH160 << ParseHex("25be8b7137608126cde868ea55720ee8ebc1d5e1") << OP_EQUALVERIFY << OP_CHECKSIG;
 
         genesis.vtx.push_back(txNew);
         genesis.hashPrevBlock.SetNull();
         genesis.hashMerkleRoot = genesis.BuildMerkleTree();
         genesis.nVersion = 0x00000001;
-        genesis.nTime    = 1461108410;
+        genesis.nTime    = 1461280589;
         genesis.nBits    = 0x1d00ffff;
         genesis.nNonce   = 0x0145160c;
 
@@ -144,8 +149,8 @@ public:
 
         vSeeds.push_back(CDNSSeedData("162.243.37.30", "162.243.37.30"));
 
-        assert(genesis.hashMerkleRoot == uint256S("0xf58856467b9b49880c8697792348bf0a0f04060047fb8b76eaa689a5ec888074"));
-        assert(hashGenesisBlock == uint256S("0xd1103326dea04900c6b31e7da2881181a4c3dd0b140c7604ec944f071aace03e"));
+        assert(genesis.hashMerkleRoot == uint256S("0x1dd1b501318ca1dc8e2f32c6833fd3d6272822782cf8dfcaea232b623ca70a39"));
+        assert(hashGenesisBlock == uint256S("0x8331ba684254a659fa2454e0c8e262cc68c011f229bfffae318e3b0e2cc33ffe"));
 
         base58Prefixes[PUBKEY_ADDRESS] = boost::assign::list_of(0);
         base58Prefixes[VPUBKEY_ADDRESS] = boost::assign::list_of(71);
@@ -195,11 +200,11 @@ public:
         bnProofOfWorkLimit = ~arith_uint256(0) >> 10;
 
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
-        genesis.nTime = 1461109020;
+        genesis.nTime = 1461281589;
         genesis.nNonce = 3;
         hashGenesisBlock = genesis.GetHash();
 
-        assert(hashGenesisBlock == uint256S("0xb5614154f0ed19d582c4d8eaf5a3b639811447d94f8baf70d235890ff029edc1"));
+        assert(hashGenesisBlock == uint256S("0x804e2603231613625239a9c16a87c24ca09946a8890efba502878b57681baf7f"));
 
         convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
 
