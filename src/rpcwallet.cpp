@@ -218,20 +218,30 @@ Value setaccount(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "setaccount \"hivemindaddress\" \"account\"\n"
+            "setaccount \"hivemindaddress\" or \"votecoinaddress\" \"account\"\n"
             "\nSets the account associated with the given address.\n"
             "\nArguments:\n"
-            "1. \"hivemindaddress\"  (string, required) The hivemind address to be associated with an account.\n"
+            "1. \"hivemindaddress\" or \"votecoinaddress\"  (string, required) The hivemind address to be associated with an account.\n"
             "2. \"account\"         (string, required) The account to assign the address to.\n"
             "\nExamples:\n"
             + HelpExampleCli("setaccount", "\"1D1ZrZNe3JUo7ZycKEYQQiQAWd9y54F4XZ\" \"tabby\"")
             + HelpExampleRpc("setaccount", "\"1D1ZrZNe3JUo7ZycKEYQQiQAWd9y54F4XZ\", \"tabby\"")
         );
 
-    CHivemindAddress address(params[0].get_str());
-    if (!address.IsValid())
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind address");
+    CHivemindAddress address;
+    string strAddress = params[0].get_str();
 
+    // Try setting Hivemind address
+    if (!address.SetString(strAddress)) {
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind / Votecoin address");
+    }
+
+    // Is this a Votecoin address?
+    if (!address.IsValid()) {
+        address.is_votecoin = 1;
+        if (!address.IsValid())
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind / Votecoin address");
+    }
 
     string strAccount;
     if (params.size() > 1)

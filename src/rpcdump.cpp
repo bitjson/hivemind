@@ -337,11 +337,8 @@ Value dumpprivkey(const Array& params, bool fHelp)
     if (!address.IsValid()) {
         address.is_votecoin = 1;
         if (!address.IsValid())
-            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Votecoin address");
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind / Votecoin address");
     }
-
-    std::cout << "ax: " << address.ToString() << std::endl;
-    std::cout << "valid? " << address.IsValid() << std::endl;
 
     CKeyID keyID;
     if (!address.GetKeyID(keyID))
