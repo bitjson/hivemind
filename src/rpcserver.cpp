@@ -362,7 +362,9 @@ static const CRPCCommand vRPCCommands[] =
     { "market",             "getmarket",              &getmarket,              false,     false,      true },
     { "market",             "getoutcome",             &getoutcome,             false,     false,      true },
     { "market",             "gettrade",               &gettrade,               false,     false,      true },
-    { "market",             "getvote",                &getvote,                false,     false,      true },
+    { "market",             "getsealedvote",          &getsealedvote,          false,     false,      true },
+    { "market",             "getrevealvote",          &getrevealvote,          false,     false,      true },
+    { "market",             "getstealvote",           &getstealvote,           false,     false,      true },
     { "market",             "getballot",              &getballot,              false,     false,      true },
     { "market",             "getnewvotecoinaddress",  &getnewvotecoinaddress,  false,     false,      true },
 
