@@ -9,7 +9,7 @@ MarketGraphWidget::MarketGraphWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setupGraph();
+    setupMarketTradeViewGraph();
 }
 
 MarketGraphWidget::~MarketGraphWidget()
@@ -18,6 +18,15 @@ MarketGraphWidget::~MarketGraphWidget()
 }
 
 void MarketGraphWidget::setupGraph()
+{
+}
+
+void MarketGraphWidget::setupTableGraph()
+{
+
+}
+
+void MarketGraphWidget::setupMarketTradeViewGraph()
 {
     // Create random trade data for testing based on qcustomplot examples
     int trades = 10;
@@ -59,11 +68,11 @@ void MarketGraphWidget::setupGraph()
     // create candlestick chart:
     QCPFinancial *candlesticks = new QCPFinancial(ui->customPlot->xAxis, ui->customPlot->yAxis);
     ui->customPlot->addPlottable(candlesticks);
-    QCPFinancialDataMap data1 = QCPFinancial::timeSeriesToOhlc(time, candlestickValues, binSize, startTime);
+    QCPFinancialDataMap data1 = QCPFinancial::timeSeriesToOhlc(time, candlestickValues, binSize/5, startTime);
     candlesticks->setName("Candlestick");
     candlesticks->setChartStyle(QCPFinancial::csCandlestick);
     candlesticks->setData(&data1, true);
-    candlesticks->setWidth(binSize*0.9);
+    candlesticks->setWidth(binSize*0.6);
     candlesticks->setTwoColored(true);
     candlesticks->setBrushPositive(QColor(245, 245, 245));
     candlesticks->setBrushNegative(QColor(0, 0, 0));
@@ -73,17 +82,17 @@ void MarketGraphWidget::setupGraph()
     // create ohlc chart:
     QCPFinancial *ohlc = new QCPFinancial(ui->customPlot->xAxis, ui->customPlot->yAxis);
     ui->customPlot->addPlottable(ohlc);
-    QCPFinancialDataMap data2 = QCPFinancial::timeSeriesToOhlc(time, ohlcValues, binSize/3, startTime); // divide binSize by 3 just to make the ohlc bars a bit denser
+    QCPFinancialDataMap data2 = QCPFinancial::timeSeriesToOhlc(time, ohlcValues, binSize/5, startTime);
     ohlc->setName("OHLC");
     ohlc->setChartStyle(QCPFinancial::csOhlc);
     ohlc->setData(&data2, true);
-    ohlc->setWidth(binSize*0.9);
+    ohlc->setWidth(binSize*0.6);
     ohlc->setTwoColored(true);
 
     // create bottom axis rect for volume bar chart:
     QCPAxisRect *volumeAxisRect = new QCPAxisRect(ui->customPlot);
     ui->customPlot->plotLayout()->addElement(1, 0, volumeAxisRect);
-    //volumeAxisRect->setMaximumSize(QSize(QWIDGETSIZE_MAX, 100));
+    volumeAxisRect->setMaximumSize(QSize(QWIDGETSIZE_MAX, 100));
     volumeAxisRect->axis(QCPAxis::atBottom)->setLayer("axes");
     volumeAxisRect->axis(QCPAxis::atBottom)->grid()->setLayer("grid");
     // bring bottom and main axis rect closer together:
@@ -132,3 +141,9 @@ void MarketGraphWidget::setupGraph()
     ui->customPlot->axisRect()->setMarginGroup(QCP::msLeft|QCP::msRight, group);
     volumeAxisRect->setMarginGroup(QCP::msLeft|QCP::msRight, group);
 }
+
+void MarketGraphWidget::setupFullMarketGraph()
+{
+
+}
+

@@ -119,11 +119,9 @@ AC_DEFUN([HIVEMIND_QT_CONFIGURE],[
       fi
       _HIVEMIND_QT_CHECK_STATIC_PLUGINS([Q_IMPORT_PLUGIN(AccessibleFactory)], [-lqtaccessiblewidgets])
       if test x$TARGET_OS = xwindows; then
-         PKG_CHECK_MODULES([QTPRINT], [Qt5PrintSupport], [QT_LIBS="$QTPRINT_LIBS $QT_LIBS"])
         _HIVEMIND_QT_CHECK_STATIC_PLUGINS([Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)],[-lqwindows])
         AC_DEFINE(QT_QPA_PLATFORM_WINDOWS, 1, [Define this symbol if the qt platform is windows])
       elif test x$TARGET_OS = xlinux; then
-        PKG_CHECK_MODULES([QTPRINT], [Qt5PrintSupport], [QT_LIBS="$QTPRINT_LIBS $QT_LIBS"])
         PKG_CHECK_MODULES([X11XCB], [x11-xcb], [QT_LIBS="$X11XCB_LIBS $QT_LIBS"])
         _HIVEMIND_QT_CHECK_STATIC_PLUGINS([Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)],[-lqxcb -lxcb-static])
         AC_DEFINE(QT_QPA_PLATFORM_XCB, 1, [Define this symbol if the qt platform is xcb])
@@ -148,8 +146,9 @@ AC_DEFUN([HIVEMIND_QT_CONFIGURE],[
          Q_IMPORT_PLUGIN(qjpcodecs)
          Q_IMPORT_PLUGIN(qtwcodecs)
          Q_IMPORT_PLUGIN(qkrcodecs)
-         Q_IMPORT_PLUGIN(AccessibleFactory)],
-         [-lqcncodecs -lqjpcodecs -lqtwcodecs -lqkrcodecs -lqtaccessiblewidgets])
+         Q_IMPORT_PLUGIN(AccessibleFactory),
+         Q_IMPORT_PLUGIN(QWindowsPrinterSupportPlugin)],
+         [-lqcncodecs -lqjpcodecs -lqtwcodecs -lqkrcodecs -lqtaccessiblewidgets -lwindowsprintersupport])
     fi
   fi
   CPPFLAGS=$TEMP_CPPFLAGS
@@ -387,7 +386,6 @@ AC_DEFUN([_HIVEMIND_QT_FIND_LIBS_WITHOUT_PKGCONFIG],[
   HIVEMIND_QT_CHECK(AC_CHECK_LIB([${QT_LIB_PREFIX}Core]   ,[main],,HIVEMIND_QT_FAIL(lib$QT_LIB_PREFIXCore not found)))
   HIVEMIND_QT_CHECK(AC_CHECK_LIB([${QT_LIB_PREFIX}Gui]    ,[main],,HIVEMIND_QT_FAIL(lib$QT_LIB_PREFIXGui not found)))
   HIVEMIND_QT_CHECK(AC_CHECK_LIB([${QT_LIB_PREFIX}Network],[main],,HIVEMIND_QT_FAIL(lib$QT_LIB_PREFIXNetwork not found)))
-  HIVEMIND_QT_CHECK(AC_CHECK_LIB([${QT_LIB_PREFIX}PrintSupport],[main],,HIVEMIND_QT_FAIL(lib$QT_LIB_PREFIXPrintSupport not found)))
   if test x$hivemind_qt_got_major_vers = x5; then
     HIVEMIND_QT_CHECK(AC_CHECK_LIB([${QT_LIB_PREFIX}Widgets],[main],,HIVEMIND_QT_FAIL(lib$QT_LIB_PREFIXWidgets not found)))
   fi
