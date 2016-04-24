@@ -8,11 +8,13 @@ What is Hivemind?
 
 Hivemind is an ambitious modification of Bitcoin, which extends Bitcoin's abilities (to send an receive value-tokens) by adding the ability to create and participate in [markets for event derivatives ("prediction markets")](https://en.wikipedia.org/wiki/Prediction_market).
 
-Although substantially more complex, Hivemind offers correspondingly substantial benefits, having potentially world-changing implications for science, taxation, corporate governance and politics. 
+Although substantially more complex, Hivemind offers correspondingly substantial benefits, having potentially world-changing implications for science, taxation, corporate governance and politics.
 
 Hivemind includes two types of value-token.  One, "Bitcoin", is used for storing value, buying/selling in markets and paying transaction fees to miners. This coin will resemble Bitcoin-testnet-money (an "Altcoin") for the duration of pre-release testing, and will then be a [sidechain](http://www.blockstream.com/) of Bitcoin. Therefore, the network will "accept" Bitcoin (indeed, this will be the only currency the network accepts). The second (less important) token, "VoteCoin", is used to track a smaller group of special users and reward them for providing reports to the blockchain on the status of the bet-upon events.
 
 For an immediately useable, binary version of the Hivemind Core software, see [http://107.170.174.203/Builds/](http://107.170.174.203/Builds/).
+
+For more information, including the original whitepaper, please see the [Hivemind](http://bitcoinhivemind.com/).
 
 License
 -------
@@ -60,7 +62,7 @@ make install
 cd ../..
 
 # Install Remaining Dependencies
-sudo apt-get install autoconf libboost-all-dev libssl-dev libtool libdb++-dev libprotobuf-dev protobuf-compiler libqt4-dev libqrencode-dev 
+sudo apt-get install autoconf libboost-all-dev libssl-dev libtool libdb++-dev libprotobuf-dev protobuf-compiler libqt4-dev libqrencode-dev
 
 
 # Install Hivemindd (no GUI)

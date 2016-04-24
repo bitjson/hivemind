@@ -7,7 +7,7 @@ Setup
 
 Running
 ---------------------
-The following are some helpful notes on how to run Hivemind on your native platform. 
+The following are some helpful notes on how to run Hivemind on your native platform.
 
 ### Unix
 
@@ -26,7 +26,7 @@ Unpack the files into a directory and run:
 
 Unpack the files into a directory, and then run hivemind-qt.exe.
 
-### OSX
+### OS X
 
 Drag Hivemind-Qt to your applications folder, and then run Hivemind-Qt.
 
@@ -41,12 +41,12 @@ Building
 ---------------------
 The following are developer notes on how to build Hivemind on your native platform. They are not complete guides, but include notes on the necessary libraries, compile flags, etc.
 
-- [OSX Build Notes](build-osx.md)
+- [OS X Build Notes](build-osx.md)
 - [Unix Build Notes](build-unix.md)
 
 Development
 ---------------------
-The Hivemind repo's [root README](https://github.com/hivemind/hivemind/blob/master/README.md) contains relevant information on the development process and automated testing.
+The Hivemind repo's [root README](/README.md) contains relevant information on the development process and automated testing.
 
 - [Developer Notes](developer-notes.md)
 - [Multiwallet Qt Development](multiwallet-qt.md)

@@ -1,6 +1,7 @@
 Mac OS X Build Instructions and Notes
 ====================================
-This guide will show you how to build hivemindd(headless client) for OSX.
+
+This guide will show you how to build hivemindd (headless client) for OS X.
 
 Notes
 -----
