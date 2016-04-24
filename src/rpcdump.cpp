@@ -310,11 +310,11 @@ Value dumpprivkey(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
         throw runtime_error(
-            "dumpprivkey \"hivemindaddress\"\n"
-            "\nReveals the private key corresponding to 'hivemindaddress'.\n"
+            "dumpprivkey \"hivemindaddress\" or \"votecoinaddress\"\n"
+            "\nReveals the private key corresponding to 'hivemindaddress' or 'votecoinaddress'.\n"
             "Then the importprivkey can be used with this output\n"
             "\nArguments:\n"
-            "1. \"hivemindaddress\"   (string, required) The hivemind address for the private key\n"
+            "1. \"hivemindaddress\" or \"votecoinaddress\"  (string, required) The address for the private key\n"
             "\nResult:\n"
             "\"key\"                (string) The private key\n"
             "\nExamples:\n"
@@ -325,10 +325,21 @@ Value dumpprivkey(const Array& params, bool fHelp)
 
     EnsureWalletIsUnlocked();
 
-    string strAddress = params[0].get_str();
     CHivemindAddress address;
-    if (!address.SetString(strAddress))
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind address");
+    string strAddress = params[0].get_str();
+
+    // Try setting Hivemind address
+    if (!address.SetString(strAddress)) {
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind / Votecoin address");
+    }
+
+    // Is this a Votecoin address?
+    if (!address.IsValid()) {
+        address.is_votecoin = 1;
+        if (!address.IsValid())
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind / Votecoin address");
+    }
+
     CKeyID keyID;
     if (!address.GetKeyID(keyID))
         throw JSONRPCError(RPC_TYPE_ERROR, "Address does not refer to a key");

@@ -59,7 +59,7 @@ json_spirit::Array DecisionMarketCreationWidget::createDecisionMarketArray()
     QString title = ui->lineEditTitle->text();
     QString description = ui->plainTextEditDescription->toPlainText();
     QString tags = ui->lineEditTags->text();
-    int maturation = 1;
+    int maturation = ui->spinBoxMaturation->value();
     int txPoWh = ui->comboBoxHashFunction->currentIndex();
     int txPoWd = ui->doubleSpinBoxDifficulty->value();
 

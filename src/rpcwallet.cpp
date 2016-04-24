@@ -218,20 +218,30 @@ Value setaccount(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 1 || params.size() > 2)
         throw runtime_error(
-            "setaccount \"hivemindaddress\" \"account\"\n"
+            "setaccount \"hivemindaddress\" or \"votecoinaddress\" \"account\"\n"
             "\nSets the account associated with the given address.\n"
             "\nArguments:\n"
-            "1. \"hivemindaddress\"  (string, required) The hivemind address to be associated with an account.\n"
+            "1. \"hivemindaddress\" or \"votecoinaddress\"  (string, required) The hivemind address to be associated with an account.\n"
             "2. \"account\"         (string, required) The account to assign the address to.\n"
             "\nExamples:\n"
             + HelpExampleCli("setaccount", "\"1D1ZrZNe3JUo7ZycKEYQQiQAWd9y54F4XZ\" \"tabby\"")
             + HelpExampleRpc("setaccount", "\"1D1ZrZNe3JUo7ZycKEYQQiQAWd9y54F4XZ\", \"tabby\"")
         );
 
-    CHivemindAddress address(params[0].get_str());
-    if (!address.IsValid())
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind address");
+    CHivemindAddress address;
+    string strAddress = params[0].get_str();
 
+    // Try setting Hivemind address
+    if (!address.SetString(strAddress)) {
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind / Votecoin address");
+    }
+
+    // Is this a Votecoin address?
+    if (!address.IsValid()) {
+        address.is_votecoin = 1;
+        if (!address.IsValid())
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind / Votecoin address");
+    }
 
     string strAccount;
     if (params.size() > 1)
@@ -2974,14 +2984,8 @@ Value createsealedvote(const Array& params, bool fHelp)
     CAmount nFeeRequired;
     CAmount nAmount = (int64_t) rounduint64(0.01*COIN);
 
-    /*
-     * Allow for the creation of sealedvote objects with Bitcoin on the testnet.
-     * TODO: remove
-     */
-    string strAccount;
-    if (Params().NetworkIDString() == "main") {
-      strAccount = obj.branchid.ToString();
-    }
+    // Use votecoins to pay for the vote
+    string strAccount = obj.branchid.ToString();
 
     CWalletTx wtx;
     CTxDestination txDestChange;
@@ -3075,14 +3079,8 @@ Value createstealvote(const Array& params, bool fHelp)
     CAmount nFeeRequired;
     CAmount nAmount = (int64_t) rounduint64(0.01*COIN);
 
-    /*
-     * Allow for the creation of stealvote objects with Bitcoin on the testnet.
-     * TODO: remove
-     */
-    string strAccount;
-    if (Params().NetworkIDString() == "main") {
-      strAccount = obj.branchid.ToString();
-    }
+    // Use votecoins to pay for the vote
+    string strAccount = obj.branchid.ToString();
 
     CWalletTx wtx;
     CTxDestination txDestChange;
@@ -3204,14 +3202,8 @@ Value createrevealvote(const Array& params, bool fHelp)
     CAmount nFeeRequired;
     CAmount nAmount = (int64_t) rounduint64(0.01*COIN);
 
-    /*
-     * Allow for the creation of revealvote objects with Bitcoin on the testnet.
-     * TODO: remove
-     */
-    string strAccount;
-    if (Params().NetworkIDString() == "main") {
-      strAccount = obj.branchid.ToString();
-    }
+    // Use votecoins to pay for the vote
+    string strAccount = obj.branchid.ToString();
 
     CWalletTx wtx;
     CTxDestination txDestChange;
@@ -3562,10 +3554,10 @@ Value gettrade(const Array& params, bool fHelp)
     return entry;
 }
 
-Value getvote(const Array& params, bool fHelp)
+Value getsealedvote(const Array& params, bool fHelp)
 {
     string strHelp =
-        "getvote voteid"
+        "getsealedvote voteid"
         "\nReturns the vote."
         "\nArguments:"
         "\n1. voteid       (uint256 string)";
@@ -3581,10 +3573,104 @@ Value getvote(const Array& params, bool fHelp)
     uint256 id;
     id.SetHex(params[0].get_str());
 
-    // TODO
+    marketSealedVote *sealedVote = pmarkettree->GetSealedVote(id);
+
+    if (!sealedVote) {
+        string strError = std::string("Error: sealedvote does not exist!");
+        throw JSONRPCError(RPC_WALLET_ERROR, strError.c_str());
+    }
 
     Object entry;
     entry.push_back(Pair("voteid", id.ToString()));
+    entry.push_back(Pair("branchid", sealedVote->branchid.ToString()));
+    entry.push_back(Pair("height", (int)sealedVote->nHeight));
+    entry.push_back(Pair("txid", sealedVote->txid.ToString()));
+
+    return entry;
+}
+
+Value getrevealvote(const Array& params, bool fHelp)
+{
+    string strHelp =
+        "getrevealvote voteid"
+        "\nReturns the vote."
+        "\nArguments:"
+        "\n1. voteid       (uint256 string)";
+
+    if (fHelp || (params.size() != 1))
+        throw runtime_error(strHelp);
+
+    if (!pmarkettree) {
+        string strError = std::string("Error: NULL pmarkettree!");
+        throw JSONRPCError(RPC_WALLET_ERROR, strError.c_str());
+    }
+
+    uint256 id;
+    id.SetHex(params[0].get_str());
+
+    marketRevealVote *revealVote = pmarkettree->GetRevealVote(id);
+
+    if (!revealVote) {
+        string strError = std::string("Error: revealvote does not exist!");
+        throw JSONRPCError(RPC_WALLET_ERROR, strError.c_str());
+    }
+
+    Object entry;
+    entry.push_back(Pair("voteid", id.ToString()));
+    entry.push_back(Pair("branchid", revealVote->branchid.ToString()));
+    entry.push_back(Pair("height", (int)revealVote->nHeight));
+    entry.push_back(Pair("txid", revealVote->txid.ToString()));
+
+    // Get decision ID(s)
+    Array decisionArray;
+    for (unsigned int i = 0; i < revealVote->decisionIDs.size(); i++) {
+        decisionArray.push_back(revealVote->decisionIDs.at(i).GetHex());
+    }
+
+    entry.push_back(Pair("decisions", decisionArray));
+
+    // Get decision vote(s)
+    Array voteArray;
+    for (unsigned int i = 0; i < revealVote->decisionVotes.size(); i++) {
+        voteArray.push_back((int)revealVote->decisionVotes.at(i));
+    }
+
+    entry.push_back(Pair("votes", voteArray));
+
+    return entry;
+}
+
+Value getstealvote(const Array& params, bool fHelp)
+{
+    string strHelp =
+        "getstealvote voteid"
+        "\nReturns the vote."
+        "\nArguments:"
+        "\n1. voteid       (uint256 string)";
+
+    if (fHelp || (params.size() != 1))
+        throw runtime_error(strHelp);
+
+    if (!pmarkettree) {
+        string strError = std::string("Error: NULL pmarkettree!");
+        throw JSONRPCError(RPC_WALLET_ERROR, strError.c_str());
+    }
+
+    uint256 id;
+    id.SetHex(params[0].get_str());
+
+    marketStealVote *stealVote = pmarkettree->GetStealVote(id);
+
+    if (!stealVote) {
+        string strError = std::string("Error: stealvote does not exist!");
+        throw JSONRPCError(RPC_WALLET_ERROR, strError.c_str());
+    }
+
+    Object entry;
+    entry.push_back(Pair("voteid", id.ToString()));
+    entry.push_back(Pair("branchid", stealVote->branchid.ToString()));
+    entry.push_back(Pair("height", (int)stealVote->nHeight));
+    entry.push_back(Pair("txid", stealVote->txid.ToString()));
 
     return entry;
 }

@@ -52,10 +52,10 @@ static void convertSeed6(std::vector<CAddress> &vSeedsOut, const SeedSpec6 *data
 static Checkpoints::MapCheckpoints mapCheckpoints;
 static const Checkpoints::CCheckpointData data = {
         &mapCheckpoints,
-        1397080064, // * UNIX timestamp of last checkpoint block
-        36544669,   // * total number of transactions between genesis and last checkpoint
-                    //   (the tx=... number in the SetBestChain debug.log lines)
-        60000.0     // * estimated number of transactions per day after checkpoint
+        0, // * UNIX timestamp of last checkpoint block
+        0, // * total number of transactions between genesis and last checkpoint
+           //   (the tx=... number in the SetBestChain debug.log lines)
+        0  // * estimated number of transactions per day after checkpoint
     };
 static Checkpoints::MapCheckpoints mapCheckpointsTestnet;
 static const Checkpoints::CCheckpointData dataTestnet = {
@@ -76,7 +76,6 @@ class CMainParams : public CChainParams {
 public:
     CMainParams() {
         strNetworkID = "main";
-bool SHORT_TAU_TESTING = true;
         /**
          * The message start string is designed to be unlikely to occur in normal data.
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
@@ -120,55 +119,38 @@ bool SHORT_TAU_TESTING = true;
         genesisBranch.minTradingFee = COIN / 100;
         genesisBranch.alpha = COIN / 10;
         genesisBranch.tol = COIN / 5;
-if (SHORT_TAU_TESTING) {
         genesisBranch.tau = 7*40;
         genesisBranch.ballotTime = 2*40;
         genesisBranch.unsealTime = 2*40;
-} else {
-        genesisBranch.tau = (14 * 24 * 60) / 10; /* 14 days */
-        genesisBranch.ballotTime = (genesisBranch.tau - 16)/2;
-        genesisBranch.unsealTime = (genesisBranch.tau - 16)/2;
-}
         genesisBranch.consensusThreshold = COIN / 100;
 
         txNew.vout[0].nValue = 0;
         txNew.vout[0].scriptPubKey = genesisBranch.GetScript();
 
-        /* vout[1..3]: the branch's votecoins */
-        txNew.vout[1].nValue = 50000000;
-        txNew.vout[1].scriptPubKey = CScript() << ParseHex("048c28a97bf8298bc0d23d8c749452a32e694b65e30a9472a3954ab30fe5324caa40a30463a3305193378fedf31f7cc0eb7ae784f0451cb9459e71dc73cbef9482") << OP_CHECKSIG;
-        txNew.vout[2].nValue = 50000000;
-        txNew.vout[2].scriptPubKey = CScript() << ParseHex("04ab1ac1872a38a2f196bed5a6047f0da2c8130fe8de49fc4d5dfb201f7611d8e213f4a37a324d17a1e9aa5f39db6a42b6f7ef93d33e1e545f01a581f3c429d15b") << OP_CHECKSIG;
-/*
-        txNew.vout[3].nValue = 33333333;
-        txNew.vout[3].scriptPubKey = CScript() << ParseHex("049729247032c0dfcf45b4841fcd72f6e9a2422631fc3466cf863e87154754dd4091d1a244265fea1dcd15c75dcbd4df3690dae85255acaf49384b492f2aa36143") << OP_CHECKSIG;
-*/
+        /* Genesis branch votecoins */
+        // 1 votecoin to Va21XbkLRmjs6ajLcR2dkzdhu1Lc5SLAUF
+        txNew.vout[1].nValue = 100000000;
+        txNew.vout[1].scriptPubKey = CScript() << OP_DUP << OP_HASH160 << ParseHex("003947b2fe63ced9f1a8d685be6fe506972a6ddd") << OP_EQUALVERIFY << OP_CHECKSIG;
+
+        // 1 votecoin to VdSQB5w3f66UtrsizDJ7vAFRnv5DTBYKZP
+        txNew.vout[2].nValue = 100000000;
+        txNew.vout[2].scriptPubKey = CScript() << OP_DUP << OP_HASH160 << ParseHex("25be8b7137608126cde868ea55720ee8ebc1d5e1") << OP_EQUALVERIFY << OP_CHECKSIG;
+
         genesis.vtx.push_back(txNew);
         genesis.hashPrevBlock.SetNull();
         genesis.hashMerkleRoot = genesis.BuildMerkleTree();
         genesis.nVersion = 0x00000001;
-if (SHORT_TAU_TESTING) {
-        genesis.nTime    = 0x5572fec9;
+        genesis.nTime    = 1461280589;
         genesis.nBits    = 0x1d00ffff;
         genesis.nNonce   = 0x0145160c;
-} else {
-        genesis.nTime    = 0x5517ec26;
-        genesis.nBits    = 0x1d00ffff;
-        genesis.nNonce   = 0x0a52fab0;
-}
 
         genesisBranch.txid = txNew.GetHash();
         hashGenesisBlock = genesis.GetHash();
 
         vSeeds.push_back(CDNSSeedData("162.243.37.30", "162.243.37.30"));
 
-if (SHORT_TAU_TESTING) {
-        assert(genesis.hashMerkleRoot == uint256S("0x84468287c97d192c4e5d957964f802cd51ded59b714c2ddb7348edf4f4c45fa5"));
-        assert(hashGenesisBlock == uint256S("0xbbaf560c1381592e96286e62df302b09f6557284d4c2181f830e2cd3905b4c16"));
-} else {
-        assert(genesis.hashMerkleRoot == uint256S("0x22070acaf5bd2762a487ffc4ec34289c4a52add700561abd96fdabd446b1730c"));
-        assert(hashGenesisBlock == uint256S("0x000000006249a3761ba3be5307773df2d7a1c3214a381c96876e098997110fc1"));
-}
+        assert(genesis.hashMerkleRoot == uint256S("0x1dd1b501318ca1dc8e2f32c6833fd3d6272822782cf8dfcaea232b623ca70a39"));
+        assert(hashGenesisBlock == uint256S("0x8331ba684254a659fa2454e0c8e262cc68c011f229bfffae318e3b0e2cc33ffe"));
 
         base58Prefixes[PUBKEY_ADDRESS] = boost::assign::list_of(0);
         base58Prefixes[VPUBKEY_ADDRESS] = boost::assign::list_of(71);
@@ -215,14 +197,14 @@ public:
         nTargetTimespan = 10 * 60; // 10 minutes
         nTargetSpacing = 1 * 60; // 1 minute
 
-        bnProofOfWorkLimit = ~arith_uint256(0) >> 12;
+        bnProofOfWorkLimit = ~arith_uint256(0) >> 10;
 
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
-        genesis.nTime = 1454472451;
+        genesis.nTime = 1461281589;
         genesis.nNonce = 3;
-        hashGenesisBlock = uint256S("0x14ddcf0a2bb0041dab74b50029e85211fb0be42125a2be0a37837e884e5167d5");
+        hashGenesisBlock = genesis.GetHash();
 
-        assert(hashGenesisBlock == uint256S("0x14ddcf0a2bb0041dab74b50029e85211fb0be42125a2be0a37837e884e5167d5"));
+        assert(hashGenesisBlock == uint256S("0x804e2603231613625239a9c16a87c24ca09946a8890efba502878b57681baf7f"));
 
         convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
 
@@ -257,7 +239,7 @@ public:
         nTargetTimespan = 14 * 24 * 60 * 60; //! two weeks
         nTargetSpacing = 10 * 60;
         bnProofOfWorkLimit = ~arith_uint256(0) >> 1;
-        genesis.nTime = 1296688602;
+        genesis.nTime = 1461108410;
         genesis.nBits = 0x207fffff;
         genesis.nNonce = 2;
         hashGenesisBlock = genesis.GetHash();

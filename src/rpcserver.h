@@ -238,7 +238,9 @@ extern json_spirit::Value getdecision(const json_spirit::Array& params, bool fHe
 extern json_spirit::Value getmarket(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value getoutcome(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value gettrade(const json_spirit::Array& params, bool fHelp);
-extern json_spirit::Value getvote(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value getsealedvote(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value getrevealvote(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value getstealvote(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value getballot(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value getnewvotecoinaddress(const json_spirit::Array& params, bool fHelp);
 

@@ -262,6 +262,8 @@ CTxDestination CHivemindAddress::Get() const
     memcpy(&id, &vchData[0], 20);
     if (vchVersion == Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS))
         return CKeyID(id);
+    else if (vchVersion == Params().Base58Prefix(CChainParams::VPUBKEY_ADDRESS))
+        return CKeyID(id);
     else if (vchVersion == Params().Base58Prefix(CChainParams::SCRIPT_ADDRESS))
         return CScriptID(id);
     else

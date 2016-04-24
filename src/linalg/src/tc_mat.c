@@ -451,6 +451,7 @@ tc_mat_svd(
         }
         return 0;
     }
+
     /* Step1: A = U D V where D is bi-diagonal
      *            A is nr x nc
      *            U is nr x nr
@@ -482,7 +483,7 @@ tc_mat_svd(
     /* iterate until either max_iterations has been hit
      * or the largest superdiagonal entry is below the
      * threshold. Set threshold = 1-e8 * largest element.
-     * Any term less than 0.1 threshold will be considered
+     * Any term less than 0.1 * threshold will be considered
      * to be zero.
      */
     const uint32_t max_iterations = 100 * D->nc;
@@ -505,7 +506,7 @@ tc_mat_svd(
     {
         /* For any zeros on the diagonal, apply a series of
          * Givens rotations to also zero out its off-diagonal
-         * term.  Then move this component into D1.
+         * term. Then move this component into D1.
          */
         for(uint32_t i1=i0; i1 < D->nr; i1++) {
             if (fabs(D->a[i1][i1]) > zero_threshold)
@@ -607,8 +608,7 @@ tc_mat_svd(
         }
         if (i0 >= D->nr - 1)
             break;
-        /* Find largest element on super diagonal.*/
-        /* Break if less than threshold.          */
+        /* Find largest element on super diagonal. */
         double largest_off_diag = 0.0;
         uint32_t n_zeros_on_off_diagonal = 0;
         for(uint32_t i=i0; i+1 < D->nr; i++) {
@@ -617,6 +617,7 @@ tc_mat_svd(
             if (fabs(D->a[i][i+1]) < zero_threshold)
                 n_zeros_on_off_diagonal++;
         }
+        /* Break if largest element less than threshold. */
         if (largest_off_diag < threshold)
             break;
         /* Find the next zero on the uper diagonal*/
@@ -625,7 +626,7 @@ tc_mat_svd(
         for(  ; i1+1 < D->nr; i1++)
             if (fabs(D->a[i1][i1+1]) < zero_threshold)
                 break;
-        /* Find Wilkerson shift.                  */
+        /* Find Wilkinson shift. */
         struct tc_mat *t = tc_mat_ctr(3, 2);
         for(uint32_t i=0; i < 3; i++)
             for(uint32_t j=0; j < 2; j++)
@@ -815,8 +816,7 @@ tc_wgt_median(const struct tc_mat *wgt, const struct tc_mat *A, uint32_t j,
     double mid_wgts = sum_wgts / 2.0;
 
     /* Is there a median to look for? */
-    if (nwgts <= 2)
-        return 0.0;
+    if (nwgts == 0) return 0.0;
 
     /* iterate through the sorted values until mid_wgts is passed */
     qsort(v, nwgts, sizeof(struct vecdouble), vecdouble_cmp);
@@ -1035,13 +1035,21 @@ tc_vote_proc(struct tc_vote *vote)
     struct tc_mat *isbin = vote->cvecs[TC_VOTE_IS_BINARY];
     struct tc_mat *firstloading = vote->cvecs[TC_VOTE_FIRST_LOADING];
 
-    /* fM: M with NAs filled in with the preliminary outcomes */
+    /* fM: M with NAs filled in (for SVD) with the preliminary outcomes */
     struct tc_mat *fM = tc_mat_ctr(M->nr, M->nc);
     tc_mat_copy(fM, M);
     for(uint32_t j=0; j < M->nc; j++) {
-        double prelim_outcome = (isbin->a[0][j] != 0.0)?
-            tc_wgt_mean(wgt, M, j, vote->NA):
-            tc_wgt_median(wgt, M, j, vote->NA);
+        /* Calculate the preliminary outcome */
+        double prelim_outcome = 0.0;
+        if (isbin->a[0][j] != 0.0) {
+            // Use the mean for binary decisions
+            prelim_outcome = tc_wgt_mean(wgt, M, j, vote->NA);
+        } else {
+            // Use the median for scaled decisions
+            prelim_outcome = tc_wgt_median(wgt, M, j, vote->NA);
+        }
+
+        // Replace NA values in the matrix with the preliminary outcome
         for(uint32_t i=0; i < M->nr; i++)
             if (fM->a[i][j] == vote->NA)
                 fM->a[i][j] = prelim_outcome;

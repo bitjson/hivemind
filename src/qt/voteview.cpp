@@ -8,6 +8,9 @@
 #include <iostream>
 #include "base58.h"
 #include "txdb.h"
+#include "wallet.h"
+
+extern CWallet* pwalletMain;
 
 VoteView::VoteView(QWidget *parent) :
     QWidget(parent),
@@ -48,11 +51,15 @@ void VoteView::on_pushButtonCreateRevealVote_clicked()
         return;
     }
 
-    // Create Votecoin address
-    CHivemindAddress address;
-    address.is_votecoin = 1;
-    CScriptID id = branch->GetScript();
-    address.Set(id);
+    // Get the voter's address
+    CHivemindAddress voterAddress;
+    voterAddress.is_votecoin = 1;
+    voterAddress.SetString(ui->lineEditVotecoinAddress->text().toStdString());
+
+    if (!voterAddress.IsValid()) {
+        emit displayMessage("Error creating Reveald Vote", "Invalid Votecoin address!");
+        return;
+    }
 
     // Try to get the sealed vote
     uint256 uVote;
@@ -66,7 +73,7 @@ void VoteView::on_pushButtonCreateRevealVote_clicked()
 
     // Create spirit array of sealed vote params
     json_spirit::Array revealVoteParams;
-    revealVoteParams.push_back(address.ToString());
+    revealVoteParams.push_back(voterAddress.ToString());
     revealVoteParams.push_back(branch->GetHash().GetHex());
     int height = sealedVote->height;
     revealVoteParams.push_back(height);
@@ -153,9 +160,7 @@ void VoteView::on_pushButtonCreateSealedVote_clicked()
     }
 
     // Create blank voteid
-    std::string voteID = "0000000000000000000000000000000000000000000000000000000000000000";
     uint256 uVote;
-    uVote.SetHex(voteID);
 
     // Grab the decision if it exists
     std::string decisionID = ui->lineEditDecisionID->text().toStdString();
@@ -167,11 +172,15 @@ void VoteView::on_pushButtonCreateSealedVote_clicked()
         return;
     }
 
-    // Create Votecoin address
-    CHivemindAddress address;
-    address.is_votecoin = 1;
-    CScriptID id = branch->GetScript();
-    address.Set(id);
+    // Get the voter's address
+    CHivemindAddress voterAddress;
+    voterAddress.is_votecoin = 1;
+    voterAddress.SetString(ui->lineEditVotecoinAddress->text().toStdString());
+
+    if (!voterAddress.IsValid()) {
+        emit displayMessage("Error creating Sealed Vote", "Invalid Votecoin address!");
+        return;
+    }
 
     // Create revealvote
     marketRevealVote revealVote;
@@ -181,7 +190,7 @@ void VoteView::on_pushButtonCreateSealedVote_clicked()
     revealVote.decisionIDs.push_back(decision->GetHash());
     revealVote.decisionVotes.push_back(ui->comboBoxVote->currentIndex());
     revealVote.NA = 2016;
-    address.GetKeyID(revealVote.keyID);
+    voterAddress.GetKeyID(revealVote.keyID);
 
     /* 2. Create sealed vote object from revealed vote object */
 
@@ -217,6 +226,7 @@ void VoteView::on_pushButtonCreateSealedVote_clicked()
             int code = codePair.value_.get_int();
             if (code < 0) {
                 emit displayMessage("Error creating Sealed Vote", QString::fromStdString(messagePair.value_.get_str()));
+                return;
             }
         }
 
