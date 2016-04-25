@@ -25,6 +25,7 @@ public slots:
 
 private:
     QList<marketMarket *> marketModel;
+    QList<QPixmap *> graphPixmapList;
 
 };
 
