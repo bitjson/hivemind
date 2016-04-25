@@ -56,8 +56,8 @@ regularly to indicate new official, stable release versions of Hivemind.
 Testing / Where to start
 -------
 
-### The Hivemind project maintains a repository with everything a developer needs to start testing and working on the Bitcoin Hivemind project, as well as a network with nodes containing canonical blockchain data to work with.
+The Hivemind project maintains a repository with everything a developer needs to start testing and working on the Bitcoin Hivemind project, as well as a network with nodes containing canonical blockchain data to work with.
 https://github.com/bitcoin-hivemind/testnet-canonical
 
-### To find something to work on, see the issues page or the Hivemind roadmap:
+To find something to work on, see the issues page or the Hivemind roadmap:
 http://bitcoinhivemind.com/blog/roadmap/
