@@ -1,6 +1,10 @@
 #include "marketmodel.h"
 
+#include "marketgraphwidget.h"
+
 #include <sstream>
+#include <QWidget>
+#include <QHBoxLayout>
 
 extern CMarketTreeDB *pmarkettree;
 
@@ -38,11 +42,6 @@ QVariant MarketModel::data(const QModelIndex &index, int role) const
             return QString::fromStdString(market->title);
         }
 
-        // Graph
-        if (col == 1) {
-            return QString("Graph");
-        }
-
         // Market Details
         if (col == 2) {
             std::stringstream sstream;
@@ -52,6 +51,23 @@ QVariant MarketModel::data(const QModelIndex &index, int role) const
             sstream << "Market ID: " << market->GetHash().GetHex() << std::endl;
 
             return QString::fromStdString(sstream.str());
+        }
+    }
+
+    case Qt::DecorationRole:
+    {
+        // Graph
+        if (col == 1) {
+            MarketGraphWidget graphWidget;
+            return graphWidget.getTableGraphPixmap();
+        }
+    }
+
+    case Qt::SizeHintRole:
+    {
+        // Graph
+        if (col == 1) {
+            return QSize(80, 80);
         }
     }
     }

@@ -17,13 +17,27 @@ MarketGraphWidget::~MarketGraphWidget()
     delete ui;
 }
 
-void MarketGraphWidget::setupGraph()
+QPixmap MarketGraphWidget::getTableGraphPixmap()
 {
-}
+    int numTrades = 50;
 
-void MarketGraphWidget::setupTableGraph()
-{
+    // Create data
+    QVector<double> x(numTrades), y(numTrades);
+    for (int i = 0; i < numTrades; i++) {
+        x[i] = i;
+        y[i] = i * 2;
+    }
 
+    // Create graph
+    ui->customPlot->addGraph();
+    ui->customPlot->graph(0)->setData(x, y);
+
+    // Setup graph
+    ui->customPlot->xAxis->setRange(0, 50);
+    ui->customPlot->yAxis->setRange(0, 100);
+    ui->customPlot->replot();
+
+    return ui->customPlot->toPixmap(80, 80);
 }
 
 void MarketGraphWidget::setupMarketTradeViewGraph()

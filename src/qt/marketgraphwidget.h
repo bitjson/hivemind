@@ -15,18 +15,13 @@ public:
     explicit MarketGraphWidget(QWidget *parent = 0);
     ~MarketGraphWidget();
 
-private:
-    Ui::MarketGraphWidget *ui;
-
-    void setupGraph();
-
     /*
      * Market graph to be used inside of table cells.
      *
      * Very small, 80x80 or smaller.
      * Should display a simple line X Y chart that is legible at small sizes
      */
-    void setupTableGraph();
+    QPixmap getTableGraphPixmap();
 
     /*
      * Market graph to be used inside the TradeView widget.
@@ -41,6 +36,10 @@ private:
      * able to open up this view from the MarketTradeView.
      */
     void setupFullMarketGraph();
+
+private:
+    Ui::MarketGraphWidget *ui;
+
 };
 
 #endif // MARKETGRAPHWIDGET_H
