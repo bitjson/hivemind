@@ -48,11 +48,7 @@
 
 #if QT_VERSION < 0x050000
 #include <qnumeric.h>
-#include <QPrinter>
-#include <QPrintEngine>
 #else
-#include <QtPrintSupport/QPrinter>
-#include <QtPrintSupport/QtPrintSupport>
 #include <QtNumeric>
 #endif
 

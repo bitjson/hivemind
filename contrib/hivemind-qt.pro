@@ -19,5 +19,3 @@ FORMS += \
 
 RESOURCES += \
     ../src/qt/hivemind.qrc
-
-QT += printsupport
