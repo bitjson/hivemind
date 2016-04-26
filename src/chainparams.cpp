@@ -102,7 +102,7 @@ public:
          */
         CMutableTransaction txNew;
         txNew.vin.resize(1);
-        txNew.vout.resize(3);
+        txNew.vout.resize(2);
 
         /* vin[0]: */
         txNew.vin[0].scriptSig = CScript() << ParseHex("ffff001d") << ParseHex("84");
@@ -128,29 +128,24 @@ public:
         txNew.vout[0].scriptPubKey = genesisBranch.GetScript();
 
         /* Genesis branch votecoins */
-        // 1 votecoin to Va21XbkLRmjs6ajLcR2dkzdhu1Lc5SLAUF
-        txNew.vout[1].nValue = 100000000;
-        txNew.vout[1].scriptPubKey = CScript() << OP_DUP << OP_HASH160 << ParseHex("003947b2fe63ced9f1a8d685be6fe506972a6ddd") << OP_EQUALVERIFY << OP_CHECKSIG;
-
-        // 1 votecoin to VdSQB5w3f66UtrsizDJ7vAFRnv5DTBYKZP
-        txNew.vout[2].nValue = 100000000;
-        txNew.vout[2].scriptPubKey = CScript() << OP_DUP << OP_HASH160 << ParseHex("25be8b7137608126cde868ea55720ee8ebc1d5e1") << OP_EQUALVERIFY << OP_CHECKSIG;
+        txNew.vout[1].nValue = 2500000000; // Vs3wG59emG9RawcDmPp4h8E6RQSUcU8JVs
+        txNew.vout[1].scriptPubKey = CScript() << OP_DUP << OP_HASH160 << ParseHex("bb10b0147b4a27610135ec84d78a1c9492f6452b") << OP_EQUALVERIFY << OP_CHECKSIG;
 
         genesis.vtx.push_back(txNew);
         genesis.hashPrevBlock.SetNull();
         genesis.hashMerkleRoot = genesis.BuildMerkleTree();
         genesis.nVersion = 0x00000001;
-        genesis.nTime    = 1461280589;
+        genesis.nTime    = 1461628983;
         genesis.nBits    = 0x1d00ffff;
-        genesis.nNonce   = 0x0145160c;
+        genesis.nNonce   = 3;
 
         genesisBranch.txid = txNew.GetHash();
         hashGenesisBlock = genesis.GetHash();
 
         vSeeds.push_back(CDNSSeedData("162.243.37.30", "162.243.37.30"));
 
-        assert(genesis.hashMerkleRoot == uint256S("0x1dd1b501318ca1dc8e2f32c6833fd3d6272822782cf8dfcaea232b623ca70a39"));
-        assert(hashGenesisBlock == uint256S("0x8331ba684254a659fa2454e0c8e262cc68c011f229bfffae318e3b0e2cc33ffe"));
+        assert(genesis.hashMerkleRoot == uint256S("0xf52a2c57f7633044dc1c8e8d3a02c732992417acd045abd9bddbda3ab8187445"));
+        assert(hashGenesisBlock == uint256S("0x1ba40c3fe57ffa5c0f845b669dbd942b941cc7e0e1dca592dd888cf242cf7295"));
 
         base58Prefixes[PUBKEY_ADDRESS] = boost::assign::list_of(0);
         base58Prefixes[VPUBKEY_ADDRESS] = boost::assign::list_of(71);
@@ -200,11 +195,11 @@ public:
         bnProofOfWorkLimit = ~arith_uint256(0) >> 10;
 
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
-        genesis.nTime = 1461281589;
+        genesis.nTime = 1461628993;
         genesis.nNonce = 3;
         hashGenesisBlock = genesis.GetHash();
 
-        assert(hashGenesisBlock == uint256S("0x804e2603231613625239a9c16a87c24ca09946a8890efba502878b57681baf7f"));
+        assert(hashGenesisBlock == uint256S("0x1e50d6db652310cb4d365e677ec9accf7273521e7943f84d265bc893a9a22d27"));
 
         convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
 
