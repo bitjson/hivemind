@@ -139,6 +139,97 @@ Value importprivkey(const Array& params, bool fHelp)
     return Value::null;
 }
 
+Value importvoteprivkey(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() < 2 || params.size() > 3)
+        throw runtime_error(
+            "importvoteprivkey \"hivemindprivkey\" \"branchid\" (rescan)\n"
+            "\nAdds a private key (as returned by dumpprivkey) to your wallet.\n"
+            "\nArguments:\n"
+            "1. \"hivemindprivkey\"   (string, required) The private key (see dumpprivkey)\n"
+            "2. \"branchid\"            (string, required) The branchid this address is used for\n"
+            "3. rescan               (boolean, optional, default=true) Rescan the wallet for transactions\n"
+            "\nNote: This call can take minutes to complete if rescan is true.\n"
+            "\nExamples:\n"
+            "\nDump a private key\n"
+            + HelpExampleCli("dumpprivkey", "\"myaddress\"") +
+            "\nImport the private key with rescan\n"
+            + HelpExampleCli("importvoteprivkey", "\"mykey\"") +
+            "\nImport using a label and without rescan\n"
+            + HelpExampleCli("importvoteprivkey", "\"mykey\" \"branchid\" false") +
+            "\nAs a JSON-RPC call\n"
+            + HelpExampleRpc("importvoteprivkey", "\"mykey\", \"branchid\", false")
+        );
+
+    EnsureWalletIsUnlocked();
+
+    string strSecret = params[0].get_str();
+    string strLabel = "";
+
+    // Whether to perform rescan after import
+    bool fRescan = true;
+    if (params.size() > 2)
+        fRescan = params[2].get_bool();
+
+    CHivemindSecret vchSecret;
+    bool fGood = vchSecret.SetString(strSecret);
+
+    if (!fGood) throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid private key encoding");
+
+    CKey key = vchSecret.GetKey();
+    if (!key.IsValid()) throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Private key outside allowed range");
+
+    CPubKey pubkey = key.GetPubKey();
+    assert(key.VerifyPubKey(pubkey));
+
+    CHivemindAddress votecoinAddress;
+    votecoinAddress.is_votecoin = 1;
+    votecoinAddress.Set(pubkey.GetID());
+    if (!votecoinAddress.IsValid()) throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Private key outside allowed range");
+
+    /* Add address to the address book */
+    CKeyID vchAddress;
+    votecoinAddress.GetKeyID(vchAddress);
+    {
+        std::cout << "Adding " << vchAddress.ToString() << std::endl;
+        pwalletMain->MarkDirty();
+        pwalletMain->SetAddressBook(vchAddress, strLabel, "receive");
+
+        // Don't throw error in case a key is already there
+        if (pwalletMain->HaveKey(vchAddress))
+            return Value::null;
+
+        pwalletMain->mapKeyMetadata[vchAddress].nCreateTime = 1;
+
+        if (!pwalletMain->AddKeyPubKey(key, pubkey))
+            throw JSONRPCError(RPC_WALLET_ERROR, "Error adding key to wallet");
+
+        // whenever a key is imported, we need to scan the whole chain
+        pwalletMain->nTimeFirstKey = 1; // 0 would be considered 'no value'
+
+        if (fRescan) {
+            pwalletMain->ScanForWalletTransactions(chainActive.Genesis(), true);
+        }
+    }
+
+    /* Set the account (branchid) for the imported votecoin address */
+    string strAccount;
+    if (params.size() > 1) {
+        strAccount = params[1].get_str();
+        if (strAccount == "*")
+            throw JSONRPCError(RPC_WALLET_ERROR, "Invalid account name");
+    }
+
+    // Only add the account if the address is yours.
+    if (IsMine(*pwalletMain, votecoinAddress.Get())) {
+        pwalletMain->SetAddressBook(votecoinAddress.Get(), strAccount, "receive");
+    } else {
+        throw JSONRPCError(RPC_MISC_ERROR, "setaccount can only be used with own address");
+    }
+
+    return Value::null;
+}
+
 Value importaddress(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 1 || params.size() > 3)

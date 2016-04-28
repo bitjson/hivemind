@@ -345,10 +345,32 @@ Create Outcome
 ------------------
 
   action_type = char        'O' (createoutcomes)
-  action_data =
-                TODO
+  action_data = uint256     branchid
+                uint32      number of voters
+                {uint64}+   old reputation
+                {uint64}+   this reputation
+                {uint64}+   smoothed reputation
+                {uint64}+   NA row
+                {uint64}+   participation row
+                {uint64}+   participation rel
+                {uint64}+   bonus row
+                uint32      number of decisions
+                {uint256}+  decision ids
+                {uint64}+   is scaled array
+                {uint64}+   first loading
+                {uint64}+   decisions raw
+                {uint64}+   consensus reward
+                {uint64}+   certainty
+                {uint64}+   NA column
+                {uint64}+   participation column
+                {uint64}+   author bonus
+                {uint64}+   decisions final
+                {uint64}+   vote matrix
+                uint64      NA value
+                uint64      alpha value
+                uint64      tolerance value
+                tx          payout / reputation transaction
 
   action_type = char        'R' (redistribution of votecoins)
   action_data = varint      noutputs
                 {output}+   output array (pay-to-pubkey-hash)
-

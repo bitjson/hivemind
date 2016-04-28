@@ -382,11 +382,11 @@ Value sendtoaddress(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() < 2 || params.size() > 4)
         throw runtime_error(
-            "sendtoaddress \"hivemindaddress\" amount ( \"comment\" \"comment-to\" )\n"
+            "sendtoaddress \"hivemindaddress\" or  \"votecoinaddress\" amount ( \"comment\" \"comment-to\" )\n"
             "\nSend an amount to a given address. The amount is a real and is rounded to the nearest 0.00000001\n"
             + HelpRequiringPassphrase() +
             "\nArguments:\n"
-            "1. \"hivemindaddress\"  (string, required) The hivemind address to send to.\n"
+            "1. \"hivemindaddress\"  (string, required) The hivemind / votecoin address to send to.\n"
             "2. \"amount\"      (numeric, required) The amount in btc to send. eg 0.1\n"
             "3. \"comment\"     (string, optional) A comment used to store what the transaction is for. \n"
             "                             This is not part of the transaction, just kept in your wallet.\n"
@@ -401,9 +401,18 @@ Value sendtoaddress(const Array& params, bool fHelp)
             + HelpExampleRpc("sendtoaddress", "\"1M72Sfpbz1BPpXFHz9m3CdqATR44Jvaydd\", 0.1, \"donation\", \"seans outpost\"")
         );
 
-    CHivemindAddress address(params[0].get_str());
-    if (!address.IsValid())
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind address");
+    string strAddress = params[0].get_str();
+    CHivemindAddress address;
+
+    // Try setting Hivemind address
+    address.SetString(strAddress);
+    if (!address.IsValid()) {
+        // Try setting Votecoin address
+        address.is_votecoin = 1;
+        address.SetString(strAddress);
+        if (!address.IsValid())
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind / Votecoin address");
+    }
 
     // Amount
     CAmount nAmount = AmountFromValue(params[1]);
@@ -864,9 +873,19 @@ Value sendfrom(const Array& params, bool fHelp)
         );
 
     string strAccount = AccountFromValue(params[0]);
-    CHivemindAddress address(params[1].get_str());
-    if (!address.IsValid())
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind address");
+    string strAddress = params[1].get_str();
+    CHivemindAddress address;
+
+    // Try setting Hivemind address
+    address.SetString(strAddress);
+    if (!address.IsValid()) {
+        // Try setting Votecoin address
+        address.is_votecoin = 1;
+        address.SetString(strAddress);
+        if (!address.IsValid())
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind / Votecoin address");
+    }
+
     CAmount nAmount = AmountFromValue(params[2]);
     int nMinDepth = 1;
     if (params.size() > 3)
