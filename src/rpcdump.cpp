@@ -191,7 +191,6 @@ Value importvoteprivkey(const Array& params, bool fHelp)
     CKeyID vchAddress;
     votecoinAddress.GetKeyID(vchAddress);
     {
-        std::cout << "Adding " << vchAddress.ToString() << std::endl;
         pwalletMain->MarkDirty();
         pwalletMain->SetAddressBook(vchAddress, strLabel, "receive");
 
