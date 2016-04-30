@@ -270,10 +270,10 @@ Value getaccount(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
         throw runtime_error(
-            "getaccount \"hivemindaddress\"\n"
+            "getaccount \"hivemindaddress\" or \"votecoinaddress\"\n"
             "\nReturns the account associated with the given address.\n"
             "\nArguments:\n"
-            "1. \"hivemindaddress\"  (string, required) The hivemind address for account lookup.\n"
+            "1. \"hivemindaddress\" or \"votecoinaddress\" (string, required) The address for account lookup.\n"
             "\nResult:\n"
             "\"accountname\"        (string) the account address\n"
             "\nExamples:\n"
@@ -281,9 +281,20 @@ Value getaccount(const Array& params, bool fHelp)
             + HelpExampleRpc("getaccount", "\"1D1ZrZNe3JUo7ZycKEYQQiQAWd9y54F4XZ\"")
         );
 
-    CHivemindAddress address(params[0].get_str());
-    if (!address.IsValid())
-        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind address");
+    CHivemindAddress address;
+    string strAddress = params[0].get_str();
+
+    // Try setting Hivemind address
+    if (!address.SetString(strAddress)) {
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind / Votecoin address");
+    }
+
+    // Is this a Votecoin address?
+    if (!address.IsValid()) {
+        address.is_votecoin = 1;
+        if (!address.IsValid())
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid Hivemind / Votecoin address");
+    }
 
     string strAccount;
     map<CTxDestination, CAddressBookData>::iterator mi = pwalletMain->mapAddressBook.find(address.Get());
