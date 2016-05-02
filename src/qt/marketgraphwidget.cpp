@@ -8,8 +8,6 @@ MarketGraphWidget::MarketGraphWidget(QWidget *parent) :
     ui(new Ui::MarketGraphWidget)
 {
     ui->setupUi(this);
-
-    setupMarketTradeViewGraph();
 }
 
 MarketGraphWidget::~MarketGraphWidget()
@@ -17,7 +15,7 @@ MarketGraphWidget::~MarketGraphWidget()
     delete ui;
 }
 
-QPixmap MarketGraphWidget::getTableGraphPixmap()
+QPixmap MarketGraphWidget::getTableGraphPixmap(QString title)
 {
     int numTrades = 50;
 
@@ -25,7 +23,7 @@ QPixmap MarketGraphWidget::getTableGraphPixmap()
     QVector<double> x(numTrades), y(numTrades);
     for (int i = 0; i < numTrades; i++) {
         x[i] = i;
-        y[i] = i * 2;
+        y[i] = 50;
     }
 
     // Create graph
@@ -35,9 +33,25 @@ QPixmap MarketGraphWidget::getTableGraphPixmap()
     // Setup graph
     ui->customPlot->xAxis->setRange(0, 50);
     ui->customPlot->yAxis->setRange(0, 100);
+
+    // Style graph
+    QPen linePen;
+    linePen.setWidth(4);
+    ui->customPlot->graph()->setPen(linePen);
+
+    ui->customPlot->plotLayout()->insertRow(0);
+    QCPPlotTitle *plotTitle = new QCPPlotTitle(ui->customPlot);
+    plotTitle->setText(title);
+    plotTitle->setFont(QFont("Helvetica [Cronyx]", 16));
+    ui->customPlot->plotLayout()->addElement(0, 0, plotTitle);
+    ui->customPlot->xAxis->setTicks(false);
+    ui->customPlot->xAxis->setTickLabels(false);
+    ui->customPlot->yAxis->setTicks(false);
+    ui->customPlot->yAxis->setTickLabels(false);
+
     ui->customPlot->replot();
 
-    return ui->customPlot->toPixmap(80, 80);
+    return ui->customPlot->toPixmap(480, 360);
 }
 
 void MarketGraphWidget::setupMarketTradeViewGraph()

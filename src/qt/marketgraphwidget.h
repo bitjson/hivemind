@@ -21,7 +21,7 @@ public:
      * Very small, 80x80 or smaller.
      * Should display a simple line X Y chart that is legible at small sizes
      */
-    QPixmap getTableGraphPixmap();
+    QPixmap getTableGraphPixmap(QString title);
 
     /*
      * Market graph to be used inside the TradeView widget.

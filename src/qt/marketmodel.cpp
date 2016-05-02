@@ -20,7 +20,7 @@ int MarketModel::rowCount(const QModelIndex & /*parent*/) const
 
 int MarketModel::columnCount(const QModelIndex & /*parent*/) const
 {
-    return 3;
+    return 2;
 }
 
 QVariant MarketModel::data(const QModelIndex &index, int role) const
@@ -32,18 +32,13 @@ QVariant MarketModel::data(const QModelIndex &index, int role) const
     int row = index.row();
     int col = index.column();
 
+    marketMarket *market = marketModel.at(row);
+
     switch(role) {
     case Qt::DisplayRole:
     {
-        marketMarket *market = marketModel.at(row);
-
-        // Title
-        if (col == 0) {
-            return QString::fromStdString(market->title);
-        }
-
         // Market Details
-        if (col == 2) {
+        if (col == 1) {
             std::stringstream sstream;
             sstream << "Title: " << market->title << std::endl;
             sstream << "Description: " << market->description << std::endl;
@@ -57,17 +52,17 @@ QVariant MarketModel::data(const QModelIndex &index, int role) const
     case Qt::DecorationRole:
     {
         // Graph
-        if (col == 1) {
+        if (col == 0) {
             MarketGraphWidget graphWidget;
-            return graphWidget.getTableGraphPixmap();
+            return graphWidget.getTableGraphPixmap(QString::fromStdString(market->title));
         }
     }
 
     case Qt::SizeHintRole:
     {
         // Graph
-        if (col == 1) {
-            return QSize(80, 80);
+        if (col == 0) {
+            return QSize(480, 360);
         }
     }
     }
@@ -81,10 +76,8 @@ QVariant MarketModel::headerData(int section, Qt::Orientation orientation, int r
         if (orientation == Qt::Horizontal) {
             switch(section) {
             case 0:
-                return QString("Title");
-            case 1:
                 return QString("Graph");
-            case 2:
+            case 1:
                 return QString("Market Info");
             }
         }
