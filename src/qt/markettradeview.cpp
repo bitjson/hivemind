@@ -5,6 +5,7 @@
 #include "utilmoneystr.h"
 
 #include <QClipboard>
+#include <QDialog>
 #include <QMessageBox>
 
 extern CMarketTreeDB *pmarkettree;
@@ -20,6 +21,7 @@ MarketTradeView::MarketTradeView(QWidget *parent) :
 
     marketGraph = new MarketGraphWidget(this);
     marketGraph->setFixedSize(540, 380);
+    marketGraph->setupMarketTradeViewGraph();
     ui->frameMarketGraph->layout()->addWidget(marketGraph);
 }
 
@@ -128,10 +130,7 @@ void MarketTradeView::updateMarketInfo()
 
 void MarketTradeView::setMarketToTrade(uint256 uMarket)
 {
-    if (!uMarket.IsNull()) {
-        uMarketID = uMarket;
-    }
-
+    if (!uMarket.IsNull()) uMarketID = uMarket;
     updateMarketInfo();
 }
 
@@ -154,4 +153,17 @@ void MarketTradeView::on_pushButtonCopyMarketID_clicked()
 {
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(ui->labelMarketIDValue->text());
+}
+
+void MarketTradeView::on_pushButtonPopupGraph_clicked()
+{
+    QDialog *graphDialog = new QDialog(this);
+    MarketGraphWidget *graphWidget = new MarketGraphWidget(this);
+    QHBoxLayout *hbox = new QHBoxLayout(this);
+
+    graphWidget->setupFullMarketGraph();
+    graphDialog->setLayout(hbox);
+    graphDialog->layout()->addWidget(graphWidget);
+
+    graphDialog->show();
 }

@@ -102,13 +102,68 @@
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_8">
              <item>
-              <widget class="QLabel" name="label_2">
-               <property name="text">
-                <string>Market Graph:</string>
+              <widget class="QFrame" name="frame_6">
+               <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
                </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <item>
+                 <widget class="QLabel" name="label_2">
+                  <property name="text">
+                   <string>Market Graph:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_2">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButtonPopupGraph">
+                  <property name="layoutDirection">
+                   <enum>Qt::LeftToRight</enum>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../hivemind.qrc">
+                    <normaloff>:/icons/expand</normaloff>:/icons/expand</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>20</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </widget>
              </item>
             </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Your trades:</string>
+            </property>
            </widget>
           </item>
           <item>
@@ -161,13 +216,6 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="labelOwned">
-               <property name="text">
-                <string>Shares owned:</string>
-               </property>
-              </widget>
-             </item>
              <item row="2" column="1">
               <widget class="QLabel" name="labelOwnedValue">
                <property name="text">
@@ -175,14 +223,14 @@
                </property>
               </widget>
              </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelOwned">
+               <property name="text">
+                <string>Shares owned:</string>
+               </property>
+              </widget>
+             </item>
             </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Your trades:</string>
-            </property>
            </widget>
           </item>
           <item>
@@ -247,7 +295,7 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="tabSetMarketPrice">
              <property name="enabled">
@@ -437,7 +485,11 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="spinBoxShares"/>
+                  <widget class="QSpinBox" name="spinBoxShares">
+                   <property name="maximum">
+                    <number>999999999</number>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <spacer name="verticalSpacer_4">
@@ -552,7 +604,11 @@
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QSpinBox" name="spinBoxState"/>
+              <widget class="QSpinBox" name="spinBoxState">
+               <property name="maximum">
+                <number>999999999</number>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>

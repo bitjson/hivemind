@@ -1,7 +1,16 @@
+// Copyright (c) 2011-2013 The Bitcoin Core developers
+// Copyright (c) 2016 The Hivemind Core developers
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+// Also see qcustomplot http://www.qcustomplot.com for information
+// about the graphing library used by Hivemind-Qt.
+
 #ifndef MARKETGRAPHWIDGET_H
 #define MARKETGRAPHWIDGET_H
 
 #include <QWidget>
+
+class marketMarket;
 
 namespace Ui {
 class MarketGraphWidget;
@@ -21,7 +30,7 @@ public:
      * Very small, 80x80 or smaller.
      * Should display a simple line X Y chart that is legible at small sizes
      */
-    QPixmap getTableGraphPixmap(QString title);
+    QPixmap getTableGraphPixmap(QString title, marketMarket *market);
 
     /*
      * Market graph to be used inside the TradeView widget.

@@ -35,6 +35,8 @@ private slots:
 
     void on_pushButtonCopyMarketID_clicked();
 
+    void on_pushButtonPopupGraph_clicked();
+
 signals:
     void finalizeError(const QString &errorMessage);
 

@@ -51,6 +51,7 @@
         <file alias="verify">res/icons/verify.png</file>
         <file alias="author">res/icons/author.png</file>
         <file alias="trade">res/icons/trade.png</file>
+        <file alias="expand">res/icons/expand.png</file>
     </qresource>
     <qresource prefix="/movies">
         <file alias="spinner-000">res/movies/spinner-000.png</file>

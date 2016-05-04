@@ -54,7 +54,7 @@ QVariant MarketModel::data(const QModelIndex &index, int role) const
         // Graph
         if (col == 0) {
             MarketGraphWidget graphWidget;
-            return graphWidget.getTableGraphPixmap(QString::fromStdString(market->title));
+            return graphWidget.getTableGraphPixmap(QString::fromStdString(market->title), market);
         }
     }
 
