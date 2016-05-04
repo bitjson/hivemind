@@ -23,38 +23,34 @@ QPixmap MarketGraphWidget::getTableGraphPixmap(QString title, marketMarket *mark
 
     /* Get the trades for this market */
     std::vector<marketTrade *> trades;
-//    for (unsigned int i = 0; i < market->decisionIDs.size(); i++) {
-//        uint256 uDecision = market->decisionIDs.at(i);
-//        if (!uDecision.IsNull()) {
-//            marketDecision dec;
-////            dec.
-//        }
-////        marketDecision *decision = market->decisionIDs.at(i);
-////        //pmarkettree->GetTrades()
-//    }
-
     trades = pmarkettree->GetTrades(market->GetHash());
-    std::cout << "trades: " << trades.size() << std::endl;
 
-    int numTrades = 50;
+    unsigned int numTrades = trades.size();
+    unsigned int maxPrice = 0;
 
-    qsrand(qrand());
     // Create data
     QVector<double> x(numTrades), y(numTrades);
-    for (int i = 0; i < numTrades; i+=2) {
+    for (unsigned int i = 0; i < numTrades; i++) {
         x[i] = i;
-        y[i] = qrand() % 50;
+        y[i] = 1e-8*trades.at(i)->price;
+
+        // Do we need to increase the range of the Y axis?
+        if (y[i] > maxPrice) maxPrice = y[i];
     }
 
-    // Create graph
+    /* Initialize Graph */
     ui->customPlot->addGraph();
     ui->customPlot->graph(0)->setData(x, y);
 
-    // Setup graph
-    ui->customPlot->xAxis->setRange(0, 50);
-    ui->customPlot->yAxis->setRange(0, 100);
+    /*
+     * Graph range:
+     * X axis min = 0 max = number of trades
+     * Y axis min = 0 max = highest trade price plus 50 for padding
+     */
+    ui->customPlot->xAxis->setRange(0, numTrades);
+    ui->customPlot->yAxis->setRange(0, maxPrice + 50);
 
-    // Style graph
+    /* Style graph */
     QPen linePen;
     linePen.setWidth(4);
     ui->customPlot->graph()->setPen(linePen);
