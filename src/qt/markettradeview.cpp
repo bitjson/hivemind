@@ -125,7 +125,7 @@ void MarketTradeView::updateMarketInfo()
     std::string marketPrice = FormatMoney(marketAccountValue(market->maxCommission, 1e-8*market->B, nStates, nShares));
 
     // Set market price label
-    ui->labelMarketPriceValue->setText(QString::fromStdString(marketPrice));
+    ui->labelCurrentPriceValue->setText(QString::fromStdString(marketPrice));
 }
 
 void MarketTradeView::setMarketToTrade(uint256 uMarket)
@@ -166,4 +166,19 @@ void MarketTradeView::on_pushButtonPopupGraph_clicked()
     graphDialog->layout()->addWidget(graphWidget);
 
     graphDialog->show();
+}
+
+void MarketTradeView::on_pushButtonMinus10_clicked()
+{
+    ui->spinBoxShares->setValue(ui->spinBoxShares->value() - 10);
+}
+
+void MarketTradeView::on_pushButtonPlus10_clicked()
+{
+    ui->spinBoxShares->setValue(ui->spinBoxShares->value() + 10);
+}
+
+void MarketTradeView::on_horizontalSliderNumberShares_valueChanged(int value)
+{
+    ui->spinBoxShares->setValue(value);
 }

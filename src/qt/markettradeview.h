@@ -37,6 +37,12 @@ private slots:
 
     void on_pushButtonPopupGraph_clicked();
 
+    void on_pushButtonMinus10_clicked();
+
+    void on_pushButtonPlus10_clicked();
+
+    void on_horizontalSliderNumberShares_valueChanged(int value);
+
 signals:
     void finalizeError(const QString &errorMessage);
 
