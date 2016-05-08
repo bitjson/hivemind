@@ -133,8 +133,6 @@ QVariant MarketModel::headerData(int section, Qt::Orientation orientation, int r
 
 void MarketModel::setBranch(uint256 branchID)
 {
-    std::cout << "Setting branch\n";
-
     if (!priv) return;
 
     // Make sure the branch exists
