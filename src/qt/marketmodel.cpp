@@ -1,21 +1,61 @@
 #include "marketmodel.h"
 
-#include "marketgraphwidget.h"
-
-#include <sstream>
-#include <QWidget>
 #include <QHBoxLayout>
+#include <QList>
+#include <QWidget>
+#include <sstream>
+
+#include "marketgraphwidget.h"
+#include "txdb.h"
+#include "wallet.h"
+#include "walletmodel.h"
 
 extern CMarketTreeDB *pmarkettree;
 
-MarketModel::MarketModel(QObject *parent) :
-   QAbstractTableModel(parent)
+// Private implementation
+class MarketModelPriv
 {
+public:
+    MarketModelPriv(CWallet *wallet, MarketModel *parent)
+        : wallet(wallet),
+          parent(parent)
+    {
+    }
+
+    CWallet *wallet;
+    MarketModel *parent;
+
+    QList<const marketMarket *> cached;
+
+    int size()
+    {
+        return cached.size();
+    }
+
+    const marketMarket *index(int idx)
+    {
+        if(idx >= 0 && idx < cached.size())
+            return cached[idx];
+        return 0;
+    }
+};
+
+MarketModel::MarketModel(CWallet *wallet, WalletModel *parent) :
+   QAbstractTableModel(parent),
+   wallet(wallet),
+   walletModel(parent),
+   priv(new MarketModelPriv(wallet, this))
+{
+}
+
+MarketModel::~MarketModel()
+{
+    delete priv;
 }
 
 int MarketModel::rowCount(const QModelIndex & /*parent*/) const
 {
-   return marketModel.size();
+   return priv->size();
 }
 
 int MarketModel::columnCount(const QModelIndex & /*parent*/) const
@@ -32,7 +72,7 @@ QVariant MarketModel::data(const QModelIndex &index, int role) const
     int row = index.row();
     int col = index.column();
 
-    marketMarket *market = marketModel.at(row);
+    const marketMarket *market = priv->index(row);
 
     switch(role) {
     case Qt::DisplayRole:
@@ -70,6 +110,11 @@ QVariant MarketModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+const marketMarket *MarketModel::index(int row) const
+{
+    return priv->index(row);
+}
+
 QVariant MarketModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role == Qt::DisplayRole) {
@@ -88,9 +133,16 @@ QVariant MarketModel::headerData(int section, Qt::Orientation orientation, int r
 
 void MarketModel::setBranch(uint256 branchID)
 {
+    std::cout << "Setting branch\n";
+
+    if (!priv) return;
+
     // Make sure the branch exists
     const marketBranch *branch = pmarkettree->GetBranch(branchID);
     if (!branch) return;
+
+    // Erase / reset the cache
+    resetModel();
 
     // Get the list of decisions on the branch
     vector<marketDecision *> decisions = pmarkettree->GetDecisions(branchID);
@@ -111,32 +163,27 @@ void MarketModel::setBranch(uint256 branchID)
     }
 
     // Add markets to the model
-    beginInsertRows(QModelIndex(), 0, markets.size());
+    if (markets.size()) {
+        beginInsertRows(QModelIndex(), 0, markets.size()-1);
 
-    for (unsigned int i = 0; i < markets.size(); i++) {
-        marketModel.push_back(markets.at(i));
+        for (unsigned int i = 0; i < markets.size(); i++)
+            priv->cached.append(markets.at(i));
+
+        endInsertRows();
     }
-
-    endInsertRows();
 }
 
 void MarketModel::resetModel()
 {
     beginResetModel();
 
-    marketModel.clear();
-
-    endResetModel();
-}
-
-uint256 MarketModel::getMarketID(const QModelIndex &index)
-{
-    uint256 uMarket;
-
-    if (!index.isValid()) {
-        return uMarket;
+    if (priv->cached.size()) {
+        beginRemoveRows(QModelIndex(), 0, priv->cached.size()-1);
+        for (ssize_t i = 0; i < priv->cached.size(); i++)
+            delete priv->cached.at(i);
+        priv->cached.clear();
+        endRemoveRows();
     }
 
-    uMarket = marketModel.at(index.row())->GetHash();
-    return uMarket;
+    endResetModel();
 }

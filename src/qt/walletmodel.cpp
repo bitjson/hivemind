@@ -5,8 +5,7 @@
 
 #include "walletmodel.h"
 
-#include "addresstablemodel.h"
-#include "guiconstants.h"
+/* Bitcoin Hivemind models that need to be registered */
 #include "ballotballottablemodel.h"
 #include "ballotoutcometablemodel.h"
 #include "ballotsealedvotetablemodel.h"
@@ -15,17 +14,20 @@
 #include "decisiondecisiontablemodel.h"
 #include "decisionmarkettablemodel.h"
 #include "decisiontradetablemodel.h"
-#include "recentrequeststablemodel.h"
+#include "marketmodel.h"
 #include "resolvevotecoltablemodel.h"
 #include "resolvevoterowtablemodel.h"
 #include "resolvevoteinputtablemodel.h"
-#include "transactiontablemodel.h"
 
+#include "addresstablemodel.h"
 #include "base58.h"
 #include "db.h"
+#include "guiconstants.h"
 #include "keystore.h"
 #include "main.h"
+#include "recentrequeststablemodel.h"
 #include "sync.h"
+#include "transactiontablemodel.h"
 #include "ui_interface.h"
 #include "wallet.h"
 #include "walletdb.h" // for BackupWallet
@@ -44,6 +46,7 @@ WalletModel::WalletModel(CWallet *wallet, OptionsModel *optionsModel, QObject *p
     decisionDecisionTableModel(0),
     decisionMarketTableModel(0),
     decisionTradeTableModel(0),
+    marketModel(0),
     resolveVoteColTableModel(0),
     resolveVoteRowTableModel(0),
     resolveVoteInputTableModel(0),
@@ -66,6 +69,7 @@ WalletModel::WalletModel(CWallet *wallet, OptionsModel *optionsModel, QObject *p
     decisionDecisionTableModel = new DecisionDecisionTableModel(wallet, this);
     decisionMarketTableModel = new DecisionMarketTableModel(wallet, this);
     decisionTradeTableModel = new DecisionTradeTableModel(wallet, this);
+    marketModel = new MarketModel(wallet, this);
     resolveVoteColTableModel = new ResolveVoteColTableModel();
     resolveVoteRowTableModel = new ResolveVoteRowTableModel();
     resolveVoteInputTableModel = new ResolveVoteInputTableModel();
@@ -438,6 +442,11 @@ DecisionMarketTableModel *WalletModel::getDecisionMarketTableModel()
 DecisionTradeTableModel *WalletModel::getDecisionTradeTableModel()
 {
     return decisionTradeTableModel;
+}
+
+MarketModel *WalletModel::getMarketModel()
+{
+    return marketModel;
 }
 
 ResolveVoteColTableModel *WalletModel::getResolveVoteColTableModel()

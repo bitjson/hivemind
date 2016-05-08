@@ -4,6 +4,8 @@
 #include "qcustomplot.h"
 #include "txdb.h"
 
+extern CMarketTreeDB *pmarkettree;
+
 MarketGraphWidget::MarketGraphWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MarketGraphWidget)
@@ -16,7 +18,7 @@ MarketGraphWidget::~MarketGraphWidget()
     delete ui;
 }
 
-QPixmap MarketGraphWidget::getTableGraphPixmap(QString title, marketMarket *market)
+QPixmap MarketGraphWidget::getTableGraphPixmap(QString title, const marketMarket *market)
 {
     // If market doesn't exist, display error icon
     if (!market) return QPixmap(":/icons/quit");
@@ -28,7 +30,7 @@ QPixmap MarketGraphWidget::getTableGraphPixmap(QString title, marketMarket *mark
     unsigned int numTrades = trades.size();
     unsigned int maxPrice = 0;
 
-    // Create data
+    /* Load trading data for graph */
     QVector<double> x(numTrades), y(numTrades);
     for (unsigned int i = 0; i < numTrades; i++) {
         x[i] = i;
@@ -69,32 +71,21 @@ QPixmap MarketGraphWidget::getTableGraphPixmap(QString title, marketMarket *mark
     return ui->customPlot->toPixmap(480, 360);
 }
 
-void MarketGraphWidget::setupMarketTradeViewGraph()
+void MarketGraphWidget::setupMarketTradeViewGraph(const marketMarket *market)
 {
     // prepare data:
     QVector<double> x1(20), y1(20);
-    QVector<double> x2(100), y2(100);
     QVector<double> x3(20), y3(20);
-    QVector<double> x4(20), y4(20);
+
     for (int i=0; i<x1.size(); ++i)
     {
       x1[i] = i/(double)x1.size()*10;
       y1[i] = qCos(x1[i]*0.8+qSin(x1[i]*0.16+1.0))*qSin(x1[i]*0.54)+1.4;
     }
-    for (int i=0; i<x2.size(); ++i)
-    {
-      x2[i] = i/(double)x2.size()*10;
-      y2[i] = qCos(x2[i]*0.85+qSin(x2[i]*0.165+1.1))*qSin(x2[i]*0.50)+1.7;
-    }
     for (int i=0; i<x3.size(); ++i)
     {
       x3[i] = i/(double)x3.size()*10;
       y3[i] = 0.05+3*(0.5+qCos(x3[i]*x3[i]*0.2+2)*0.5)/(double)(x3[i]+0.7)+qrand()/(double)RAND_MAX*0.01;
-    }
-    for (int i=0; i<x4.size(); ++i)
-    {
-      x4[i] = x3[i];
-      y4[i] = (0.5-y3[i])+((x4[i]-2)*(x4[i]-2)*0.02);
     }
 
     // create and configure plottables:
@@ -102,12 +93,6 @@ void MarketGraphWidget::setupMarketTradeViewGraph()
     graphPrice->setData(x1, y1);
     graphPrice->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, QPen(Qt::black, 1.5), QBrush(Qt::white), 9));
     graphPrice->setPen(QPen(QColor(120, 120, 120), 2));
-
-    QCPGraph *graphHighlight = ui->customPlot->addGraph();
-    graphHighlight->setData(x2, y2);
-    graphHighlight->setPen(Qt::NoPen);
-    graphHighlight->setBrush(QColor(200, 200, 200, 20));
-    graphHighlight->setChannelFillGraph(graphPrice);
 
     QCPBars *barsVolume = new QCPBars(ui->customPlot->xAxis, ui->customPlot->yAxis);
     ui->customPlot->addPlottable(barsVolume);

@@ -25,6 +25,7 @@ class DecisionBranchTableModel;
 class DecisionDecisionTableModel;
 class DecisionMarketTableModel;
 class DecisionTradeTableModel;
+class MarketModel;
 class OptionsModel;
 class RecentRequestsTableModel;
 class ResolveVoteColTableModel;
@@ -144,6 +145,7 @@ public:
     DecisionDecisionTableModel *getDecisionDecisionTableModel();
     DecisionMarketTableModel *getDecisionMarketTableModel();
     DecisionTradeTableModel *getDecisionTradeTableModel();
+    MarketModel *getMarketModel();
     ResolveVoteColTableModel *getResolveVoteColTableModel();
     ResolveVoteRowTableModel *getResolveVoteRowTableModel();
     ResolveVoteInputTableModel *getResolveVoteInputTableModel();
@@ -238,6 +240,7 @@ private:
     DecisionDecisionTableModel *decisionDecisionTableModel;
     DecisionMarketTableModel *decisionMarketTableModel;
     DecisionTradeTableModel *decisionTradeTableModel;
+    MarketModel *marketModel;
     ResolveVoteColTableModel *resolveVoteColTableModel;
     ResolveVoteRowTableModel *resolveVoteRowTableModel;
     ResolveVoteInputTableModel *resolveVoteInputTableModel;
