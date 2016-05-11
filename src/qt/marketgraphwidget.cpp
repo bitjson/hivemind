@@ -2,14 +2,15 @@
 #include "ui_marketgraphwidget.h"
 
 #include "qcustomplot.h"
+#include "txdb.h"
+
+extern CMarketTreeDB *pmarkettree;
 
 MarketGraphWidget::MarketGraphWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MarketGraphWidget)
 {
     ui->setupUi(this);
-
-    setupMarketTradeViewGraph();
 }
 
 MarketGraphWidget::~MarketGraphWidget()
@@ -17,76 +18,160 @@ MarketGraphWidget::~MarketGraphWidget()
     delete ui;
 }
 
-QPixmap MarketGraphWidget::getTableGraphPixmap()
+QPixmap MarketGraphWidget::getTableGraphPixmap(QString title, const marketMarket *market)
 {
-    int numTrades = 50;
+    // If market doesn't exist, display error icon
+    if (!market) return QPixmap(":/icons/quit");
 
-    // Create data
+    /* Get the trades for this market */
+    std::vector<marketTrade *> trades;
+    trades = pmarkettree->GetTrades(market->GetHash());
+
+    unsigned int numTrades = trades.size();
+    unsigned int maxPrice = 0;
+
+    /* Load trading data for graph */
     QVector<double> x(numTrades), y(numTrades);
-    for (int i = 0; i < numTrades; i++) {
+    for (unsigned int i = 0; i < numTrades; i++) {
         x[i] = i;
-        y[i] = i * 2;
+        y[i] = 1e-8*trades.at(i)->price;
+
+        // Do we need to increase the range of the Y axis?
+        if (y[i] > maxPrice) maxPrice = y[i];
     }
 
-    // Create graph
+    /* Initialize Graph */
     ui->customPlot->addGraph();
     ui->customPlot->graph(0)->setData(x, y);
 
-    // Setup graph
-    ui->customPlot->xAxis->setRange(0, 50);
-    ui->customPlot->yAxis->setRange(0, 100);
+    /*
+     * Graph range:
+     * X axis min = 0 max = number of trades
+     * Y axis min = 0 max = highest trade price plus 50 for padding
+     */
+    ui->customPlot->xAxis->setRange(0, numTrades);
+    ui->customPlot->yAxis->setRange(0, maxPrice + 50);
+
+    /* Style graph */
+    QPen linePen;
+    linePen.setWidth(4);
+    ui->customPlot->graph()->setPen(linePen);
+    ui->customPlot->plotLayout()->insertRow(0);
+    QCPPlotTitle *plotTitle = new QCPPlotTitle(ui->customPlot);
+    plotTitle->setText(title);
+    plotTitle->setFont(QFont("Helvetica [Cronyx]", 16));
+    ui->customPlot->plotLayout()->addElement(0, 0, plotTitle);
+    ui->customPlot->xAxis->setTicks(false);
+    ui->customPlot->xAxis->setTickLabels(false);
+    ui->customPlot->yAxis->setTicks(false);
+    ui->customPlot->yAxis->setTickLabels(false);
+
     ui->customPlot->replot();
 
-    return ui->customPlot->toPixmap(80, 80);
+    return ui->customPlot->toPixmap(480, 360);
 }
 
-void MarketGraphWidget::setupMarketTradeViewGraph()
+void MarketGraphWidget::setupMarketTradeViewGraph(const marketMarket *market)
 {
-    // Create random trade data for testing based on qcustomplot examples
-    int trades = 10;
-    QVector<double> time(trades), candlestickValues(trades), ohlcValues(trades);
-    QDateTime start = QDateTime(QDate(2016, 4, 12));
-    start.setTimeSpec(Qt::UTC);
-    double startTime = start.toTime_t();
-    double binSize = 3600*24*1; // bin data in 1 day intervals
+    // prepare data:
+    QVector<double> x1(20), y1(20);
+    QVector<double> x3(20), y3(20);
 
-    // Add times to trades
-    qsrand(9);
-    for (int i = 1; i < trades; ++i)
+    for (int i=0; i<x1.size(); ++i)
     {
-      time[i] = startTime + 3600*24*i;
+      x1[i] = i/(double)x1.size()*10;
+      y1[i] = qCos(x1[i]*0.8+qSin(x1[i]*0.16+1.0))*qSin(x1[i]*0.54)+1.4;
+    }
+    for (int i=0; i<x3.size(); ++i)
+    {
+      x3[i] = i/(double)x3.size()*10;
+      y3[i] = 0.05+3*(0.5+qCos(x3[i]*x3[i]*0.2+2)*0.5)/(double)(x3[i]+0.7)+qrand()/(double)RAND_MAX*0.01;
     }
 
+    // create and configure plottables:
+    QCPGraph *graphPrice = ui->customPlot->addGraph();
+    graphPrice->setData(x1, y1);
+    graphPrice->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, QPen(Qt::black, 1.5), QBrush(Qt::white), 9));
+    graphPrice->setPen(QPen(QColor(120, 120, 120), 2));
+
+    QCPBars *barsVolume = new QCPBars(ui->customPlot->xAxis, ui->customPlot->yAxis);
+    ui->customPlot->addPlottable(barsVolume);
+    barsVolume->setWidth(9/(double)x3.size());
+    barsVolume->setData(x3, y3);
+    barsVolume->setPen(Qt::NoPen);
+    barsVolume->setBrush(QColor(10, 140, 70, 80));
+
+    // move bars above graphs and grid below bars:
+    ui->customPlot->addLayer("abovemain", ui->customPlot->layer("main"), QCustomPlot::limAbove);
+    ui->customPlot->addLayer("belowmain", ui->customPlot->layer("main"), QCustomPlot::limBelow);
+    graphPrice->setLayer("abovemain");
+    ui->customPlot->xAxis->grid()->setLayer("belowmain");
+    ui->customPlot->yAxis->grid()->setLayer("belowmain");
+
+    // set some pens, brushes and backgrounds:
+    ui->customPlot->xAxis->setBasePen(QPen(Qt::white, 1));
+    ui->customPlot->yAxis->setBasePen(QPen(Qt::white, 1));
+    ui->customPlot->xAxis->setTickPen(QPen(Qt::white, 1));
+    ui->customPlot->yAxis->setTickPen(QPen(Qt::white, 1));
+    ui->customPlot->xAxis->setSubTickPen(QPen(Qt::white, 1));
+    ui->customPlot->yAxis->setSubTickPen(QPen(Qt::white, 1));
+    ui->customPlot->xAxis->setTickLabelColor(Qt::white);
+    ui->customPlot->yAxis->setTickLabelColor(Qt::white);
+    ui->customPlot->xAxis->grid()->setPen(QPen(QColor(140, 140, 140), 1, Qt::DotLine));
+    ui->customPlot->yAxis->grid()->setPen(QPen(QColor(140, 140, 140), 1, Qt::DotLine));
+    ui->customPlot->xAxis->grid()->setSubGridPen(QPen(QColor(80, 80, 80), 1, Qt::DotLine));
+    ui->customPlot->yAxis->grid()->setSubGridPen(QPen(QColor(80, 80, 80), 1, Qt::DotLine));
+    ui->customPlot->xAxis->grid()->setSubGridVisible(true);
+    ui->customPlot->yAxis->grid()->setSubGridVisible(true);
+    ui->customPlot->xAxis->grid()->setZeroLinePen(Qt::NoPen);
+    ui->customPlot->yAxis->grid()->setZeroLinePen(Qt::NoPen);
+    ui->customPlot->xAxis->setUpperEnding(QCPLineEnding::esSpikeArrow);
+    ui->customPlot->yAxis->setUpperEnding(QCPLineEnding::esSpikeArrow);
+    QLinearGradient plotGradient;
+    plotGradient.setStart(0, 0);
+    plotGradient.setFinalStop(0, 350);
+    plotGradient.setColorAt(0, QColor(80, 80, 80));
+    plotGradient.setColorAt(1, QColor(50, 50, 50));
+    ui->customPlot->setBackground(plotGradient);
+    QLinearGradient axisRectGradient;
+    axisRectGradient.setStart(0, 0);
+    axisRectGradient.setFinalStop(0, 350);
+    axisRectGradient.setColorAt(0, QColor(80, 80, 80));
+    axisRectGradient.setColorAt(1, QColor(30, 30, 30));
+    ui->customPlot->axisRect()->setBackground(axisRectGradient);
+
+    ui->customPlot->rescaleAxes();
+    ui->customPlot->yAxis->setRange(0, 2);
+}
+
+void MarketGraphWidget::setupFullMarketGraph()
+{
+    // generate two sets of random walk data (one for candlestick and one for ohlc chart):
+    int n = 500;
+    QVector<double> time(n), value1(n), value2(n);
+    QDateTime start = QDateTime(QDate(2014, 6, 11));
+    start.setTimeSpec(Qt::UTC);
+    double startTime = start.toTime_t();
+    double binSize = 3600*24; // bin data in 1 day intervals
     time[0] = startTime;
-    candlestickValues[0] = 5;
-    ohlcValues[0] = 10;
-    candlestickValues[1] = 1;
-    ohlcValues[1] = 22;
-    candlestickValues[2] = 1;
-    ohlcValues[2] = 30;
-    candlestickValues[3] = 1;
-    ohlcValues[3] = 55;
-    candlestickValues[4] = 3;
-    ohlcValues[4] = 20;
-    candlestickValues[5] = 4;
-    ohlcValues[5] = 30;
-    candlestickValues[6] = 8;
-    ohlcValues[6] = 40;
-    candlestickValues[7] = 4;
-    ohlcValues[7] = 20;
-    candlestickValues[8] = 3;
-    ohlcValues[8] = 15;
-    candlestickValues[9] = 4;
-    ohlcValues[9] = 10;
+    value1[0] = 60;
+    value2[0] = 20;
+    qsrand(9);
+    for (int i=1; i<n; ++i)
+    {
+      time[i] = startTime + 3600*i;
+      value1[i] = value1[i-1] + (qrand()/(double)RAND_MAX-0.5)*10;
+      value2[i] = value2[i-1] + (qrand()/(double)RAND_MAX-0.5)*3;
+    }
 
     // create candlestick chart:
     QCPFinancial *candlesticks = new QCPFinancial(ui->customPlot->xAxis, ui->customPlot->yAxis);
     ui->customPlot->addPlottable(candlesticks);
-    QCPFinancialDataMap data1 = QCPFinancial::timeSeriesToOhlc(time, candlestickValues, binSize/5, startTime);
+    QCPFinancialDataMap data1 = QCPFinancial::timeSeriesToOhlc(time, value1, binSize, startTime);
     candlesticks->setName("Candlestick");
     candlesticks->setChartStyle(QCPFinancial::csCandlestick);
     candlesticks->setData(&data1, true);
-    candlesticks->setWidth(binSize*0.6);
+    candlesticks->setWidth(binSize*0.9);
     candlesticks->setTwoColored(true);
     candlesticks->setBrushPositive(QColor(245, 245, 245));
     candlesticks->setBrushNegative(QColor(0, 0, 0));
@@ -96,11 +181,11 @@ void MarketGraphWidget::setupMarketTradeViewGraph()
     // create ohlc chart:
     QCPFinancial *ohlc = new QCPFinancial(ui->customPlot->xAxis, ui->customPlot->yAxis);
     ui->customPlot->addPlottable(ohlc);
-    QCPFinancialDataMap data2 = QCPFinancial::timeSeriesToOhlc(time, ohlcValues, binSize/5, startTime);
+    QCPFinancialDataMap data2 = QCPFinancial::timeSeriesToOhlc(time, value2, binSize/3.0, startTime); // divide binSize by 3 just to make the ohlc bars a bit denser
     ohlc->setName("OHLC");
     ohlc->setChartStyle(QCPFinancial::csOhlc);
     ohlc->setData(&data2, true);
-    ohlc->setWidth(binSize*0.6);
+    ohlc->setWidth(binSize*0.2);
     ohlc->setTwoColored(true);
 
     // create bottom axis rect for volume bar chart:
@@ -116,18 +201,18 @@ void MarketGraphWidget::setupMarketTradeViewGraph()
     // create two bar plottables, for positive (green) and negative (red) volume bars:
     QCPBars *volumePos = new QCPBars(volumeAxisRect->axis(QCPAxis::atBottom), volumeAxisRect->axis(QCPAxis::atLeft));
     QCPBars *volumeNeg = new QCPBars(volumeAxisRect->axis(QCPAxis::atBottom), volumeAxisRect->axis(QCPAxis::atLeft));
-    for (int i = 0; i < trades; ++i)
+    for (int i=0; i<n/5; ++i)
     {
-      int v = i;
-      (v < 0 ? volumeNeg : volumePos)->addData(startTime+3600*24*i, qAbs(v));
+      int v = qrand()%20000+qrand()%20000+qrand()%20000-10000*3;
+      (v < 0 ? volumeNeg : volumePos)->addData(startTime+3600*5.0*i, qAbs(v)); // add data to either volumeNeg or volumePos, depending on sign of v
     }
     ui->customPlot->setAutoAddPlottableToLegend(false);
     ui->customPlot->addPlottable(volumePos);
     ui->customPlot->addPlottable(volumeNeg);
-    volumePos->setWidth(3600);
+    volumePos->setWidth(3600*4);
     volumePos->setPen(Qt::NoPen);
     volumePos->setBrush(QColor(100, 180, 110));
-    volumeNeg->setWidth(3600);
+    volumeNeg->setWidth(3600*4);
     volumeNeg->setPen(Qt::NoPen);
     volumeNeg->setBrush(QColor(180, 90, 90));
 
@@ -136,28 +221,24 @@ void MarketGraphWidget::setupMarketTradeViewGraph()
     connect(volumeAxisRect->axis(QCPAxis::atBottom), SIGNAL(rangeChanged(QCPRange)), ui->customPlot->xAxis, SLOT(setRange(QCPRange)));
     // configure axes of both main and bottom axis rect:
     volumeAxisRect->axis(QCPAxis::atBottom)->setAutoTickStep(false);
-    volumeAxisRect->axis(QCPAxis::atBottom)->setTickStep(3600*24*1); // 1 day tickstep
+    volumeAxisRect->axis(QCPAxis::atBottom)->setTickStep(3600*24*4); // 4 day tickstep
     volumeAxisRect->axis(QCPAxis::atBottom)->setTickLabelType(QCPAxis::ltDateTime);
     volumeAxisRect->axis(QCPAxis::atBottom)->setDateTimeSpec(Qt::UTC);
-    volumeAxisRect->axis(QCPAxis::atBottom)->setDateTimeFormat("dd");
+    volumeAxisRect->axis(QCPAxis::atBottom)->setDateTimeFormat("dd. MMM");
+    volumeAxisRect->axis(QCPAxis::atBottom)->setTickLabelRotation(15);
     volumeAxisRect->axis(QCPAxis::atLeft)->setAutoTickCount(3);
     ui->customPlot->xAxis->setBasePen(Qt::NoPen);
     ui->customPlot->xAxis->setTickLabels(false);
     ui->customPlot->xAxis->setTicks(false); // only want vertical grid in main axis rect, so hide xAxis backbone, ticks, and labels
     ui->customPlot->xAxis->setAutoTickStep(false);
-    ui->customPlot->xAxis->setTickStep(3600*24*1); // 1 day tickstep
+    ui->customPlot->xAxis->setTickStep(3600*24*4); // 4 day tickstep
     ui->customPlot->rescaleAxes();
-    ui->customPlot->xAxis->scaleRange(1, ui->customPlot->xAxis->range().center());
-    ui->customPlot->yAxis->scaleRange(1, ui->customPlot->yAxis->range().center());
+    ui->customPlot->xAxis->scaleRange(1.025, ui->customPlot->xAxis->range().center());
+    ui->customPlot->yAxis->scaleRange(1.1, ui->customPlot->yAxis->range().center());
 
-    // Align left side of axis
+    // make axis rects' left side line up:
     QCPMarginGroup *group = new QCPMarginGroup(ui->customPlot);
     ui->customPlot->axisRect()->setMarginGroup(QCP::msLeft|QCP::msRight, group);
     volumeAxisRect->setMarginGroup(QCP::msLeft|QCP::msRight, group);
-}
-
-void MarketGraphWidget::setupFullMarketGraph()
-{
-
 }
 

@@ -6,6 +6,8 @@
 #include <QTableView>
 #include <QWidget>
 
+class WalletModel;
+
 namespace Ui {
 class MarketView;
 }
@@ -17,6 +19,8 @@ class MarketView : public QWidget
 public:
     explicit MarketView(QWidget *parent = 0);
     ~MarketView();
+
+    void setModel(WalletModel *model);
 
 public slots:
         void on_tableView_doubleClicked(const QModelIndex &index);
@@ -31,7 +35,8 @@ private slots:
 private:
     Ui::MarketView *ui;
 
-    MarketModel *marketModel;
+    WalletModel *model;
+    MarketModel *test;
     QTableView *marketTableView;
 
     /*

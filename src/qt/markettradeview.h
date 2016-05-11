@@ -20,8 +20,8 @@ public:
     ~MarketTradeView();
 
 public slots:
-    // Set the market ID of the market to create trades on
-    void setMarketToTrade(uint256 uMarket);
+    // Set (pointer to MarketModel) the market to create trades on
+    void setMarket(const marketMarket *marketToTrade);
 
 private slots:
     void on_pushButtonFinalize_clicked();
@@ -35,14 +35,22 @@ private slots:
 
     void on_pushButtonCopyMarketID_clicked();
 
+    void on_pushButtonPopupGraph_clicked();
+
+    void on_pushButtonMinus10_clicked();
+
+    void on_pushButtonPlus10_clicked();
+
+    void on_horizontalSliderNumberShares_valueChanged(int value);
+
 signals:
     void finalizeError(const QString &errorMessage);
 
 private:
     Ui::MarketTradeView *ui;
 
-    // Market ID
-    uint256 uMarketID;
+    // Market
+    const marketMarket *market;
 
     // Market graph
     MarketGraphWidget *marketGraph;

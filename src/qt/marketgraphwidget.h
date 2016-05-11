@@ -1,7 +1,16 @@
+// Copyright (c) 2011-2013 The Bitcoin Core developers
+// Copyright (c) 2016 The Hivemind Core developers
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+// Also see qcustomplot http://www.qcustomplot.com for information
+// about the graphing library used by Hivemind-Qt.
+
 #ifndef MARKETGRAPHWIDGET_H
 #define MARKETGRAPHWIDGET_H
 
 #include <QWidget>
+
+class marketMarket;
 
 namespace Ui {
 class MarketGraphWidget;
@@ -18,22 +27,19 @@ public:
     /*
      * Market graph to be used inside of table cells.
      *
-     * Very small, 80x80 or smaller.
-     * Should display a simple line X Y chart that is legible at small sizes
+     * Should display a simple line X Y chart that is legible
+     * at small sizes
      */
-    QPixmap getTableGraphPixmap();
+    QPixmap getTableGraphPixmap(QString title, const marketMarket *market);
 
     /*
      * Market graph to be used inside the TradeView widget.
-     * Should display a Candlestick and OHLC graph with enough detail for
-     * traders making quick decisions but still fitting into a reasonable space.
      */
-    void setupMarketTradeViewGraph();
+    void setupMarketTradeViewGraph(const marketMarket *market);
 
     /*
-     * Market graph to be viewed on its own, as large as the user wants it and
-     * with as much detail as possible. Should be customizable. Users will be
-     * able to open up this view from the MarketTradeView.
+     * Popup market graph, full OHLC / candlestick chart
+     * to be viewed in its own window.
      */
     void setupFullMarketGraph();
 

@@ -5,6 +5,7 @@
 #include "utilmoneystr.h"
 
 #include <QClipboard>
+#include <QDialog>
 #include <QMessageBox>
 
 extern CMarketTreeDB *pmarkettree;
@@ -18,9 +19,13 @@ MarketTradeView::MarketTradeView(QWidget *parent) :
     connect(this, SIGNAL(finalizeError(QString)),
             this, SLOT(on_finalizeError(QString)));
 
-    marketGraph = new MarketGraphWidget(this);
-    marketGraph->setFixedSize(540, 380);
-    ui->frameMarketGraph->layout()->addWidget(marketGraph);
+    if (market) {
+        marketGraph = new MarketGraphWidget(this);
+        marketGraph->setFixedSize(540, 380);
+
+        marketGraph->setupMarketTradeViewGraph(market);
+        ui->frameMarketGraph->layout()->addWidget(marketGraph);
+    }
 }
 
 MarketTradeView::~MarketTradeView()
@@ -102,14 +107,11 @@ void MarketTradeView::on_pushButtonFinalize_clicked()
 
 void MarketTradeView::updateMarketInfo()
 {
-    // Get the market
-    if (uMarketID.IsNull()) return;
+    // Check that market has been set
+    if (!market) return;
 
     // Set the market ID
-    ui->labelMarketIDValue->setText(QString::fromStdString(uMarketID.GetHex()));
-
-    marketMarket *market = pmarkettree->GetMarket(uMarketID);
-    if (!market) return;
+    ui->labelMarketIDValue->setText(QString::fromStdString(market->GetHash().GetHex()));
 
     // Current trades on the market
     vector<marketTrade *> trades = pmarkettree->GetTrades(market->GetHash());
@@ -123,15 +125,12 @@ void MarketTradeView::updateMarketInfo()
     std::string marketPrice = FormatMoney(marketAccountValue(market->maxCommission, 1e-8*market->B, nStates, nShares));
 
     // Set market price label
-    ui->labelMarketPriceValue->setText(QString::fromStdString(marketPrice));
+    ui->labelCurrentPriceValue->setText(QString::fromStdString(marketPrice));
 }
 
-void MarketTradeView::setMarketToTrade(uint256 uMarket)
+void MarketTradeView::setMarket(const marketMarket *marketToTrade)
 {
-    if (!uMarket.IsNull()) {
-        uMarketID = uMarket;
-    }
-
+    if (marketToTrade) market = marketToTrade;
     updateMarketInfo();
 }
 
@@ -154,4 +153,32 @@ void MarketTradeView::on_pushButtonCopyMarketID_clicked()
 {
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(ui->labelMarketIDValue->text());
+}
+
+void MarketTradeView::on_pushButtonPopupGraph_clicked()
+{
+    QDialog *graphDialog = new QDialog(this);
+    MarketGraphWidget *graphWidget = new MarketGraphWidget(this);
+    QHBoxLayout *hbox = new QHBoxLayout(this);
+
+    graphWidget->setupFullMarketGraph();
+    graphDialog->setLayout(hbox);
+    graphDialog->layout()->addWidget(graphWidget);
+
+    graphDialog->show();
+}
+
+void MarketTradeView::on_pushButtonMinus10_clicked()
+{
+    ui->spinBoxShares->setValue(ui->spinBoxShares->value() - 10);
+}
+
+void MarketTradeView::on_pushButtonPlus10_clicked()
+{
+    ui->spinBoxShares->setValue(ui->spinBoxShares->value() + 10);
+}
+
+void MarketTradeView::on_horizontalSliderNumberShares_valueChanged(int value)
+{
+    ui->spinBoxShares->setValue(value);
 }

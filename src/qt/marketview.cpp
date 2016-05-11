@@ -1,6 +1,8 @@
 #include "marketview.h"
 #include "ui_marketview.h"
+
 #include "markettradeview.h"
+#include "walletmodel.h"
 
 #include <QDialog>
 #include <QHBoxLayout>
@@ -11,11 +13,7 @@ MarketView::MarketView(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    // Grab the branch
-    uint256 uBranch;
-    uBranch.SetHex("0f894a25c5e0318ee148fe54600ebbf50782f0a1df1eb2aab06321a8ccec270d");
-
-    // Setup model & market table
+    /* Setup market table */
     marketTableView = new QTableView(this);
     marketTableView->horizontalHeader()->setStretchLastSection(true);
 
@@ -27,13 +25,8 @@ MarketView::MarketView(QWidget *parent) :
     marketTableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 #endif
 
-    marketModel = new MarketModel(this);
-    marketTableView->setModel(marketModel);
     marketTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->frameRight->layout()->addWidget(marketTableView);
-
-    // Set the branch for the market table model
-    marketModel->setBranch(uBranch);
 
     // Setup signals
     connect(marketTableView, SIGNAL(doubleClicked(QModelIndex)),
@@ -51,9 +44,7 @@ MarketView::~MarketView()
 void MarketView::on_tableView_doubleClicked(const QModelIndex &index)
 {
     MarketTradeView *marketTradeView = new MarketTradeView(this);
-
-    uint256 marketID = marketModel->getMarketID(index);
-    marketTradeView->setMarketToTrade(marketID);
+    marketTradeView->setMarket(test->index(index.row()));
 
     QHBoxLayout *hbox = new QHBoxLayout(this);
     hbox->addWidget(marketTradeView);
@@ -108,4 +99,19 @@ void MarketView::on_pushButtonScaleLess_clicked()
 void MarketView::on_pushButtonScaleMore_clicked()
 {
     setScale(graphScale+1);
+}
+
+void MarketView::setModel(WalletModel *model)
+{
+    this->model = model;
+    test = model->getMarketModel();
+    if (!test) return;
+
+    // Grab the branch
+    uint256 uBranch;
+    uBranch.SetHex("0f894a25c5e0318ee148fe54600ebbf50782f0a1df1eb2aab06321a8ccec270d");
+    // Set the branch for the market table model
+    test->setBranch(uBranch);
+
+    marketTableView->setModel(test);
 }
