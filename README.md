@@ -1,7 +1,9 @@
-Hivemind Core integration/staging tree
+Hivemind Core Integration/Staging Tree
 =====================================
 
-[http://www.bitcoin-hivemind.com](http://www.bitcoin-hivemind.com)
+[bitcoinhivemind.com](http://bitcoinhivemind.com/)
+
+This is the Bitcoin sidechain implementation of the [Truthcoin protocol](http://bitcoinhivemind.com/papers/). This project succeeds [Truthcoin](https://github.com/truthcoin/truthcoin-cpp), a proposed extension to Bitcoin itself.
 
 What is Hivemind?
 ----------------
