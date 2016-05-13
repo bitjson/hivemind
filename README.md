@@ -1,16 +1,18 @@
-Hivemind Core integration/staging tree
+Hivemind Core Integration/Staging Tree
 =====================================
 
-[http://www.bitcoin-hivemind.com](http://www.bitcoin-hivemind.com)
+[bitcoinhivemind.com](http://bitcoinhivemind.com/)
+
+This is the Bitcoin sidechain implementation of the [Truthcoin protocol](http://bitcoinhivemind.com/papers/). This project succeeds [Truthcoin](https://github.com/truthcoin/truthcoin-cpp), a proposed extension to Bitcoin itself.
 
 What is Hivemind?
 ----------------
 
-Hivemind is an ambitious modification of Bitcoin, which extends Bitcoin's abilities (to send and receive value-tokens) by adding the ability to create and participate in [markets for event derivatives ("prediction markets")](https://en.wikipedia.org/wiki/Prediction_market).
+Hivemind is an ambitious Bitcoin sidechain which extends Bitcoin's abilities (to send and receive value-tokens) by adding the ability to create and participate in [markets for event derivatives ("prediction markets")](https://en.wikipedia.org/wiki/Prediction_market).
 
 Although substantially more complex, Hivemind offers correspondingly substantial benefits, having potentially world-changing implications for science, taxation, corporate governance and politics.
 
-Hivemind includes two types of value-token.  One, "Bitcoin", is used for storing value, buying/selling in markets and paying transaction fees to miners. This coin will resemble Bitcoin-testnet-money (an "Altcoin") for the duration of pre-release testing, and will then be a [sidechain](http://www.blockstream.com/) of Bitcoin. Therefore, the network will "accept" Bitcoin (indeed, this will be the only currency the network accepts). The second (less important) token, "VoteCoin", is used to track a smaller group of special users and reward them for providing reports to the blockchain on the status of the bet-upon events.
+Hivemind includes two types of value-token. The first token – "Bitcoin" – is used for storing value, buying/selling in markets and paying transaction fees to miners. This coin will resemble Bitcoin-testnet-money (an "Altcoin") for the duration of pre-release testing, and will then be a [sidechain](http://www.blockstream.com/) of Bitcoin. Therefore, the network will "accept" Bitcoin (indeed, this will be the only currency the network accepts). The second (less important) token, "VoteCoin", is used to track a smaller group of special users and reward them for providing reports to the blockchain on the status of the bet-upon events.
 
 For an immediately useable, binary version of the Hivemind Core software, see [Hivemind Builds](http://107.170.174.203/Builds/).
 
