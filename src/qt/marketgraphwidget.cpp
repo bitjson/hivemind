@@ -73,31 +73,41 @@ QPixmap MarketGraphWidget::getTableGraphPixmap(QString title, const marketMarket
 
 void MarketGraphWidget::setupMarketTradeViewGraph(const marketMarket *market)
 {
-    // prepare data:
-    QVector<double> x1(20), y1(20);
-    QVector<double> x3(20), y3(20);
+    if (!market) return;
 
-    for (int i=0; i<x1.size(); ++i)
-    {
-      x1[i] = i/(double)x1.size()*10;
-      y1[i] = qCos(x1[i]*0.8+qSin(x1[i]*0.16+1.0))*qSin(x1[i]*0.54)+1.4;
-    }
-    for (int i=0; i<x3.size(); ++i)
-    {
-      x3[i] = i/(double)x3.size()*10;
-      y3[i] = 0.05+3*(0.5+qCos(x3[i]*x3[i]*0.2+2)*0.5)/(double)(x3[i]+0.7)+qrand()/(double)RAND_MAX*0.01;
+    /* Get the trades for this market */
+    std::vector<marketTrade *> trades;
+    trades = pmarkettree->GetTrades(market->GetHash());
+
+    unsigned int numTrades = trades.size();
+    unsigned int maxPrice = 0;
+
+    /* Load trading data for graph */
+    QVector<double> x(numTrades), y(numTrades); // Trade data
+    QVector<double> x2(numTrades), y2(numTrades); // Volume data
+    for (unsigned int i = 0; i < numTrades; i++) {
+        x [i] = i;
+        x2[i] = i;
+        y [i] = 1e-8*trades.at(i)->price;
+        y2[i] = 1e-8*trades.at(i)->nShares;
+
+        // Do we need to increase the range of the Y axis?
+        if (y[i] > maxPrice) maxPrice = y[i];
     }
 
-    // create and configure plottables:
+    /* Setup graphs */
+
+    // Price graph
     QCPGraph *graphPrice = ui->customPlot->addGraph();
-    graphPrice->setData(x1, y1);
+    graphPrice->setData(x, y);
     graphPrice->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, QPen(Qt::black, 1.5), QBrush(Qt::white), 9));
-    graphPrice->setPen(QPen(QColor(120, 120, 120), 2));
+    graphPrice->setPen(QPen(QColor(120, 120, 120), 4));
 
+    // Volume
     QCPBars *barsVolume = new QCPBars(ui->customPlot->xAxis, ui->customPlot->yAxis);
     ui->customPlot->addPlottable(barsVolume);
-    barsVolume->setWidth(9/(double)x3.size());
-    barsVolume->setData(x3, y3);
+    barsVolume->setWidth(3/(double)x2.size());
+    barsVolume->setData(x2, y2);
     barsVolume->setPen(Qt::NoPen);
     barsVolume->setBrush(QColor(10, 140, 70, 80));
 
@@ -108,7 +118,7 @@ void MarketGraphWidget::setupMarketTradeViewGraph(const marketMarket *market)
     ui->customPlot->xAxis->grid()->setLayer("belowmain");
     ui->customPlot->yAxis->grid()->setLayer("belowmain");
 
-    // set some pens, brushes and backgrounds:
+    // Set style (based on qcustomplot style demo)
     ui->customPlot->xAxis->setBasePen(QPen(Qt::white, 1));
     ui->customPlot->yAxis->setBasePen(QPen(Qt::white, 1));
     ui->customPlot->xAxis->setTickPen(QPen(Qt::white, 1));
@@ -141,7 +151,7 @@ void MarketGraphWidget::setupMarketTradeViewGraph(const marketMarket *market)
     ui->customPlot->axisRect()->setBackground(axisRectGradient);
 
     ui->customPlot->rescaleAxes();
-    ui->customPlot->yAxis->setRange(0, 2);
+    ui->customPlot->yAxis->setRange(-5, maxPrice + 5);
 }
 
 void MarketGraphWidget::setupFullMarketGraph()

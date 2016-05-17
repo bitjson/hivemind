@@ -35,8 +35,8 @@ private slots:
 private:
     Ui::MarketView *ui;
 
-    WalletModel *model;
-    MarketModel *test;
+    WalletModel *walletModel;
+    MarketModel *marketModel;
     QTableView *marketTableView;
 
     /*

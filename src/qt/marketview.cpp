@@ -44,7 +44,7 @@ MarketView::~MarketView()
 void MarketView::on_tableView_doubleClicked(const QModelIndex &index)
 {
     MarketTradeView *marketTradeView = new MarketTradeView(this);
-    marketTradeView->setMarket(test->index(index.row()));
+    marketTradeView->setMarket(marketModel->index(index.row()));
 
     QHBoxLayout *hbox = new QHBoxLayout(this);
     hbox->addWidget(marketTradeView);
@@ -103,15 +103,15 @@ void MarketView::on_pushButtonScaleMore_clicked()
 
 void MarketView::setModel(WalletModel *model)
 {
-    this->model = model;
-    test = model->getMarketModel();
-    if (!test) return;
+    this->walletModel = model;
+    marketModel = model->getMarketModel();
+    if (!marketModel) return;
 
     // Grab the branch
     uint256 uBranch;
     uBranch.SetHex("0f894a25c5e0318ee148fe54600ebbf50782f0a1df1eb2aab06321a8ccec270d");
     // Set the branch for the market table model
-    test->setBranch(uBranch);
+    marketModel->setBranch(uBranch);
 
-    marketTableView->setModel(test);
+    marketTableView->setModel(marketModel);
 }
