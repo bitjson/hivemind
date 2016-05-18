@@ -6,6 +6,7 @@
 
 #include "amount.h"
 #include "base58.h"
+#include "coincontrol.h"
 #include "core_io.h"
 #include "rpcserver.h"
 #include "init.h"
@@ -156,6 +157,57 @@ CHivemindAddress GetAccountAddress(string strAccount, bool bForceNew=false)
     return CHivemindAddress(account.vchPubKey.GetID());
 }
 
+CHivemindAddress GetBranchAccountAddress(string branchID, bool bForceNew=false)
+{
+    CWalletDB walletdb(pwalletMain->strWalletFile);
+
+    CHivemindAddress branchAddress;
+    branchAddress.is_votecoin = 1;
+
+    // Check that branch is valid
+    uint256 uBranch;
+    uBranch.SetHex(branchID);
+
+    marketBranch *branch = pmarkettree->GetBranch(uBranch);
+    if (!branch) return branchAddress;
+
+    delete branch;
+
+    // Read account
+    CAccount account;
+    walletdb.ReadAccount(branchID, account);
+
+    bool bKeyUsed = false;
+
+    // Check if the current key has been used
+    if (account.vchPubKey.IsValid())
+    {
+        CScript scriptPubKey = GetScriptForDestination(account.vchPubKey.GetID());
+        for (map<uint256, CWalletTx>::iterator it = pwalletMain->mapWallet.begin();
+             it != pwalletMain->mapWallet.end() && account.vchPubKey.IsValid();
+             ++it)
+        {
+            const CWalletTx& wtx = (*it).second;
+            BOOST_FOREACH(const CTxOut& txout, wtx.vout)
+                if (txout.scriptPubKey == scriptPubKey)
+                    bKeyUsed = true;
+        }
+    }
+
+    // Generate a new key
+    if (!account.vchPubKey.IsValid() || bForceNew || bKeyUsed)
+    {
+        if (!pwalletMain->GetKeyFromPool(account.vchPubKey))
+            throw JSONRPCError(RPC_WALLET_KEYPOOL_RAN_OUT, "Error: Keypool ran out, please call keypoolrefill first");
+
+        pwalletMain->SetAddressBook(account.vchPubKey.GetID(), branchID, "receive");
+        walletdb.WriteAccount(branchID, account);
+    }
+
+    branchAddress.Set(account.vchPubKey.GetID());
+    return branchAddress;
+}
+
 Value getaccountaddress(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 1)
@@ -183,6 +235,32 @@ Value getaccountaddress(const Array& params, bool fHelp)
     return ret;
 }
 
+Value getbranchaddress(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() != 1)
+        throw runtime_error(
+            "getbranchaddress \"branchid\"\n"
+            "\nReturns the users current votecoin address for this branch.\n"
+            "\nArguments:\n"
+            "1. \"branchid\"       (string, required) The branch id (account) to get an address from.\n"
+            "\nResult:\n"
+            "\"votecoinaddress\"   (string) The branch (account) votecoin address\n"
+            "\nExamples:\n"
+            + HelpExampleCli("getbranchaddress", "")
+            + HelpExampleCli("getbranchaddress", "\"\"")
+            + HelpExampleCli("getbranchaddress", "\"branchid\"")
+            + HelpExampleRpc("getbranchaddress", "\"branchid\"")
+        );
+
+    // Parse the account first so we don't generate a key if there's an error
+    string strAccount = AccountFromValue(params[0]);
+
+    Value ret;
+
+    ret = GetBranchAccountAddress(strAccount).ToString();
+
+    return ret;
+}
 
 Value getrawchangeaddress(const Array& params, bool fHelp)
 {
@@ -3016,11 +3094,15 @@ Value createsealedvote(const Array& params, bool fHelp)
 
     // Use votecoins to pay for the vote
     string strAccount = obj.branchid.ToString();
+    CHivemindAddress voterAddress = GetBranchAccountAddress(strAccount);
+
+    CCoinControl *control = new CCoinControl;
+    control->destChange = voterAddress.Get();
 
     CWalletTx wtx;
     CTxDestination txDestChange;
     if (!pwalletMain->CreateTransaction(scriptPubKey, strAccount, nAmount, wtx,
-        reservekey, nFeeRequired, strError, txDestChange))
+        reservekey, nFeeRequired, strError, txDestChange, control))
     {
         if (nFeeRequired > pwalletMain->GetBalance())
             strError = strprintf(
@@ -3029,6 +3111,11 @@ Value createsealedvote(const Array& params, bool fHelp)
         LogPrintf("createsealedvote() : %s\n", strError);
         throw JSONRPCError(RPC_WALLET_ERROR, strError);
     }
+
+    delete control; /* control no longer needed */
+
+    CPubKey key;
+    reservekey.GetReservedKey(key);
 
     if (!pwalletMain->CommitTransaction(wtx, reservekey))
         throw JSONRPCError(RPC_WALLET_ERROR,
@@ -3111,11 +3198,15 @@ Value createstealvote(const Array& params, bool fHelp)
 
     // Use votecoins to pay for the vote
     string strAccount = obj.branchid.ToString();
+    CHivemindAddress voterAddress = GetBranchAccountAddress(strAccount);
+
+    CCoinControl *control = new CCoinControl;
+    control->destChange = voterAddress.Get();
 
     CWalletTx wtx;
     CTxDestination txDestChange;
     if (!pwalletMain->CreateTransaction(scriptPubKey, strAccount, nAmount, wtx,
-        reservekey, nFeeRequired, strError, txDestChange))
+        reservekey, nFeeRequired, strError, txDestChange, control))
     {
         if (nFeeRequired > pwalletMain->GetBalance())
             strError = strprintf(
@@ -3127,6 +3218,8 @@ Value createstealvote(const Array& params, bool fHelp)
     if (!pwalletMain->CommitTransaction(wtx, reservekey))
         throw JSONRPCError(RPC_WALLET_ERROR,
             "Error: The createstealvote transaction was rejected!");
+
+    delete control; /* control no longer needed */
 
     Object entry;
     entry.push_back(Pair("txid", wtx.GetHash().ToString()));
@@ -3234,11 +3327,15 @@ Value createrevealvote(const Array& params, bool fHelp)
 
     // Use votecoins to pay for the vote
     string strAccount = obj.branchid.ToString();
+    CHivemindAddress voterAddress = GetBranchAccountAddress(strAccount);
+
+    CCoinControl *control = new CCoinControl;
+    control->destChange = voterAddress.Get();
 
     CWalletTx wtx;
     CTxDestination txDestChange;
     if (!pwalletMain->CreateTransaction(scriptPubKey, strAccount, nAmount, wtx,
-        reservekey, nFeeRequired, strError, txDestChange))
+        reservekey, nFeeRequired, strError, txDestChange, control))
     {
         if (nFeeRequired > pwalletMain->GetBalance())
             strError = strprintf(
@@ -3250,6 +3347,8 @@ Value createrevealvote(const Array& params, bool fHelp)
     if (!pwalletMain->CommitTransaction(wtx, reservekey))
         throw JSONRPCError(RPC_WALLET_ERROR,
             "Error: The createrevealvote transaction was rejected!");
+
+    delete control; /* control no longer needed */
 
     Object entry;
     entry.push_back(Pair("txid", wtx.GetHash().ToString()));
