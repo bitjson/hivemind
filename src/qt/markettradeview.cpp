@@ -19,13 +19,10 @@ MarketTradeView::MarketTradeView(QWidget *parent) :
     connect(this, SIGNAL(finalizeError(QString)),
             this, SLOT(on_finalizeError(QString)));
 
-    if (market) {
-        marketGraph = new MarketGraphWidget(this);
-        marketGraph->setFixedSize(540, 380);
+    marketGraph = new MarketGraphWidget(this);
+    marketGraph->setFixedSize(540, 380);
 
-        marketGraph->setupMarketTradeViewGraph(market);
-        ui->frameMarketGraph->layout()->addWidget(marketGraph);
-    }
+    ui->frameMarketGraph->layout()->addWidget(marketGraph);
 }
 
 MarketTradeView::~MarketTradeView()
@@ -44,7 +41,7 @@ void MarketTradeView::on_pushButtonFinalize_clicked()
     std::string marketHex = ui->labelMarketIDValue->text().toStdString();
     std::string type = (ui->radioButtonLong->isChecked())? "buy":"sell";
     double shares = ui->labelSharesToBuyValue->text().toDouble();
-    double price = ui->labelCurrentPriceValue->text().toDouble();
+    double price = ui->doubleSpinBoxOrderPrice->value();
     int state = ui->spinBoxState->value();
     int nonce = 0;
 
@@ -122,10 +119,14 @@ void MarketTradeView::updateMarketInfo()
     // Shares on the market
     double *nShares = new double [nStates];
     marketNShares(trades, nStates, nShares);
-    std::string marketPrice = FormatMoney(marketAccountValue(market->maxCommission, 1e-8*market->B, nStates, nShares));
 
-    // Set market price label
+    // Price of the market
+    double accountValue = marketAccountValue(market->maxCommission, 1e-8*market->B, nStates, nShares);
+    std::string marketPrice = FormatMoney(accountValue);
     ui->labelCurrentPriceValue->setText(QString::fromStdString(marketPrice));
+
+    // Market graph
+    marketGraph->setupMarketTradeViewGraph(market);
 }
 
 void MarketTradeView::setMarket(const marketMarket *marketToTrade)

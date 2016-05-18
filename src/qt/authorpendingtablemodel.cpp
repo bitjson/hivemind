@@ -394,7 +394,7 @@ void AuthorPendingTableModel::on_tableView_doubleClicked(const QModelIndex &inde
 void AuthorPendingTableModel::receivePendingCombo(json_spirit::Array array)
 {
     int row = pending.size();
-    beginInsertRows(QModelIndex(), row, row+1);
+    beginInsertRows(QModelIndex(), row, row);
 
     pending.push_back(array);
 
