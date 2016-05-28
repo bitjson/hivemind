@@ -53,51 +53,13 @@ extern CMarketTreeDB *pmarkettree;
 //      1) all trade payouts are calculated, and
 //      2) the market author fee is calculated.
 //
-CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
+void getBranchOutcome(CMutableTransaction &tx, marketBranch *branch, uint32_t height)
 {
-    /* The outcome transaction to return */
-    CMutableTransaction mtx;
-
     /* Check that branch actually points to something */
-    if (!branch) return mtx;
+    if (!branch) return;
 
     /* Make sure the current height is a factor of tau */
-    if (height % branch->tau) return mtx;
-
-    /* Get the list of decisions on the branch, and create decisionMap */
-    vector<marketDecision *> decisions = pmarkettree->GetDecisions(branch->GetHash());
-    map<uint256, const marketDecision *> decisionMap;
-    for(size_t i=0; i < decisions.size(); i++)
-        decisionMap[ decisions[i]->GetHash() ] = decisions[i];
-
-    /* Get the list of previous outcomes on this branch */
-    vector<marketOutcome *> outcomes = pmarkettree->GetOutcomes(branch->GetHash());
-
-    /* Try to find the previous outcome transaction */
-    CTransaction previousOutcomeTx;
-    uint32_t previousOutcomeHeight = 0;
-    for(size_t i = 0; i < outcomes.size(); ++i) {
-        if (outcomes[i]->nHeight < previousOutcomeHeight)
-            continue;
-        if (outcomes[i]->tx.vout.empty())
-            continue;
-        previousOutcomeHeight = outcomes[i]->nHeight;
-        previousOutcomeTx = outcomes[i]->tx;
-    }
-
-    /* If there is no previous outcome, get branch creation transaction */
-    if (!previousOutcomeHeight) {
-        // Get the branch creation transaction
-        uint256 hashBlock;
-        bool foundBranchTx = GetTransaction(branch->txid, previousOutcomeTx, hashBlock, true);
-
-        // If this is the genesis branch, get the genesis branch transaction
-        if (!foundBranchTx && branch->GetHash() == Params().GenesisBranch().GetHash()) {
-            // Create the first outcome
-            CBlock genesisBlock = Params().GenesisBlock();
-            previousOutcomeTx = genesisBlock.vtx.front();
-        }
-    }
+    if (height % branch->tau) return;
 
     /* Retrieve the votes for this height. */
     vector<marketRevealVote *> revealvotes = pmarkettree->GetRevealVotes(branch->GetHash(), height);
@@ -118,12 +80,16 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
     outcome->tol = branch->tol;
     outcome->nVoters = 0;
 
-    // TODO fix
-    // max = height - ballot - unseal
-    // min = height - tau - ballot - unseal
+    // TODO adjust
     /* The range of decision ending times to be included in the new outcome */
     uint32_t maxHeight = height; // Max = the current height, which is a multiple of tau.
     uint32_t minHeight = maxHeight - (branch->tau - 1); // Min = the begining of this tau period
+
+    /* Get the list of decisions on the branch, and create decisionMap */
+    vector<marketDecision *> decisions = pmarkettree->GetDecisions(branch->GetHash());
+    map<uint256, const marketDecision *> decisionMap;
+    for(size_t i=0; i < decisions.size(); i++)
+        decisionMap[ decisions[i]->GetHash() ] = decisions[i];
 
     /* Find the decisions within our range */
     for(size_t i=0; i < decisions.size(); i++) {
@@ -139,42 +105,46 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
         outcome->isScaled.push_back(decision->isScaled);
     }
 
-    /* If there are decisions, calculate the outcome */
+    /* Get the list of previous outcomes on this branch */
+    vector<marketOutcome *> outcomes = pmarkettree->GetOutcomes(branch->GetHash());
+
+    /* Try to find the previous outcome transaction */
+    CTransaction previousOutcomeTx;
+    uint32_t previousOutcomeHeight = 0;
+    for(size_t i = 0; i < outcomes.size(); ++i) {
+        if (outcomes[i]->nHeight < previousOutcomeHeight)
+            continue;
+        if (outcomes[i]->tx.vout.empty())
+            continue;
+        previousOutcomeHeight = outcomes[i]->nHeight;
+        previousOutcomeTx = outcomes[i]->tx;
+    }
+
+    /* Populate the vote matrix [nVoters][nDecisions] */
     if (outcome->nDecisions) {
+        /* Retrieve the votes for this height. */
+        vector<marketRevealVote *> revealvotes = pmarkettree->GetRevealVotes(branch->GetHash(), height);
+
+        /* Create a map of new votes, indexed by their owner's keyID */
+        map<CKeyID, const marketRevealVote *> voteMap;
+        for(size_t i=0; i < revealvotes.size(); i++)
+           voteMap[ revealvotes[i]->keyID ] = revealvotes[i];
+
+        // Clear and resize the vote matrix for new outcome calculation
         outcome->voteMatrix.clear();
         outcome->voteMatrix.resize(voteMap.size()*outcome->nDecisions, outcome->NA);
 
-        /* Go through the previous outcome and find voters */
-        for(uint32_t i=0; i < previousOutcomeTx.vout.size(); i++) {
-            /* Get the current voter's key */
-            uint160 u;
-            vector<vector<unsigned char> > vSolutions;
-            txnouttype whichType;
-            int rc = (Solver(previousOutcomeTx.vout[i].scriptPubKey, whichType, vSolutions))? 0: -1;
-            if (rc) {
-                if (whichType == TX_PUBKEY) {
-                    CPubKey pubKey(vSolutions[0]);
-                    if (pubKey.IsValid())
-                       u = Hash160(pubKey.begin(), pubKey.end());
-                    else
-                       rc = -1;
-                } else
-                if (whichType == TX_PUBKEYHASH)
-                    u = uint160(vSolutions[0]);
-                else
-                if (whichType == TX_SCRIPTHASH)
-                    u = uint160(vSolutions[0]);
-                else
-                    rc = -1;
-            }
+        /* Go through the reveal votes and collect voter keys */
+        for(uint32_t i=0; i < revealvotes.size(); i++) {
+            outcome->voterIDs.push_back(revealvotes.at(i)->keyID);
 
-            /* The current voter's key */
-            CKeyID keyID(u);
-            outcome->voterIDs.push_back(keyID);
-            outcome->oldRep.push_back(previousOutcomeTx.vout[i].nValue);
+            uint256 txid = revealvotes.at(i)->txid;
+//            pcoinsTip->GetCoins()
+// TODO OLD REP
+            outcome->oldRep.push_back(25000);
             map<CKeyID, const marketRevealVote *>::const_iterator vit
-                = voteMap.find(keyID);
-            if ((!rc) && (vit != voteMap.end())) {
+                = voteMap.find(revealvotes.at(i)->keyID);
+            if (vit != voteMap.end()) {
                 const marketRevealVote *vote = vit->second;
                 const vector<uint256> &decisionIDs = vote->decisionIDs;
                 const vector<uint64_t> &decisionVotes = vote->decisionVotes;
@@ -191,27 +161,27 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
             }
             outcome->nVoters++;
         }
+        /* clean up */
+        for(size_t i=0; i < revealvotes.size(); i++)
+            delete revealvotes[i];
     }
 
-    /* calculate the new reputations if we need to */
-    if (outcome->nVoters && previousOutcomeTx.vout.size() && outcome->calc() == 0) {
-        /* create new reputation tx and append to reputationTx */
-        for(uint32_t i=0; i < previousOutcomeTx.vout.size(); i++) {
-            CKeyID keyID = outcome->voterIDs[i];
-            CScript script;
-            script << OP_DUP << OP_HASH160 << ToByteVector(keyID) << OP_EQUALVERIFY << OP_CHECKSIG;
-            /*
-             * Input: the previous reputation tx, or the branch creation tx if first outcome on branch
-             * Output: reputation transfers to voters
-             */
-            mtx.vin.push_back(CTxIn(COutPoint(previousOutcomeTx.GetHash(),i)));
-            mtx.vout.push_back(CTxOut(1e-8*outcome->smoothedRep[i], script));
+    /* Calculate new outcome, add reputation payouts to transaction */
+    if (outcome->nVoters) {
+        int ret = outcome->calc();
+
+        if (ret == 0) {
+            for(uint32_t i=0; i < outcome->voterIDs.size(); i++) {
+                // Get voter information
+                CKeyID keyID = outcome->voterIDs[i];
+                CScript script;
+                script << OP_DUP << OP_HASH160 << ToByteVector(keyID) << OP_EQUALVERIFY << OP_CHECKSIG;
+
+                // Pay voter
+                tx.vout.push_back(CTxOut(1e-8*outcome->smoothedRep[i], script));
+            }
         }
     }
-
-    /* clean up */
-    for(size_t i=0; i < revealvotes.size(); i++)
-        delete revealvotes[i];
 
     /* Find all of the markets on this branch */
     vector<marketMarket *> markets;
@@ -317,9 +287,9 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
 
                 /* If there is payout to be made, create the script and add it to the coinTX */
                 if (payout > 0.0) {
-                    CScript script;
-                    script << OP_DUP << OP_HASH160 << ToByteVector(trades[j]->keyID) << OP_EQUALVERIFY << OP_CHECKSIG;
-                    mtx.vout.push_back(CTxOut(nShares*payout, script));
+//                    CScript script;
+//                    script << OP_DUP << OP_HASH160 << ToByteVector(trades[j]->keyID) << OP_EQUALVERIFY << OP_CHECKSIG;
+//                    mtx.vout.push_back(CTxOut(nShares*payout, script));
                 }
 
                 /* Cleanup */
@@ -327,6 +297,8 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
             }
         }
     }
+
+    // add outcome
 
     /* clean up */
     for(size_t i=0; i < markets.size(); i++)
@@ -340,8 +312,6 @@ CTransaction getOutcomeTx(marketBranch *branch, uint32_t height)
         delete outcomes[i];
     if (outcome)
         delete outcome;
-
-    return mtx;
 }
 
 //
@@ -428,14 +398,11 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn)
     pblocktemplate->vTxFees.push_back(-1); // updated at end
     pblocktemplate->vTxSigOps.push_back(-1); // updated at end
 
-    // Create branch outcome transactions
+    // Add branch outcome output(s)
     uint32_t height = chainActive.Height() + 1;
     vector<marketBranch *> branches = pmarkettree->GetBranches();
     for(size_t i=0; i < branches.size(); i++) {
-        CTransaction btx = getOutcomeTx(branches[i], height);
-        // If there is a new outcome for the branch, add the outcome to the block
-        if (btx.vout.size())
-            pblock->vtx.push_back(btx);
+        getBranchOutcome(txNew, branches[i], height);
     }
     /* clean up */
     for(size_t i=0; i < branches.size(); i++)
@@ -647,7 +614,7 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn)
         LogPrintf("CreateNewBlock(): total size %u\n", nBlockSize);
 
         // Compute final coinbase transaction.
-        txNew.vout[0].nValue = GetBlockValue(nHeight, nFees);
+        txNew.vout[0].nValue = GetBlockValue(nHeight, nFees) - 100000000;
         txNew.vin[0].scriptSig = CScript() << nHeight << OP_0;
         pblock->vtx[0] = txNew;
         pblocktemplate->vTxFees[0] = -nFees;
@@ -660,7 +627,7 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn)
         pblocktemplate->vTxSigOps[0] = GetLegacySigOpCount(pblock->vtx[0]);
 
         CValidationState state;
-        if (!TestBlockValidity(state, *pblock, pindexPrev, false, false)) {
+        if (!TestBlockValidity(state, *pblock, pindexPrev, false, false)) {     
             throw std::runtime_error("CreateNewBlock() : TestBlockValidity failed");
         }
     }
