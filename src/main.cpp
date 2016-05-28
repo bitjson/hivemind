@@ -2826,9 +2826,9 @@ bool TestBlockValidity(CValidationState &state, const CBlock& block, CBlockIndex
         return false;
     if (!ContextualCheckBlock(block, state, pindexPrev))
         return false;
-    if (!ConnectBlock(block, state, &indexDummy, viewNew, true)) {
+    if (!ConnectBlock(block, state, &indexDummy, viewNew, true))
         return false;
-    }
+
     assert(state.IsValid());
 
     return true;

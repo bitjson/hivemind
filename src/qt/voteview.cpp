@@ -10,8 +10,6 @@
 #include "txdb.h"
 #include "wallet.h"
 
-extern CWallet* pwalletMain;
-
 VoteView::VoteView(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::VoteView)
