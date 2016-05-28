@@ -473,14 +473,14 @@ int marketOutcome::calc(void)
     authorBonus.clear();
     decisionsFinal.clear();
     for(uint32_t i=0; i < nDecisions; i++) {
-        firstLoading.push_back( (uint64_t) (firstloading[i][0] * 1e8) );
-        decisionsRaw.push_back( (uint64_t) (decisionsraw[i][0] * 1e8) );
-        consensusReward.push_back( (uint64_t) (consensusrew[i][0] * 1e8) );
-        certainty.push_back( (uint64_t) (certain[i][0] * 1e8) );
-        NACol.push_back( (uint64_t) (nacol[i][0] * 1e8) );
-        particCol.push_back( (uint64_t) (particcol[i][0] * 1e8) );
-        authorBonus.push_back( (uint64_t) (authorbonus[i][0] * 1e8) );
-        decisionsFinal.push_back( (uint64_t) (decisionsfinal[i][0] * 1e8) );
+        firstLoading.push_back( (uint64_t) (firstloading[0][i] * 1e8) );
+        decisionsRaw.push_back( (uint64_t) (decisionsraw[0][i] * 1e8) );
+        consensusReward.push_back( (uint64_t) (consensusrew[0][i] * 1e8) );
+        certainty.push_back( (uint64_t) (certain[0][i] * 1e8) );
+        NACol.push_back( (uint64_t) (nacol[0][i] * 1e8) );
+        particCol.push_back( (uint64_t) (particcol[0][i] * 1e8) );
+        authorBonus.push_back( (uint64_t) (authorbonus[0][i] * 1e8) );
+        decisionsFinal.push_back( (uint64_t) (decisionsfinal[0][i] * 1e8) );
     }
 
     tc_vote_dtr(vote);
