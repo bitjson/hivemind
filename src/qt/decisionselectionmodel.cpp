@@ -74,7 +74,7 @@ void DecisionSelectionModel::loadDecisions(QList<marketDecision *> decisions)
 {
     if (decisions.isEmpty()) return;
 
-    beginInsertRows(QModelIndex(), 0, decisions.size());
+    beginInsertRows(QModelIndex(), 0, decisions.size() - 1);
 
     for (int i = 0; i < decisions.size(); i++) {
         model.push_back(decisions.at(i));
