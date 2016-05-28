@@ -299,6 +299,9 @@ void getBranchOutcome(CMutableTransaction &tx, marketBranch *branch, uint32_t he
     }
 
     // add outcome
+    if (outcome) {
+        tx.vout.push_back(CTxOut(0, outcome->GetScript()));
+    }
 
     /* clean up */
     for(size_t i=0; i < markets.size(); i++)
