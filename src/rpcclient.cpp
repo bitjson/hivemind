@@ -123,6 +123,7 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "getballot", 1 },
     { "getcreatetradecapitalrequired", 2 },
     { "getcreatetradecapitalrequired", 3 },
+    { "listvotes", 1 },
 };
 
 class CRPCConvertTable
