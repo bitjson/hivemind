@@ -63,3 +63,5 @@ https://github.com/bitcoin-hivemind/testnet-canonical
 
 To find something to work on, see the issues page or the Hivemind roadmap:
 http://bitcoinhivemind.com/blog/roadmap/
+
+To join the Slack chatroom, visit: https://bitcoin-hivemind.herokuapp.com/
